@@ -1,0 +1,158 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes hero-copy-enter {
+  from {
+    opacity: 0;
+    translate: 0 24px;
+  }
+
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+.hero-title-enter,
+.hero-description-enter {
+  animation: hero-copy-enter 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.hero-description-enter {
+  animation-delay: 180ms;
+}
+
+.hero-button-enter {
+  animation: hero-copy-enter 700ms cubic-bezier(0.22, 1, 0.36, 1) 320ms both;
+}
+
+@keyframes hero-card-enter {
+  0% {
+    opacity: 0;
+    scale: 0.72;
+  }
+
+  70% {
+    scale: 1.04;
+  }
+
+  100% {
+    opacity: 1;
+    scale: 1;
+  }
+}
+
+.hero-card-enter {
+  animation: hero-card-enter 800ms cubic-bezier(0.22, 1, 0.36, 1) var(--hero-card-pop-delay, 0ms) both;
+}
+
+@keyframes mobile-carousel-card-enter {
+  from {
+    translate: 0 20px;
+    scale: 0.94;
+  }
+
+  70% {
+    scale: 1.02;
+  }
+
+  to {
+    translate: 0 0;
+    scale: 1;
+  }
+}
+
+.mobile-carousel-card-enter {
+  animation: mobile-carousel-card-enter 750ms cubic-bezier(0.22, 1, 0.36, 1) var(--mobile-card-delay, 0ms) both;
+}
+
+@keyframes mobile-menu-enter {
+  from {
+    opacity: 0;
+    filter: blur(8px);
+    transform: translateY(-0.75rem) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0) scale(1);
+  }
+}
+
+.mobile-menu-enter {
+  animation: mobile-menu-enter 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  transform-origin: top center;
+}
+
+.scroll-reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 600ms ease, transform 600ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.scroll-reveal.is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.scroll-reveal-image {
+  opacity: 0;
+  scale: 0.97;
+  transition: opacity 700ms ease, scale 900ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.scroll-reveal-image.is-revealed {
+  opacity: 1;
+  scale: 1;
+}
+
+@keyframes about-hero-photo-enter {
+  from {
+    clip-path: inset(0 0 14%);
+    scale: 1.06;
+  }
+
+  to {
+    clip-path: inset(0);
+    scale: 1;
+  }
+}
+
+.about-hero-photo-enter {
+  animation: about-hero-photo-enter 950ms cubic-bezier(0.22, 1, 0.36, 1) 120ms both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-title-enter,
+  .hero-description-enter,
+  .hero-button-enter,
+  .hero-card-enter,
+  .mobile-carousel-card-enter,
+  .mobile-menu-enter {
+    animation: none;
+  }
+
+  .about-hero-photo-enter {
+    animation: none;
+  }
+
+  .scroll-reveal {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .scroll-reveal-image {
+    opacity: 1;
+    scale: 1;
+    transition: none;
+  }
+}
+
+@layer base {
+  input, textarea, select, button {
+    @apply outline-none focus:outline-none;
+  }
+}

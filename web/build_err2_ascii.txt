@@ -1,0 +1,487 @@
+
+> build
+> react-router build
+
+[36mvite v6.4.1 [32mbuilding for production...[36m[39m
+transforming...
+node.exe : 
+At line:1 char:1
++ & "C:\nvm4w\nodejs/no
+de.exe" "C:\nvm4w\nodej
+s/node_modules/npm/bin/
+np ...
++ ~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~
+    + CategoryInfo     
+         : NotSpecifi  
+  ed: (:String) [],    
+ RemoteException
+    + FullyQualifiedEr 
+   rorId : NativeComm  
+  andError
+ 
+[1m[33mwarn[39m[22m
+ - No utility classes 
+were detected in your 
+source files. If this 
+is unexpected, 
+double-check the 
+`content` option in 
+your Tailwind CSS 
+configuration.
+[1m[33mwarn[39m[22m
+ - https://tailwindcss.
+com/docs/content-config
+uration
+[32m???[39m 107 modules transformed.
+[31m???[39m Build 
+failed in 2.58s
+[31m[vite:esbuild] 
+Transform failed with 
+1 error:
+C:/Users/Larry/Desktop/
+Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/__create/
+fetch.ts:95:40: ERROR: 
+Expected ";" but found 
+"$"[39m
+file: [36mC:/Users/Lar
+ry/Desktop/Coding/Perso
+nal Projects/NEW YEMC/S
+tuff/apps/web/src/__cre
+ate/fetch.ts:95:40[39m
+[33m
+[33mExpected ";" but 
+found "$"[33m
+93 |      : '';
+94 |    try {
+95 |      const result 
+= await originalFetch(`
+${prefix}${url}`, 
+finalInit);
+   |                   
+                       
+^
+96 |      if 
+(!result.ok) {
+97 |        
+postToParent(
+[39m
+    at 
+failureErrorWithLog (C:
+\Users\Larry\Desktop\Co
+ding\Personal 
+Projects\NEW YEMC\Stuff
+\apps\web\node_modules\
+esbuild\lib\main.js:146
+7:15)
+    at C:\Users\Larry\D
+esktop\Coding\Personal 
+Projects\NEW YEMC\Stuff
+\apps\web\node_modules\
+esbuild\lib\main.js:736
+:50
+    at responseCallback
+s.<computed> (C:\Users\
+Larry\Desktop\Coding\Pe
+rsonal Projects\NEW YEM
+C\Stuff\apps\web\node_m
+odules\esbuild\lib\main
+.js:603:9)
+    at 
+handleIncomingPacket (C
+:\Users\Larry\Desktop\C
+oding\Personal 
+Projects\NEW YEMC\Stuff
+\apps\web\node_modules\
+esbuild\lib\main.js:658
+:12)
+    at 
+Socket.readFromStdout (
+C:\Users\Larry\Desktop\
+Coding\Personal 
+Projects\NEW YEMC\Stuff
+\apps\web\node_modules\
+esbuild\lib\main.js:581
+:7)
+    at Socket.emit 
+(node:events:518:28)
+    at addChunk (node:i
+nternal/streams/readabl
+e:561:12)
+    at readableAddChunk
+PushByteMode (node:inte
+rnal/streams/readable:5
+12:3)
+    at 
+Socket.Readable.push (n
+ode:internal/streams/re
+adable:392:5)
+    at 
+Pipe.onStreamRead (node
+:internal/stream_base_c
+ommons:189:23) {
+  errors: 
+[Getter/Setter],
+  warnings: 
+[Getter/Setter],
+  frame: '\n' +
+    '\x1B[33mExpected 
+";" but found 
+"$"\x1B[39m\n' +
+    "93 |      : 
+'';\n" +
+    '94 |    try {\n' +
+    '95 |      const 
+result = await original
+Fetch(`${prefix}${url}`
+, finalInit);\n' +
+    '   |              
+                       
+     ^\n' +
+    '96 |      if 
+(!result.ok) {\n' +
+    '97 |        
+postToParent(\n',
+  loc: {
+    column: 40,
+    file: 'C:/Users/Lar
+ry/Desktop/Coding/Perso
+nal Projects/NEW YEMC/S
+tuff/apps/web/src/__cre
+ate/fetch.ts',
+    length: 1,
+    line: 95,
+    lineText: '    
+const result = await or
+iginalFetch(`${prefix}$
+{url}`, finalInit);',
+    namespace: '',
+    suggestion: ';'
+  },
+  code: 'PLUGIN_ERROR',
+  plugin: 
+'vite:esbuild',
+  hook: 'transform',
+  id: 'C:/Users/Larry/D
+esktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/__create/
+fetch.ts',
+  watchFiles: [
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/app/page.
+jsx',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/app/root.
+tsx',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/app/accou
+nt/logout/page.jsx',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/app/accou
+nt/signin/page.jsx',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/app/admin
+/applications/page.jsx'
+,
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/app/admin
+/users/page.jsx',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/node_modules/
+@react-router/dev/dist/
+config/defaults/entry.c
+lient.tsx',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/app/commu
+nity/page.jsx',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/app/accou
+nt/signup/page.jsx',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/app/faq/p
+age.jsx',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/app/about
+/page.jsx',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/app/forgo
+t-password/page.jsx',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/app/join/
+page.jsx',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/app/galle
+ry/page.jsx',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/app/reset
+-password/page.jsx',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/app/lesso
+ns/page.jsx',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/app/resou
+rces/page.jsx',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/app/conta
+ct/page.jsx',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/app/__cre
+ate/not-found.tsx',
+    'C:\\Users\\Larry\\
+Desktop\\Coding\\Person
+al Projects\\NEW YEMC\\
+Stuff\\apps\\web\\packa
+ge.json',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/node_modules/
+react/jsx-runtime.js',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/node_modules/
+react/index.js',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/node_modules/
+react-dom/client.js',
+    'C:\\Users\\Larry\\
+Desktop\\Coding\\Person
+al Projects\\NEW YEMC\\
+Stuff\\apps\\web\\src\\
+app\\layout.jsx',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/node_modules/
+react-router/dist/devel
+opment/dom-export.mjs',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/node_modules/
+react/cjs/react.product
+ion.min.js',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/node_modules/
+react/cjs/react-jsx-run
+time.production.min.js'
+,
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/node_modules/
+react-dom/index.js',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/app/layou
+t.jsx',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/node_modules/
+react-router/dist/devel
+opment/chunk-JPUPSTYD.m
+js',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/node_modules/
+react-router/dist/devel
+opment/chunk-LFPYN7LY.m
+js',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/node_modules/
+react-dom/cjs/react-dom
+.production.min.js',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/component
+s/Header.jsx',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/component
+s/Footer.jsx',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/component
+s/Testimonials.jsx',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/component
+s/Hero.jsx',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/__create/
+PolymorphicComponent.ts
+x',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/node_modules/
+scheduler/index.js',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/node_modules/
+react-router/node_modul
+es/cookie/dist/index.js
+',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/node_modules/
+set-cookie-parser/lib/s
+et-cookie.js',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/utils/use
+Auth.js',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/node_modules/
+scheduler/cjs/scheduler
+.production.min.js',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/hooks/use
+Theme.js',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/utils/use
+User.js',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/component
+s/AdminApplications/Adm
+inHeader.jsx',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/component
+s/AdminApplications/Ema
+ilModal.jsx',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/component
+s/AdminApplications/App
+licationsList.jsx',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/component
+s/AdminApplications/Loa
+dingScreen.jsx',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/component
+s/AdminApplications/Del
+eteConfirmModal.jsx',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/utils/exp
+ortCSV.js',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/hooks/use
+Applications.js',
+    'src/public/yef-log
+o.jpg',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/__create/
+useDevServerHeartbeat.t
+s',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/__create/
+fetch.ts',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/utils/for
+matters.js',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/app/globa
+l.css',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/tailwind.conf
+ig.js',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/node_modules/
+react-router/dist/devel
+opment/index.mjs'
+  ]
+}

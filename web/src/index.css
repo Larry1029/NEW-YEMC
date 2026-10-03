@@ -1,0 +1,89 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@keyframes hero-card-pop {
+	0% {
+		opacity: 0;
+		transform: translateY(70px) scale(0.72);
+	}
+
+	70% {
+		transform: translateY(-8px) scale(1.04);
+	}
+
+	100% {
+		opacity: 1;
+		transform: translateY(0) scale(1);
+	}
+}
+
+@keyframes hero-card-slide {
+	from {
+		translate: -8px 0;
+	}
+
+	to {
+		translate: 8px 0;
+	}
+}
+
+.hero-card-slide {
+	animation: hero-card-slide 7s ease-in-out infinite alternate;
+}
+
+.hero-card-pop {
+	animation: hero-card-pop 800ms cubic-bezier(0.22, 1, 0.36, 1) var(--hero-card-pop-delay, 0ms) both;
+}
+
+.hero-card-slide:nth-child(2) {
+	--hero-card-pop-delay: 150ms;
+}
+
+.hero-card-slide:nth-child(3) {
+	--hero-card-pop-delay: 300ms;
+}
+
+.hero-card-slide:nth-child(4) {
+	--hero-card-pop-delay: 450ms;
+}
+
+.hero-card-slide:nth-child(5) {
+	--hero-card-pop-delay: 600ms;
+}
+
+@keyframes hero-zigzag-flow {
+	to {
+		stroke-dashoffset: -100;
+	}
+}
+
+@keyframes hero-zigzag-glow {
+	0%,
+	100% {
+		opacity: 0.16;
+	}
+
+	50% {
+		opacity: 0.4;
+	}
+}
+
+.hero-zigzag-line {
+	stroke-dasharray: 18 82;
+	animation: hero-zigzag-flow 5s linear infinite;
+}
+
+.hero-zigzag-glow {
+	stroke-dasharray: 22 78;
+	animation: hero-zigzag-flow 7s linear infinite reverse, hero-zigzag-glow 4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.hero-card-slide,
+	.hero-card-pop,
+	.hero-zigzag-line,
+	.hero-zigzag-glow {
+		animation: none;
+	}
+}

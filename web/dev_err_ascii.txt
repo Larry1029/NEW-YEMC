@@ -1,0 +1,123 @@
+﻿
+> dev
+> react-router dev
+
+node.exe : Error: [31mRoute 
+config in "routes.ts" is 
+invalid.[39m
+At line:1 char:1
++ & 
+"C:\nvm4w\nodejs/node.exe" "C
+:\nvm4w\nodejs/node_modules/n
+pm/bin/np ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~
+    + CategoryInfo           
+   : NotSpecified: (Error:   
+  [31mRou...s invalid.[3   
+ 9m:String) [], RemoteExc    
+eption
+    + FullyQualifiedErrorId  
+   : NativeCommandError
+ 
+
+Error: Invalid glob: 
+".page.jsx" (resolved: 
+".page.jsx"). It must start 
+with '/' or './'
+    at toAbsoluteGlob (file:/
+//C:/Users/Larry/Desktop/Codi
+ng/Personal%20Projects/NEW%20
+YEMC/Stuff/apps/web/node_modu
+les/vite/dist/node/chunks/dep
+-D4NMHUTW.js:14044:9)
+    at async Promise.all 
+(index 0)
+    at file:///C:/Users/Larry
+/Desktop/Coding/Personal%20Pr
+ojects/NEW%20YEMC/Stuff/apps/
+web/node_modules/vite/dist/no
+de/chunks/dep-D4NMHUTW.js:138
+42:27
+    at async Promise.all 
+(index 0)
+    at parseImportGlob (file:
+///C:/Users/Larry/Desktop/Cod
+ing/Personal%20Projects/NEW%2
+0YEMC/Stuff/apps/web/node_mod
+ules/vite/dist/node/chunks/de
+p-D4NMHUTW.js:13864:11)
+    at transformGlobImport (f
+ile:///C:/Users/Larry/Desktop
+/Coding/Personal%20Projects/N
+EW%20YEMC/Stuff/apps/web/node
+_modules/vite/dist/node/chunk
+s/dep-D4NMHUTW.js:13895:19)
+    at TransformPluginContext
+.handler (file:///C:/Users/La
+rry/Desktop/Coding/Personal%2
+0Projects/NEW%20YEMC/Stuff/ap
+ps/web/node_modules/vite/dist
+/node/chunks/dep-D4NMHUTW.js:
+13642:24)
+    at EnvironmentPluginConta
+iner.transform (file:///C:/Us
+ers/Larry/Desktop/Coding/Pers
+onal%20Projects/NEW%20YEMC/St
+uff/apps/web/node_modules/vit
+e/dist/node/chunks/dep-D4NMHU
+TW.js:42323:18)
+    at loadAndTransform (file
+:///C:/Users/Larry/Desktop/Co
+ding/Personal%20Projects/NEW%
+20YEMC/Stuff/apps/web/node_mo
+dules/vite/dist/node/chunks/d
+ep-D4NMHUTW.js:35739:27)
+    at createConfigLoader (C:
+\Users\Larry\Desktop\Coding\P
+ersonal Projects\NEW YEMC\Stu
+ff\apps\web\node_modules\@rea
+ct-router\dev\dist\vite.js:62
+6:11)
+    at config (C:\Users\Larry
+\Desktop\Coding\Personal 
+Projects\NEW YEMC\Stuff\apps\
+web\node_modules\@react-route
+r\dev\dist\vite.js:3463:35)
+    at runConfigHook (file://
+/C:/Users/Larry/Desktop/Codin
+g/Personal%20Projects/NEW%20Y
+EMC/Stuff/apps/web/node_modul
+es/vite/dist/node/chunks/dep-
+D4NMHUTW.js:49479:17)
+    at resolveConfig (file://
+/C:/Users/Larry/Desktop/Codin
+g/Personal%20Projects/NEW%20Y
+EMC/Stuff/apps/web/node_modul
+es/vite/dist/node/chunks/dep-
+D4NMHUTW.js:48785:12)
+    at _createServer (file://
+/C:/Users/Larry/Desktop/Codin
+g/Personal%20Projects/NEW%20Y
+EMC/Stuff/apps/web/node_modul
+es/vite/dist/node/chunks/dep-
+D4NMHUTW.js:38349:66)
+    at dev (C:\Users\Larry\De
+sktop\Coding\Personal 
+Projects\NEW YEMC\Stuff\apps\
+web\node_modules\@react-route
+r\dev\dist\cli\index.js:2113:
+16)
+    at dev2 (C:\Users\Larry\D
+esktop\Coding\Personal 
+Projects\NEW YEMC\Stuff\apps\
+web\node_modules\@react-route
+r\dev\dist\cli\index.js:2284:
+3)
+    at run2 (C:\Users\Larry\D
+esktop\Coding\Personal 
+Projects\NEW YEMC\Stuff\apps\
+web\node_modules\@react-route
+r\dev\dist\cli\index.js:2584:
+7)

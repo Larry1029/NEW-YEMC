@@ -1,0 +1,279 @@
+﻿
+> build
+> react-router build
+
+[36mvite v6.4.1 [32mbuilding for production...[36m[39m
+transforming...
+[32mΓ£ô[39m 2 modules transformed.
+node.exe : 
+[31mΓ£ù[39m Build 
+failed in 205ms
+At line:1 char:1
++ & "C:\nvm4w\nodejs/no
+de.exe" "C:\nvm4w\nodej
+s/node_modules/npm/bin/
+np ...
++ ~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~
+~~
+    + CategoryInfo     
+         : NotSpecifi  
+  ed: ([31mΓ£ù[39m   
+  Build failed in 2    
+05ms:String) [], R    
+emoteException
+    + FullyQualifiedEr 
+   rorId : NativeComm  
+  andError
+ 
+[31m[vite:esbuild] 
+Transform failed with 
+1 error:
+C:/Users/Larry/Desktop/
+Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/app/__cre
+ate/not-found.tsx?__rea
+ct-router-build-client-
+route:54:49: ERROR: 
+Unterminated regular 
+expression[39m
+file: [36mC:/Users/Lar
+ry/Desktop/Coding/Perso
+nal Projects/NEW YEMC/S
+tuff/apps/web/src/app/_
+_create/not-found.tsx?_
+_react-router-build-cli
+ent-route:54:49[39m
+[33m
+[33mUnterminated 
+regular expression[33m
+52 |      }
+53 |    }, []);
+54 |    const 
+missingPath = loaderDat
+a.path.replace(/^\
+   |                   
+                       
+         ^
+55 |    const 
+existingRoutes = loader
+Data.pages.map((page) 
+=> ({
+56 |      path: 
+page.path,
+[39m
+    at 
+failureErrorWithLog (C:
+\Users\Larry\Desktop\Co
+ding\Personal 
+Projects\NEW YEMC\Stuff
+\apps\web\node_modules\
+esbuild\lib\main.js:146
+7:15)
+    at C:\Users\Larry\D
+esktop\Coding\Personal 
+Projects\NEW YEMC\Stuff
+\apps\web\node_modules\
+esbuild\lib\main.js:736
+:50
+    at responseCallback
+s.<computed> (C:\Users\
+Larry\Desktop\Coding\Pe
+rsonal Projects\NEW YEM
+C\Stuff\apps\web\node_m
+odules\esbuild\lib\main
+.js:603:9)
+    at 
+handleIncomingPacket (C
+:\Users\Larry\Desktop\C
+oding\Personal 
+Projects\NEW YEMC\Stuff
+\apps\web\node_modules\
+esbuild\lib\main.js:658
+:12)
+    at 
+Socket.readFromStdout (
+C:\Users\Larry\Desktop\
+Coding\Personal 
+Projects\NEW YEMC\Stuff
+\apps\web\node_modules\
+esbuild\lib\main.js:581
+:7)
+    at Socket.emit 
+(node:events:518:28)
+    at addChunk (node:i
+nternal/streams/readabl
+e:561:12)
+    at readableAddChunk
+PushByteMode (node:inte
+rnal/streams/readable:5
+12:3)
+    at 
+Socket.Readable.push (n
+ode:internal/streams/re
+adable:392:5)
+    at 
+Pipe.onStreamRead (node
+:internal/stream_base_c
+ommons:189:23) {
+  errors: 
+[Getter/Setter],
+  warnings: 
+[Getter/Setter],
+  frame: '\n' +
+    
+'\x1B[33mUnterminated 
+regular 
+expression\x1B[39m\n' +
+    '52 |      }\n' +
+    '53 |    }, 
+[]);\n' +
+    '54 |    const 
+missingPath = loaderDat
+a.path.replace(/^\\\n' 
++
+    '   |              
+                       
+              ^\n' +
+    '55 |    const 
+existingRoutes = loader
+Data.pages.map((page) 
+=> ({\n' +
+    '56 |      path: 
+page.path,\n',
+  loc: {
+    column: 49,
+    file: 'C:/Users/Lar
+ry/Desktop/Coding/Perso
+nal Projects/NEW YEMC/S
+tuff/apps/web/src/app/_
+_create/not-found.tsx?_
+_react-router-build-cli
+ent-route',
+    length: 0,
+    line: 54,
+    lineText: '  const 
+missingPath = loaderDat
+a.path.replace(/^\\',
+    namespace: '',
+    suggestion: ''
+  },
+  code: 'PLUGIN_ERROR',
+  plugin: 
+'vite:esbuild',
+  hook: 'transform',
+  id: 'C:/Users/Larry/D
+esktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/app/__cre
+ate/not-found.tsx?__rea
+ct-router-build-client-
+route',
+  watchFiles: [
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/app/page.
+jsx',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/node_modules/
+@react-router/dev/dist/
+config/defaults/entry.c
+lient.tsx',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/app/root.
+tsx',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/app/accou
+nt/logout/page.jsx',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/app/about
+/page.jsx',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/app/accou
+nt/signin/page.jsx',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/app/admin
+/applications/page.jsx'
+,
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/app/accou
+nt/signup/page.jsx',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/app/commu
+nity/page.jsx',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/app/faq/p
+age.jsx',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/app/conta
+ct/page.jsx',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/app/admin
+/users/page.jsx',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/app/galle
+ry/page.jsx',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/app/forgo
+t-password/page.jsx',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/app/join/
+page.jsx',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/app/lesso
+ns/page.jsx',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/app/resou
+rces/page.jsx',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/app/__cre
+ate/not-found.tsx',
+    'C:/Users/Larry/Des
+ktop/Coding/Personal 
+Projects/NEW YEMC/Stuff
+/apps/web/src/app/reset
+-password/page.jsx',
+    'C:\\Users\\Larry\\
+Desktop\\Coding\\Person
+al Projects\\NEW YEMC\\
+Stuff\\apps\\web\\packa
+ge.json'
+  ]
+}
