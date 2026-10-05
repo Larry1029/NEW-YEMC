@@ -6,7 +6,7 @@ export async function DELETE(request, { params }) {
     if (!session || !session.user?.id) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
-    const userId = parseInt(params.id);
+    const userId = params.id;
     if (userId === session.user.id) {
       return Response.json(
         { error: "You cannot delete your own account" },

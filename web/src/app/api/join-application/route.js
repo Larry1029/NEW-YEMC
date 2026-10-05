@@ -1,5 +1,15 @@
 import { sendEmail } from "@/app/api/utils/send-email";
 import sql from "@/app/api/utils/sql";
+
+const escapeHtml = (value) =>
+  String(value ?? "").replace(/[&<>"']/g, (character) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;",
+  })[character]);
+
 export async function POST(request) {
   try {
     const body = await request.json();
@@ -15,13 +25,18 @@ export async function POST(request) {
     const customStatus = typeof otherStatus === "string" ? otherStatus.trim() : "";
     const recordedStatus = status === "Other" ? `Other: ${customStatus}` : status;
     if (
-      !fullName ||
-      !email ||
-      !phoneNumber ||
-      !status ||
+      typeof fullName !== "string" ||
+      !fullName.trim() ||
+      typeof email !== "string" ||
+      !email.trim() ||
+      typeof phoneNumber !== "string" ||
+      !phoneNumber.trim() ||
+      typeof status !== "string" ||
+      !status.trim() ||
+      typeof message !== "string" ||
+      !message.trim() ||
       (status === "Other" && !customStatus) ||
-      (!institution && status !== "Other" && status !== "Unemployed") ||
-      !message
+      (!institution && status !== "Other" && status !== "Unemployed")
     ) {
       return Response.json(
         { error: "All fields are required" },
@@ -29,7 +44,8 @@ export async function POST(request) {
       );
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
+    const cleanEmail = email.trim();
+    if (!emailRegex.test(cleanEmail)) {
       return Response.json({ error: "Invalid email format" }, { status: 400 });
     }
     const phoneRegex = /^\d{10}$/;
@@ -43,7 +59,7 @@ export async function POST(request) {
     try {
       await sql`
         INSERT INTO applications (full_name, email, phone, status, institution, message)
-        VALUES (${fullName}, ${email}, ${cleanPhone}, ${recordedStatus}, ${institution}, ${message})
+        VALUES (${fullName.trim()}, ${cleanEmail}, ${cleanPhone}, ${recordedStatus}, ${institution || null}, ${message.trim()})
       `;
     } catch (dbError) {
       console.error("Failed to save application to database:", dbError);
@@ -55,26 +71,25 @@ export async function POST(request) {
     try {
       await sendEmail({
         to: "theyoungexecutivemasterclass@gmail.com",
-        from: "onboarding@resend.dev",
         subject: "New YEMC Application",
         html: `
           <h2>New Application Received</h2>
-          <p><strong>Name:</strong> ${fullName}</p>
-          <p><strong>Email:</strong> ${email}</p>
+          <p><strong>Name:</strong> ${escapeHtml(fullName.trim())}</p>
+          <p><strong>Email:</strong> ${escapeHtml(cleanEmail)}</p>
           <p><strong>Phone:</strong> ${cleanPhone}</p>
-          <p><strong>Status:</strong> ${recordedStatus}</p>
-          <p><strong>Institution:</strong> ${institution}</p>
+          <p><strong>Status:</strong> ${escapeHtml(recordedStatus)}</p>
+          <p><strong>Institution:</strong> ${escapeHtml(institution || "")}</p>
           <p><strong>Message:</strong></p>
-          <p>${message.replace(/\n/g, "<br>")}</p>
+          <p>${escapeHtml(message.trim()).replace(/\r?\n/g, "<br>")}</p>
         `,
         text: `
           New Application Received
-          Name: ${fullName}
-          Email: ${email}
+          Name: ${fullName.trim()}
+          Email: ${cleanEmail}
           Phone: ${cleanPhone}
           Status: ${recordedStatus}
           Institution: ${institution}
-          Message: ${message}
+          Message: ${message.trim()}
         `,
       });
     } catch (emailError) {
@@ -82,12 +97,11 @@ export async function POST(request) {
     }
     try {
       await sendEmail({
-        to: email,
-        from: "onboarding@resend.dev",
+        to: cleanEmail,
         subject: "Welcome to YEMC!",
         html: `
           <h2>Welcome to the Young Executive Master Class!</h2>
-          <p>Dear ${fullName},</p>
+          <p>Dear ${escapeHtml(fullName.trim())},</p>
           <p>Thank you for your interest in joining YEMC. We've received your application and are excited to have you on board!</p>
           <p>Our team will review your application and get in touch with you soon.</p>
           <br>
@@ -96,7 +110,7 @@ export async function POST(request) {
         `,
         text: `
           Welcome to the Young Executive Master Class!
-          Dear ${fullName},
+          Dear ${fullName.trim()},
           Thank you for your interest in joining YEMC. We've received your application and are excited to have you on board!
           Our team will review your application and get in touch with you soon.
           Best regards,

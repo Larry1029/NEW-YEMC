@@ -1,7 +1,7 @@
 import CreateAuth from "@auth/create"
 import Credentials from "@auth/core/providers/credentials"
 import Google from "@auth/core/providers/google"
-import { Pool } from '@neondatabase/serverless'
+import { getDatabasePool } from './db.server.js'
 import { hash, verify } from 'argon2'
 function Adapter(client) {
   return {
@@ -42,12 +42,8 @@ function Adapter(client) {
     },
     async getUser(id) {
       const sql = 'select * from auth_users where id = $1';
-      try {
-        const result = await client.query(sql, [id]);
-        return result.rowCount === 0 ? null : result.rows[0];
-      } catch {
-        return null;
-      }
+      const result = await client.query(sql, [id]);
+      return result.rowCount === 0 ? null : result.rows[0];
     },
     async getUserByEmail(email) {
       const sql = 'select * from auth_users where email = $1';
@@ -234,9 +230,9 @@ function Adapter(client) {
     },
   };
 }
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-});
+const pool = {
+  query: (...args) => getDatabasePool().query(...args),
+};
 const adapter = Adapter(pool);
 export const { auth } = CreateAuth({
   providers: [

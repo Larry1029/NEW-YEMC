@@ -2,7 +2,6 @@ import 'dotenv/config';
 import { AsyncLocalStorage } from 'node:async_hooks';
 import process from 'node:process';
 import nodeConsole from 'node:console';
-import Database from 'better-sqlite3';
 import { hash, verify } from 'argon2';
 import { Hono } from 'hono';
 import { contextStorage, getContext } from 'hono/context-storage';
@@ -10,7 +9,7 @@ import { cors } from 'hono/cors';
 import { proxy } from 'hono/proxy';
 import { bodyLimit } from 'hono/body-limit';
 import { requestId } from 'hono/request-id';
-import { createHonoServer } from 'react-router-hono-server/node';
+import { createHonoServer } from 'react-router-hono-server/aws-lambda';
 import { serializeError } from 'serialize-error';
 import AppAdapter from './adapter';
 import { getHTMLForErrorPage } from './get-html-for-error-page';
@@ -19,6 +18,7 @@ import { getCookie, setCookie, deleteCookie } from 'hono/cookie';
 import crypto from 'node:crypto';
 import QRCode from 'qrcode';
 import { sendEmail } from '../src/app/api/utils/send-email.js';
+import { getDatabasePool } from '../src/db.server.js';
 
 const als = new AsyncLocalStorage<{ requestId: string }>();
 
@@ -35,82 +35,7 @@ for (const method of ['log', 'info', 'warn', 'error', 'debug'] as const) {
   };
 }
 
-const db = new Database('local.db');
-
-db.exec(`
-  CREATE TABLE IF NOT EXISTS auth_users (
-    id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
-    name TEXT,
-    email TEXT UNIQUE,
-    emailVerified DATETIME,
-    image TEXT,
-    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
-  );
-
-  CREATE TABLE IF NOT EXISTS auth_accounts (
-    id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
-    userId TEXT NOT NULL,
-    provider TEXT NOT NULL,
-    type TEXT NOT NULL,
-    providerAccountId TEXT NOT NULL,
-    access_token TEXT,
-    expires_at INTEGER,
-    refresh_token TEXT,
-    id_token TEXT,
-    scope TEXT,
-    session_state TEXT,
-    token_type TEXT,
-    password TEXT,
-    FOREIGN KEY (userId) REFERENCES auth_users(id) ON DELETE CASCADE
-  );
-
-  CREATE TABLE IF NOT EXISTS auth_sessions (
-    id TEXT PRIMARY KEY DEFAULT (lower(hex(randomblob(16)))),
-    userId TEXT NOT NULL,
-    expires DATETIME NOT NULL,
-    sessionToken TEXT UNIQUE NOT NULL,
-    FOREIGN KEY (userId) REFERENCES auth_users(id) ON DELETE CASCADE
-  );
-
-  CREATE TABLE IF NOT EXISTS auth_verification_token (
-    identifier TEXT NOT NULL,
-    expires DATETIME NOT NULL,
-    token TEXT NOT NULL,
-    PRIMARY KEY (identifier, token)
-  );
-
-  CREATE TABLE IF NOT EXISTS join_applications (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    fullName TEXT NOT NULL,
-    email TEXT NOT NULL,
-    phoneNumber TEXT NOT NULL,
-    status TEXT NOT NULL,
-    institution TEXT NOT NULL,
-    message TEXT NOT NULL,
-    consentGiven INTEGER NOT NULL DEFAULT 0,
-    consentGivenAt DATETIME,
-    qrToken TEXT,
-    checkedInAt DATETIME,
-    createdAt DATETIME DEFAULT CURRENT_TIMESTAMP
-  )
-`);
-
-const joinApplicationColumns = db.prepare('PRAGMA table_info(join_applications)').all() as Array<{ name: string }>;
-if (!joinApplicationColumns.some((column) => column.name === 'consentGiven')) {
-  db.exec('ALTER TABLE join_applications ADD COLUMN consentGiven INTEGER NOT NULL DEFAULT 0');
-}
-if (!joinApplicationColumns.some((column) => column.name === 'consentGivenAt')) {
-  db.exec('ALTER TABLE join_applications ADD COLUMN consentGivenAt DATETIME');
-}
-if (!joinApplicationColumns.some((column) => column.name === 'qrToken')) {
-  db.exec('ALTER TABLE join_applications ADD COLUMN qrToken TEXT');
-}
-if (!joinApplicationColumns.some((column) => column.name === 'checkedInAt')) {
-  db.exec('ALTER TABLE join_applications ADD COLUMN checkedInAt DATETIME');
-}
-db.exec('CREATE UNIQUE INDEX IF NOT EXISTS idx_join_applications_qrToken ON join_applications(qrToken) WHERE qrToken IS NOT NULL');
-
-const adapter = AppAdapter(db);
+const adapter = AppAdapter();
 
 const app = new Hono();
 
@@ -251,34 +176,53 @@ app.get('/api/auth/session', async (c) => {
 app.post('/api/join-application', async (c) => {
   try {
     const body = await c.req.json();
+    if (!body || typeof body !== 'object' || Array.isArray(body)) {
+      return c.json({ error: 'Invalid application payload' }, 400);
+    }
     const { fullName, email, phoneNumber, status, otherStatus, institution, message, consentGiven } = body;
     const customStatus = typeof otherStatus === 'string' ? otherStatus.trim() : '';
     const recordedStatus = status === 'Other' ? `Other: ${customStatus}` : status;
 
-    if (!fullName || !email || !phoneNumber || !status || consentGiven !== true || (status === 'Other' && !customStatus) || (!institution && status !== "Other" && status !== "Unemployed") || !message) {
+    if (
+      typeof fullName !== 'string' || !fullName.trim() ||
+      typeof email !== 'string' || !email.trim() ||
+      typeof phoneNumber !== 'string' || !phoneNumber.trim() ||
+      typeof status !== 'string' || !status.trim() ||
+      typeof message !== 'string' || !message.trim() ||
+      consentGiven !== true ||
+      (status === 'Other' && !customStatus) ||
+      (!institution && status !== 'Other' && status !== 'Unemployed')
+    ) {
       return c.json({ error: 'All fields are required' }, 400);
+    }
+    const cleanPhone = phoneNumber.replace(/\D/g, '');
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !/^\d{10}$/.test(cleanPhone)) {
+      return c.json({ error: 'Enter a valid email and 10-digit phone number' }, 400);
     }
 
     if (!process.env.RESEND_API_KEY) {
       return c.json({ error: 'Conference pass email is not configured. Please contact YEMC before registering.' }, 503);
     }
 
-    const appBaseUrl = process.env.NODE_ENV === 'production'
-      ? process.env.APP_URL?.replace(/\/+$/, '')
-      : new URL(c.req.url).origin;
-    if (!appBaseUrl || (process.env.NODE_ENV === 'production' && !appBaseUrl.startsWith('https://'))) {
+    const appBaseUrl = process.env.APP_URL?.replace(/\/+$/, '');
+    if (!appBaseUrl) {
+      return c.json({ error: 'The public app URL is not configured for conference passes.' }, 503);
+    }
+    if (process.env.NODE_ENV === 'production' && !appBaseUrl.startsWith('https://')) {
       return c.json({ error: 'The public HTTPS app URL is not configured for conference passes.' }, 503);
     }
 
     const qrToken = crypto.randomBytes(32).toString('base64url');
     const passUrl = `${appBaseUrl}/scan/${qrToken}`;
-
-    const stmt = db.prepare(`
-      INSERT INTO join_applications (fullName, email, phoneNumber, status, institution, message, consentGiven, consentGivenAt, qrToken)
-      VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?)
-    `);
-
-    const insertResult = stmt.run(fullName, email, phoneNumber, recordedStatus, institution, message, consentGiven ? 1 : 0, qrToken);
+    const insertResult = await getDatabasePool().query(
+      `INSERT INTO applications (
+         full_name, email, phone, status, institution, message,
+         consent_given, consent_given_at, qr_token
+       ) VALUES ($1, $2, $3, $4, $5, $6, TRUE, CURRENT_TIMESTAMP, $7)
+       RETURNING id`,
+      [fullName.trim(), email.trim(), cleanPhone, recordedStatus, institution || null, message.trim(), qrToken],
+    );
+    const applicationId = insertResult.rows[0].id;
 
     try {
       const qrImage = await QRCode.toBuffer(passUrl, {
@@ -287,7 +231,7 @@ app.post('/api/join-application', async (c) => {
         type: 'png',
         width: 420,
       });
-      const safeName = String(fullName).replace(/[&<>"']/g, (character) => ({
+      const safeName = fullName.trim().replace(/[&<>"']/g, (character) => ({
         '&': '&amp;',
         '<': '&lt;',
         '>': '&gt;',
@@ -316,14 +260,23 @@ app.post('/api/join-application', async (c) => {
         }],
       });
     } catch (emailError) {
-      db.prepare('DELETE FROM join_applications WHERE id = ? AND qrToken = ?').run(insertResult.lastInsertRowid, qrToken);
       console.error('Failed to send YEMC conference pass:', emailError);
+      try {
+        await getDatabasePool().query(
+          'DELETE FROM applications WHERE id = $1 AND qr_token = $2',
+          [applicationId, qrToken],
+        );
+      } catch (cleanupError) {
+        console.error('Failed to remove registration after email failure:', cleanupError);
+        return c.json({ error: 'The conference pass email could not be sent. Please contact YEMC before registering again.' }, 500);
+      }
       return c.json({ error: 'Your registration could not be completed because the conference pass email could not be sent. Please try again later.' }, 502);
     }
 
     return c.json({ success: true }, 201);
   } catch (error: any) {
-    return c.json({ error: error.message || 'Failed to submit application' }, 500);
+    console.error('Failed to submit YEMC conference registration:', error);
+    return c.json({ error: 'Failed to submit application' }, 500);
   }
 });
 
@@ -334,22 +287,33 @@ app.post('/api/conference-pass/:token/check-in', async (c) => {
       return c.json({ error: 'Invalid conference pass' }, 404);
     }
 
-    const checkIn = db.prepare(`
-      UPDATE join_applications
-      SET checkedInAt = CURRENT_TIMESTAMP
-      WHERE qrToken = ? AND checkedInAt IS NULL
-    `).run(token);
-    const attendee = db.prepare(`
-      SELECT fullName, email, phoneNumber, status, institution, checkedInAt
-      FROM join_applications
-      WHERE qrToken = ?
-    `).get(token) as {
-      fullName: string;
+    const result = await getDatabasePool().query(
+      `WITH checked_in AS (
+         UPDATE applications
+         SET checked_in_at = CURRENT_TIMESTAMP
+         WHERE qr_token = $1 AND checked_in_at IS NULL
+         RETURNING full_name, email, phone, status, institution, checked_in_at
+       )
+       SELECT full_name, email, phone, status, institution, checked_in_at,
+              FALSE AS already_checked_in
+       FROM checked_in
+       UNION ALL
+       SELECT full_name, email, phone, status, institution, checked_in_at,
+              TRUE AS already_checked_in
+       FROM applications
+       WHERE qr_token = $1 AND checked_in_at IS NOT NULL
+         AND NOT EXISTS (SELECT 1 FROM checked_in)
+       LIMIT 1`,
+      [token],
+    );
+    const attendee = result.rows[0] as {
+      full_name: string;
       email: string;
-      phoneNumber: string;
+      phone: string;
       status: string;
       institution: string | null;
-      checkedInAt: string | null;
+      checked_in_at: string | null;
+      already_checked_in: boolean;
     } | undefined;
 
     if (!attendee) {
@@ -358,11 +322,11 @@ app.post('/api/conference-pass/:token/check-in', async (c) => {
 
     const confirmation: Record<string, unknown> = {
       valid: true,
-      alreadyCheckedIn: checkIn.changes === 0,
-      fullName: attendee.fullName,
+      alreadyCheckedIn: attendee.already_checked_in,
+      fullName: attendee.full_name,
       email: attendee.email,
-      phoneNumber: attendee.phoneNumber,
-      checkedInAt: attendee.checkedInAt,
+      phoneNumber: attendee.phone,
+      checkedInAt: attendee.checked_in_at,
     };
     if (attendee.status !== 'Unemployed' && attendee.institution) {
       confirmation.institution = attendee.institution;
@@ -377,26 +341,31 @@ app.post('/api/conference-pass/:token/check-in', async (c) => {
 
 app.get('/api/applications/list', async (c) => {
   const searchQuery = c.req.query('search');
-  let applications = [];
-
   try {
-    if (searchQuery) {
-      const stmt = db.prepare(`
-        SELECT id, fullName as full_name, email, phoneNumber as phone, status, institution, message, consentGiven as consent_given, consentGivenAt as consent_given_at, createdAt as created_at 
-        FROM join_applications 
-        WHERE fullName LIKE ? OR email LIKE ? OR phoneNumber LIKE ? 
-        ORDER BY createdAt DESC
-      `);
-      const searchPattern = `%${searchQuery}%`;
-      applications = stmt.all(searchPattern, searchPattern, searchPattern);
-    } else {
-      const stmt = db.prepare('SELECT id, fullName as full_name, email, phoneNumber as phone, status, institution, message, consentGiven as consent_given, consentGivenAt as consent_given_at, createdAt as created_at FROM join_applications ORDER BY createdAt DESC');
-      applications = stmt.all();
-    }
-
-    return c.json({ applications, total: applications.length });
+    const searchPattern = searchQuery ? `%${searchQuery}%` : null;
+    const [applicationResult, countResult] = await Promise.all([
+      getDatabasePool().query(
+        `SELECT id, full_name, email, phone, status, institution, occupation, message,
+                consent_given, consent_given_at, created_at
+         FROM applications
+         WHERE $1::text IS NULL OR full_name ILIKE $1 OR email ILIKE $1 OR phone ILIKE $1
+         ORDER BY created_at DESC`,
+        [searchPattern],
+      ),
+      getDatabasePool().query(
+        `SELECT COUNT(*) AS total
+         FROM applications
+         WHERE $1::text IS NULL OR full_name ILIKE $1 OR email ILIKE $1 OR phone ILIKE $1`,
+        [searchPattern],
+      ),
+    ]);
+    return c.json({
+      applications: applicationResult.rows,
+      total: Number(countResult.rows[0].total),
+    });
   } catch (error: any) {
-    return c.json({ error: error.message || 'Failed to fetch applications' }, 500);
+    console.error('Failed to fetch YEMC applications:', error);
+    return c.json({ error: 'Failed to fetch applications' }, 500);
   }
 });
 
@@ -405,12 +374,11 @@ app.delete('/api/applications/delete', async (c) => {
     const body = await c.req.json();
     if (!body.id) return c.json({ error: 'ID is required' }, 400);
 
-    const stmt = db.prepare('DELETE FROM join_applications WHERE id = ?');
-    stmt.run(body.id);
-
+    await getDatabasePool().query('DELETE FROM applications WHERE id = $1', [body.id]);
     return c.json({ success: true });
   } catch (error: any) {
-    return c.json({ error: error.message || 'Failed to delete application' }, 500);
+    console.error('Failed to delete YEMC application:', error);
+    return c.json({ error: 'Failed to delete application' }, 500);
   }
 });
 

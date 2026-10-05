@@ -5,7 +5,9 @@
 	"scripts": {
 		"dev": "react-router dev",
 		"build": "react-router build",
-		"typecheck": "react-router typegen"
+		"typecheck": "react-router typegen",
+		"db:migrate": "node scripts/migrate-db.js",
+		"db:import-sqlite": "node scripts/import-sqlite-data.js"
 	},
 	"dependencies": {
 		"@auth/core": "^0.37.2",
@@ -27,7 +29,6 @@
 		"@types/babel__core": "^7.20.5",
 		"@vis.gl/react-google-maps": "^0.8.3",
 		"argon2": "^0.43.0",
-		"better-sqlite3": "^12.8.0",
 		"classnames": "^2.5.1",
 		"clean-stack": "^5.2.0",
 		"cmdk": "^1.1.1",
@@ -87,6 +88,7 @@
 		"@types/ws": "^8.18.1",
 		"autoprefixer": "^10.4.21",
 		"babel-plugin-react-require": "^4.0.3",
+		"better-sqlite3": "^12.8.0",
 		"fast-glob": "^3.3.3",
 		"jsdom": "^26.1.0",
 		"micromatch": "^4.0.8",

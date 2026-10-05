@@ -1,0 +1,17 @@
+[build]
+base = "web"
+command = "npm run build"
+publish = "build/client"
+
+[build.environment]
+NODE_VERSION = "22"
+
+[functions]
+directory = "netlify/functions"
+node_bundler = "esbuild"
+included_files = ["build/server/**"]
+
+[[redirects]]
+from = "/*"
+to = "/.netlify/functions/server/:splat"
+status = 200

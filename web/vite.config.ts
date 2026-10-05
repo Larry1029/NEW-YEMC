@@ -36,7 +36,7 @@ export default defineConfig({
     restartEnvFileChange(),
     reactRouterHonoServer({
       serverEntryPoint: './__create/index.ts',
-      runtime: 'node',
+      runtime: 'aws-lambda',
     }),
     babel({
       include: ['src/**/*.{js,jsx,ts,tsx}'], 

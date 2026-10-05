@@ -7,6 +7,12 @@ export async function POST(request) {
     if (!email) {
       return Response.json({ error: "Email is required" }, { status: 400 });
     }
+    if (!process.env.APP_URL) {
+      return Response.json(
+        { error: "Password reset email is not configured" },
+        { status: 503 },
+      );
+    }
     const users = await sql`
       SELECT id, email, name FROM auth_users WHERE email = ${email}
     `;
@@ -23,7 +29,7 @@ export async function POST(request) {
       INSERT INTO password_reset_tokens (token, user_id, expires_at)
       VALUES (${token}, ${user.id}, ${expiresAt})
     `;
-    const resetUrl = `${process.env.APP_URL}/reset-password?token=${token}`;
+    const resetUrl = `${process.env.APP_URL.replace(/\/+$/, "")}/reset-password?token=${token}`;
     await sendEmail({
       to: user.email,
       subject: "Reset Your Password - YEMC",

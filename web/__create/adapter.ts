@@ -3,21 +3,22 @@ import type {
   AdapterSession,
   AdapterUser,
   VerificationToken,
-} from '@auth/core/adapters';
-import type { ProviderType } from '@auth/core/providers';
+} from "@auth/core/adapters";
+import type { ProviderType } from "@auth/core/providers";
+import { getDatabasePool } from "../src/db.server.js";
 
-interface SqliteUser extends AdapterUser {
+interface PostgresUser extends AdapterUser {
   accounts: {
     provider: string;
-    provider_account_id: string;
+    providerAccountId: string;
     password?: string;
   }[];
 }
 
-interface SqliteAdapter extends Adapter {
-  createUser(data: Omit<AdapterUser, 'id'>): Promise<AdapterUser>;
+interface PostgresAdapter extends Adapter {
+  createUser(data: Omit<AdapterUser, "id">): Promise<AdapterUser>;
   getUser(userId: string): Promise<AdapterUser | null>;
-  getUserByEmail(email: string): Promise<SqliteUser | null>;
+  getUserByEmail(email: string): Promise<PostgresUser | null>;
   getUserByAccount(data: {
     provider: string;
     providerAccountId: string;
@@ -35,147 +36,199 @@ interface SqliteAdapter extends Adapter {
     session_state?: string | null;
     token_type?: string | null;
     extraData?: Record<string, unknown>;
-  }): Promise<void>;
+  }): Promise<unknown>;
 }
 
-export default function AppAdapter(db: any): SqliteAdapter {
+export default function AppAdapter(): PostgresAdapter {
+  const query = (text: string, values: unknown[] = []) =>
+    getDatabasePool().query(text, values);
+
   return {
-    async createVerificationToken(verificationToken: VerificationToken): Promise<VerificationToken> {
+    async createVerificationToken(verificationToken: VerificationToken) {
       const { identifier, expires, token } = verificationToken;
-      const stmt = db.prepare(`
-        INSERT INTO auth_verification_token (identifier, expires, token)
-        VALUES (?, ?, ?)
-      `);
-      stmt.run(identifier, expires.toISOString(), token);
+      await query(
+        `INSERT INTO auth_verification_token (identifier, expires, token)
+         VALUES ($1, $2, $3)`,
+        [identifier, expires, token],
+      );
       return verificationToken;
     },
-    async useVerificationToken({ identifier, token }): Promise<VerificationToken | null> {
-      const stmt = db.prepare(`
-        SELECT identifier, expires, token FROM auth_verification_token
-        WHERE identifier = ? AND token = ?
-      `);
-      const result = stmt.get(identifier, token) as any;
-      if (!result) return null;
-      db.prepare(`DELETE FROM auth_verification_token WHERE identifier = ? AND token = ?`).run(identifier, token);
-      return { ...result, expires: new Date(result.expires) };
+
+    async useVerificationToken({ identifier, token }) {
+      const result = await query(
+        `DELETE FROM auth_verification_token
+         WHERE identifier = $1 AND token = $2
+         RETURNING identifier, expires, token`,
+        [identifier, token],
+      );
+      return result.rows[0] ?? null;
     },
-    async createUser(user: Omit<AdapterUser, 'id'>) {
+
+    async createUser(user) {
       const { name, email, emailVerified, image } = user;
-      const stmt = db.prepare(`
-        INSERT INTO auth_users (name, email, emailVerified, image)
-        VALUES (?, ?, ?, ?)
-        RETURNING id, name, email, emailVerified, image
-      `);
-      const result = stmt.get(name, email, emailVerified?.toISOString() || null, image) as any;
-      return { ...result, emailVerified: result.emailVerified ? new Date(result.emailVerified) : null };
+      const result = await query(
+        `INSERT INTO auth_users (name, email, "emailVerified", image)
+         VALUES ($1, $2, $3, $4)
+         RETURNING id, name, email, "emailVerified", image`,
+        [name, email, emailVerified, image],
+      );
+      return result.rows[0];
     },
-    async getUser(id: string) {
-      const stmt = db.prepare('SELECT * FROM auth_users WHERE id = ?');
-      const result = stmt.get(id) as any;
-      if (!result) return null;
-      return { ...result, emailVerified: result.emailVerified ? new Date(result.emailVerified) : null };
+
+    async getUser(id) {
+      const result = await query(
+        `SELECT id, name, email, "emailVerified", image
+         FROM auth_users WHERE id = $1`,
+        [id],
+      );
+      return result.rows[0] ?? null;
     },
+
     async getUserByEmail(email) {
-      const stmt = db.prepare('SELECT * FROM auth_users WHERE email = ?');
-      const userData = stmt.get(email) as any;
-      if (!userData) return null;
-      
-      const accountsStmt = db.prepare('SELECT * FROM auth_accounts WHERE userId = ?');
-      const accountsData = accountsStmt.all(userData.id) as any[];
-      return {
-        ...userData,
-        emailVerified: userData.emailVerified ? new Date(userData.emailVerified) : null,
-        accounts: accountsData
-      };
-    },
-    async getUserByAccount({ providerAccountId, provider }): Promise<AdapterUser | null> {
-      const stmt = db.prepare(`
-        SELECT u.* FROM auth_users u
-        JOIN auth_accounts a ON u.id = a.userId
-        WHERE a.provider = ? AND a.providerAccountId = ?
-      `);
-      const result = stmt.get(provider, providerAccountId) as any;
-      if (!result) return null;
-      return { ...result, emailVerified: result.emailVerified ? new Date(result.emailVerified) : null };
-    },
-    async updateUser(user: Partial<AdapterUser>): Promise<AdapterUser> {
-      const fetchStmt = db.prepare('SELECT * FROM auth_users WHERE id = ?');
-      const oldUser = fetchStmt.get(user.id) as any;
-      const newUser = { ...oldUser, ...user };
-      const { id, name, email, emailVerified, image } = newUser;
-      
-      const updateStmt = db.prepare(`
-        UPDATE auth_users SET
-        name = ?, email = ?, emailVerified = ?, image = ?
-        WHERE id = ?
-        RETURNING id, name, email, emailVerified, image
-      `);
-      const result = updateStmt.get(name, email, emailVerified?.toISOString() || null, image, id) as any;
-      return { ...result, emailVerified: result.emailVerified ? new Date(result.emailVerified) : null };
-    },
-    async linkAccount(account) {
-      const stmt = db.prepare(`
-        INSERT INTO auth_accounts (
-          userId, provider, type, providerAccountId, access_token, expires_at,
-          refresh_token, id_token, scope, session_state, token_type, password
-        ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        RETURNING *
-      `);
-      const result = stmt.get(
-        account.userId, account.provider, account.type, account.providerAccountId,
-        account.access_token, account.expires_at, account.refresh_token, account.id_token,
-        account.scope, account.session_state, account.token_type, account.extraData?.password
-      ) as any;
-      return result;
-    },
-    async createSession({ sessionToken, userId, expires }) {
-      const stmt = db.prepare(`
-        INSERT INTO auth_sessions (userId, expires, sessionToken)
-        VALUES (?, ?, ?)
-        RETURNING id, sessionToken, userId, expires
-      `);
-      const result = stmt.get(userId, expires.toISOString(), sessionToken) as any;
-      return { ...result, expires: new Date(result.expires) };
-    },
-    async getSessionAndUser(sessionToken: string | undefined): Promise<{ session: AdapterSession; user: AdapterUser; } | null> {
-      if (!sessionToken) return null;
-      
-      const sessionStmt = db.prepare('SELECT * FROM auth_sessions WHERE sessionToken = ?');
-      const session = sessionStmt.get(sessionToken) as any;
-      if (!session) return null;
-      
-      const userStmt = db.prepare('SELECT * FROM auth_users WHERE id = ?');
-      const user = userStmt.get(session.userId) as any;
+      const result = await query(
+        `SELECT id, name, email, "emailVerified", image
+         FROM auth_users WHERE email = $1`,
+        [email],
+      );
+      const user = result.rows[0];
       if (!user) return null;
-      
+
+      const accounts = await query(
+        `SELECT provider, "providerAccountId", password
+         FROM auth_accounts WHERE "userId" = $1`,
+        [user.id],
+      );
+      return { ...user, accounts: accounts.rows };
+    },
+
+    async getUserByAccount({ providerAccountId, provider }) {
+      const result = await query(
+        `SELECT users.id, users.name, users.email, users."emailVerified", users.image
+         FROM auth_users AS users
+         JOIN auth_accounts AS accounts ON users.id = accounts."userId"
+         WHERE accounts.provider = $1 AND accounts."providerAccountId" = $2`,
+        [provider, providerAccountId],
+      );
+      return result.rows[0] ?? null;
+    },
+
+    async updateUser(user) {
+      const existing = await query(
+        `SELECT id, name, email, "emailVerified", image
+         FROM auth_users WHERE id = $1`,
+        [user.id],
+      );
+      if (!existing.rows[0]) {
+        throw new Error(`Cannot update missing user ${user.id}`);
+      }
+
+      const updated = { ...existing.rows[0], ...user };
+      const result = await query(
+        `UPDATE auth_users
+         SET name = $2, email = $3, "emailVerified" = $4, image = $5
+         WHERE id = $1
+         RETURNING id, name, email, "emailVerified", image`,
+        [
+          updated.id,
+          updated.name,
+          updated.email,
+          updated.emailVerified,
+          updated.image,
+        ],
+      );
+      return result.rows[0];
+    },
+
+    async linkAccount(account) {
+      const result = await query(
+        `INSERT INTO auth_accounts (
+           "userId", provider, type, "providerAccountId", access_token, expires_at,
+           refresh_token, id_token, scope, session_state, token_type, password
+         ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)
+         RETURNING id, "userId", provider, type, "providerAccountId", access_token,
+                   expires_at, refresh_token, id_token, scope, session_state, token_type, password`,
+        [
+          account.userId,
+          account.provider,
+          account.type,
+          account.providerAccountId,
+          account.access_token,
+          account.expires_at,
+          account.refresh_token,
+          account.id_token,
+          account.scope,
+          account.session_state,
+          account.token_type,
+          account.extraData?.password,
+        ],
+      );
+      return result.rows[0];
+    },
+
+    async createSession({ sessionToken, userId, expires }) {
+      if (userId === undefined) {
+        throw new Error("userId is required to create a session");
+      }
+      const result = await query(
+        `INSERT INTO auth_sessions ("userId", expires, "sessionToken")
+         VALUES ($1, $2, $3)
+         RETURNING id, "sessionToken", "userId", expires`,
+        [userId, expires, sessionToken],
+      );
+      return result.rows[0];
+    },
+
+    async getSessionAndUser(sessionToken) {
+      if (!sessionToken) return null;
+      const result = await query(
+        `SELECT sessions.id AS session_id, sessions."sessionToken",
+                sessions."userId", sessions.expires,
+                users.id, users.name, users.email, users."emailVerified", users.image
+         FROM auth_sessions AS sessions
+         JOIN auth_users AS users ON users.id = sessions."userId"
+         WHERE sessions."sessionToken" = $1`,
+        [sessionToken],
+      );
+      const row = result.rows[0];
+      if (!row) return null;
+      const { session_id, ...user } = row;
       return {
-        session: { ...session, expires: new Date(session.expires) },
-        user: { ...user, emailVerified: user.emailVerified ? new Date(user.emailVerified) : null },
+        session: {
+          id: session_id,
+          sessionToken: row.sessionToken,
+          userId: row.userId,
+          expires: row.expires,
+        } as AdapterSession,
+        user: user as AdapterUser,
       };
     },
-    async updateSession(session: Partial<AdapterSession> & Pick<AdapterSession, 'sessionToken'>): Promise<AdapterSession | null | undefined> {
-      const { sessionToken } = session;
-      const sessionStmt = db.prepare('SELECT * FROM auth_sessions WHERE sessionToken = ?');
-      const originalSession = sessionStmt.get(sessionToken) as any;
-      if (!originalSession) return null;
-      
-      const newSession = { ...originalSession, ...session };
-      const updateStmt = db.prepare(`
-        UPDATE auth_sessions SET expires = ? WHERE sessionToken = ?
-        RETURNING id, sessionToken, userId, expires
-      `);
-      const result = updateStmt.get(newSession.expires instanceof Date ? newSession.expires.toISOString() : newSession.expires, newSession.sessionToken) as any;
-      return { ...result, expires: new Date(result.expires) };
+
+    async updateSession(session) {
+      const result = await query(
+        `UPDATE auth_sessions SET expires = $2
+         WHERE "sessionToken" = $1
+         RETURNING id, "sessionToken", "userId", expires`,
+        [session.sessionToken, session.expires],
+      );
+      return result.rows[0] ?? null;
     },
+
     async deleteSession(sessionToken) {
-      db.prepare('DELETE FROM auth_sessions WHERE sessionToken = ?').run(sessionToken);
+      await query(`DELETE FROM auth_sessions WHERE "sessionToken" = $1`, [
+        sessionToken,
+      ]);
     },
-    async unlinkAccount(partialAccount) {
-      const { provider, providerAccountId } = partialAccount;
-      db.prepare('DELETE FROM auth_accounts WHERE providerAccountId = ? AND provider = ?').run(providerAccountId, provider);
+
+    async unlinkAccount({ provider, providerAccountId }) {
+      await query(
+        `DELETE FROM auth_accounts
+         WHERE "providerAccountId" = $1 AND provider = $2`,
+        [providerAccountId, provider],
+      );
     },
-    async deleteUser(userId: string) {
-      db.prepare('DELETE FROM auth_users WHERE id = ?').run(userId);
-    }
+
+    async deleteUser(userId) {
+      await query(`DELETE FROM auth_users WHERE id = $1`, [userId]);
+    },
   };
 }

@@ -7,6 +7,17 @@ import updatedFetch from '../src/__create/fetch';
 
 const API_BASENAME = '/api';
 const api = new Hono();
+type ApiMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+type ApiRouteModule = Partial<
+	Record<
+		ApiMethod,
+		(request: Request, context: { params: Record<string, string> }) => Response | Promise<Response>
+	>
+>;
+const productionRouteModules = import.meta.glob<ApiRouteModule>(
+	'../src/app/api/**/route.js',
+	{ eager: true },
+);
 
 // Get current directory
 const __dirname = join(fileURLToPath(new URL('.', import.meta.url)), '../src/app/api');
@@ -61,6 +72,33 @@ function getHonoPath(routeFile: string): { name: string; pattern: string }[] {
     return { name: segment, pattern: segment };
   });
   return transformedParts;
+}
+
+function getHonoPathFromModuleKey(routeFile: string): string {
+  const relativePath = routeFile
+    .replace(/^\.\.\/src\/app\/api/, '')
+    .replace(/\/route\.js$/, '');
+  const routeParts = relativePath.split('/').filter(Boolean).map((segment) => {
+    const match = segment.match(/^\[(\.\.\.)?([^\]]+)\]$/);
+    if (!match) return segment;
+    return match[1] ? `:${match[2]}{.+}` : `:${match[2]}`;
+  });
+  return `/${routeParts.join('/')}`;
+}
+
+function registerProductionRoutes() {
+  api.routes = [];
+  for (const [routeFile, route] of Object.entries(productionRouteModules)) {
+    const honoPath = getHonoPathFromModuleKey(routeFile);
+    for (const method of ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'] as const) {
+      const handler = route[method];
+      if (handler) {
+        api.on(method, honoPath, (c) =>
+          handler(c.req.raw, { params: c.req.param() }),
+        );
+      }
+    }
+  }
 }
 
 // Import and register all routes
@@ -133,7 +171,11 @@ async function registerRoutes() {
 }
 
 // Initial route registration
-registerRoutes().catch(console.error);
+if (import.meta.env.DEV) {
+  registerRoutes().catch(console.error);
+} else {
+  registerProductionRoutes();
+}
 
 // Hot reload routes in development
 if (import.meta.env.DEV) {
