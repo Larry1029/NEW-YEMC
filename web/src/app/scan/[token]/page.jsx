@@ -2,6 +2,8 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { BadgeCheck, Building2, Mail, Phone, ShieldCheck } from "lucide-react";
+import logoSrc from "../../../public/yef-logo.jpg";
+import OptimizedImage from "../../../components/OptimizedImage";
 
 const activeCheckIns = new Map();
 
@@ -54,8 +56,20 @@ export default function ConferencePassPage() {
   const alreadyCheckedIn = attendee?.alreadyCheckedIn;
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-slate-950 px-4 py-10 text-white">
-      <section className="w-full max-w-lg overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 shadow-2xl">
+    <main className="relative isolate flex min-h-screen items-center justify-center overflow-hidden bg-slate-950 px-4 py-10 text-white">
+      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+        <div className="absolute -left-32 top-0 h-96 w-96 rounded-full bg-violet-600/10 blur-[120px]" />
+        <div className="absolute -right-32 bottom-0 h-96 w-96 rounded-full bg-blue-600/10 blur-[120px]" />
+      </div>
+      <div className="relative z-10 w-full max-w-lg">
+        <a href="/" aria-label="YEMC home" className="mb-6 flex justify-center">
+          <OptimizedImage
+            src={logoSrc}
+            alt="YEMC logo"
+            className="h-16 w-16 rounded-2xl object-contain"
+          />
+        </a>
+        <section className="w-full overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 shadow-2xl">
         <div className={`px-6 py-8 text-center sm:px-10 ${result.status === "error" ? "bg-red-950/50" : "bg-emerald-950/40"}`}>
           <div className={`mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full ${result.status === "error" ? "bg-red-500/10 text-red-400" : "bg-emerald-400/10 text-emerald-300"}`}>
             {isLoading ? (
@@ -124,7 +138,8 @@ export default function ConferencePassPage() {
             </dl>
           </div>
         )}
-      </section>
+        </section>
+      </div>
     </main>
   );
 }
