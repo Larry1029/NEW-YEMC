@@ -49,7 +49,6 @@ CREATE TABLE IF NOT EXISTS applications (
   full_name TEXT NOT NULL,
   email TEXT NOT NULL,
   phone TEXT NOT NULL,
-  occupation TEXT,
   institution TEXT,
   status TEXT,
   message TEXT,
@@ -88,7 +87,6 @@ ALTER TABLE auth_sessions
   ADD COLUMN IF NOT EXISTS "sessionToken" TEXT;
 
 ALTER TABLE applications
-  ADD COLUMN IF NOT EXISTS occupation TEXT,
   ADD COLUMN IF NOT EXISTS consent_given BOOLEAN NOT NULL DEFAULT FALSE,
   ADD COLUMN IF NOT EXISTS consent_given_at TIMESTAMPTZ,
   ADD COLUMN IF NOT EXISTS qr_token TEXT,

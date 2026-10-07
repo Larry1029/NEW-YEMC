@@ -47,13 +47,12 @@ export async function POST(request) {
     for (const app of applications) {
       try {
         await sql(
-          `INSERT INTO applications (full_name, email, phone, occupation, institution, status, message, created_at)
-           VALUES ($1, $2, $3, $4, $5, $6, $7, CURRENT_TIMESTAMP)`,
+          `INSERT INTO applications (full_name, email, phone, institution, status, message, created_at)
+           VALUES ($1, $2, $3, $4, $5, $6, CURRENT_TIMESTAMP)`,
           [
             app.full_name,
             app.email,
             app.phone,
-            app.occupation || null,
             app.institution || null,
             app.status || null,
             app.message || null,

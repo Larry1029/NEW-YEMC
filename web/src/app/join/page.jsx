@@ -189,7 +189,7 @@ export default function JoinPage() {
                     <dl className="grid gap-4 px-8 py-5 text-center text-sm md:grid-cols-3 md:gap-6 md:px-12 md:text-left md:text-base">
                       <div>
                         <dt className="mb-1 text-xs font-bold uppercase tracking-wider text-violet-300">Date</dt>
-                        <dd className="text-slate-200">Saturday, 24th October 2026</dd>
+                        <dd className="text-slate-200">Saturday, 7th November 2026</dd>
                       </div>
                       <div>
                         <dt className="mb-1 text-xs font-bold uppercase tracking-wider text-violet-300">Venue</dt>

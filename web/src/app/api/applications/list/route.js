@@ -15,7 +15,6 @@ export async function GET(request) {
           phone, 
           status,
           institution,
-          occupation,
           message, 
           created_at
         FROM applications
@@ -36,7 +35,6 @@ export async function GET(request) {
           phone, 
           status,
           institution,
-          occupation,
           message, 
           created_at
         FROM applications

@@ -245,14 +245,14 @@ app.post('/api/join-application', async (c) => {
         html: `
           <h1>Your YEMC 2026 Conference Pass</h1>
           <p>Hello ${safeName},</p>
-          <p>Your registration is confirmed. Present this unique QR pass at the conference entrance on Saturday, 24th October 2026.</p>
+          <p>Your registration is confirmed. Present this unique QR pass at the conference entrance on Saturday, 7th November 2026.</p>
           <p><strong>Venue:</strong> Palms by Eagles (formerly Holiday Inn)</p>
           <p><strong>Theme:</strong> AI for the next Gen of career and business executives</p>
           <p><img src="cid:yemc2026pass" alt="Your unique YEMC conference entry QR code" width="320" height="320" /></p>
           <p>Keep this pass private. Scanning it at the entrance confirms your check-in.</p>
           <p>Best regards,<br />The YEMC Team</p>
         `,
-        text: `Your YEMC 2026 Conference Pass\n\nHello ${fullName},\nYour registration is confirmed. Present the attached unique QR pass at the conference entrance on Saturday, 24th October 2026.\nVenue: Palms by Eagles (formerly Holiday Inn)\nTheme: AI for the next Gen of career and business executives\nKeep this pass private. Scanning it at the entrance confirms your check-in.\n\nThe QR code is attached as yemc-2026-pass.png.\n\nBest regards, The YEMC Team`,
+        text: `Your YEMC 2026 Conference Pass\n\nHello ${fullName},\nYour registration is confirmed. Present the attached unique QR pass at the conference entrance on Saturday, 7th November 2026.\nVenue: Palms by Eagles (formerly Holiday Inn)\nTheme: AI for the next Gen of career and business executives\nKeep this pass private. Scanning it at the entrance confirms your check-in.\n\nThe QR code is attached as yemc-2026-pass.png.\n\nBest regards, The YEMC Team`,
         attachments: [{
           filename: 'yemc-2026-pass.png',
           content: qrImage.toString('base64'),
@@ -345,7 +345,7 @@ app.get('/api/applications/list', async (c) => {
     const searchPattern = searchQuery ? `%${searchQuery}%` : null;
     const [applicationResult, countResult] = await Promise.all([
       getDatabasePool().query(
-        `SELECT id, full_name, email, phone, status, institution, occupation, message,
+        `SELECT id, full_name, email, phone, status, institution, message,
                 consent_given, consent_given_at, created_at
          FROM applications
          WHERE $1::text IS NULL OR full_name ILIKE $1 OR email ILIKE $1 OR phone ILIKE $1
