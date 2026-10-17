@@ -19,8 +19,11 @@ const productionRouteModules = import.meta.glob<ApiRouteModule>(
 	{ eager: true },
 );
 
-// Get current directory
-const __dirname = join(fileURLToPath(new URL('.', import.meta.url)), '../src/app/api');
+// Get current directory. Only used for dev-time route scanning; in the bundled
+// production function import.meta.url can be empty (CJS output), so don't crash.
+const __dirname = import.meta.url
+  ? join(fileURLToPath(new URL('.', import.meta.url)), '../src/app/api')
+  : join(process.cwd(), 'src/app/api');
 if (globalThis.fetch) {
   globalThis.fetch = updatedFetch;
 }
