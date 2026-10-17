@@ -19,8 +19,11 @@ const productionRouteModules = import.meta.glob<ApiRouteModule>(
 	{ eager: true },
 );
 
-// Get current directory
-const __dirname = join(fileURLToPath(new URL('.', import.meta.url)), '../src/app/api');
+// Get current directory (dev only: in production the server is bundled to CommonJS,
+// where import.meta.url is undefined and `new URL` would throw at startup)
+const __dirname = import.meta.env.DEV
+	? join(fileURLToPath(new URL('.', import.meta.url)), '../src/app/api')
+	: '';
 if (globalThis.fetch) {
   globalThis.fetch = updatedFetch;
 }
