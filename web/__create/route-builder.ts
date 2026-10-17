@@ -19,8 +19,9 @@ const productionRouteModules = import.meta.glob<ApiRouteModule>(
 	{ eager: true },
 );
 
-// Get current directory
-const __dirname = join(fileURLToPath(new URL('.', import.meta.url)), '../src/app/api');
+function getApiRoutesDirectory() {
+  return join(fileURLToPath(new URL('.', import.meta.url)), '../src/app/api');
+}
 if (globalThis.fetch) {
   globalThis.fetch = updatedFetch;
 }
@@ -54,8 +55,11 @@ async function findRouteFiles(dir: string): Promise<string[]> {
 }
 
 // Helper function to transform file path to Hono route path
-function getHonoPath(routeFile: string): { name: string; pattern: string }[] {
-  const relativePath = routeFile.replace(__dirname, '');
+function getHonoPath(
+  routeFile: string,
+  apiRoutesDirectory: string,
+): { name: string; pattern: string }[] {
+  const relativePath = routeFile.replace(apiRoutesDirectory, '');
   const parts = relativePath.split('/').filter(Boolean);
   const routeParts = parts.slice(0, -1); // Remove 'route.js'
   if (routeParts.length === 0) {
@@ -103,8 +107,9 @@ function registerProductionRoutes() {
 
 // Import and register all routes
 async function registerRoutes() {
+  const apiRoutesDirectory = getApiRoutesDirectory();
   const routeFiles = (
-    await findRouteFiles(__dirname).catch((error) => {
+    await findRouteFiles(apiRoutesDirectory).catch((error) => {
       console.error('Error finding route files:', error);
       return [];
     })
@@ -126,7 +131,7 @@ async function registerRoutes() {
       for (const method of methods) {
         try {
           if (route[method]) {
-            const parts = getHonoPath(routeFile);
+            const parts = getHonoPath(routeFile, apiRoutesDirectory);
             const honoPath = `/${parts.map(({ pattern }) => pattern).join('/')}`;
             const handler: Handler = async (c) => {
               const params = c.req.param();

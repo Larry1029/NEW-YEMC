@@ -234,22 +234,24 @@ export default function AboutPage() {
         </section>
 
         <section className="overflow-x-clip bg-slate-950 px-4 py-12 sm:px-6 sm:py-16 lg:py-20">
-          <div className="mx-auto grid max-w-7xl items-center gap-8 lg:grid-cols-2 lg:gap-12">
+          <div className="mx-auto grid max-w-7xl items-center gap-8 lg:gap-12">
             {/* Mission block */}
             <div className="relative min-w-0">
-              <div className="pointer-events-none absolute inset-x-0 top-9 flex h-16 items-center justify-start overflow-hidden px-4 sm:px-6 md:top-16 md:h-20">
-                <h2
-                  className="select-none whitespace-nowrap text-6xl font-extrabold uppercase leading-none tracking-wide text-transparent sm:text-8xl md:text-[clamp(5rem,8.5vw,7.5rem)]"
-                  style={{ WebkitTextStroke: "1px rgba(99,102,241,0.16)" }}
-                >
-                  MISSION
-                </h2>
-              </div>
-              <div className="relative z-10 px-4 py-10 text-left sm:px-6 md:py-16">
-                <h3 className="mb-6 text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-blue-400 sm:text-4xl md:text-5xl lg:text-6xl">
-                  Mission
-                </h3>
-                <p className="max-w-3xl text-base leading-relaxed text-slate-400">
+              <div className="px-4 py-6 text-left sm:px-6 md:py-8">
+                <div className="relative flex min-h-20 items-center md:min-h-36">
+                  <div className="pointer-events-none absolute inset-0 flex items-center justify-start">
+                    <h2
+                      className="select-none whitespace-nowrap text-6xl font-extrabold uppercase leading-none tracking-wide text-transparent sm:text-8xl md:text-[clamp(5rem,8.5vw,7.5rem)]"
+                      style={{ WebkitTextStroke: "1px rgba(99,102,241,0.16)" }}
+                    >
+                      MISSION
+                    </h2>
+                  </div>
+                  <h3 className="relative z-10 text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-blue-400 sm:text-4xl md:text-5xl lg:text-6xl">
+                    Mission
+                  </h3>
+                </div>
+                <p className="mt-3 max-w-3xl text-base leading-relaxed text-slate-400">
                   To raise Next Generation Business Executives through mentorship programs and conferences. We are committed to equipping young professionals with the confidence, strategy, and spiritual values needed to lead with excellence in today’s marketplace.
                 </p>
               </div>
@@ -257,19 +259,21 @@ export default function AboutPage() {
 
             {/* Vision block */}
             <div className="relative min-w-0">
-              <div className="pointer-events-none absolute inset-x-0 top-9 flex h-16 items-center justify-end overflow-hidden px-4 sm:px-6 md:top-16 md:h-20">
-                <h2
-                  className="select-none whitespace-nowrap text-6xl font-extrabold uppercase leading-none tracking-wide text-transparent sm:text-8xl md:text-[clamp(5rem,8.5vw,7.5rem)]"
-                  style={{ WebkitTextStroke: "1px rgba(59,130,246,0.16)" }}
-                >
-                  VISION
-                </h2>
-              </div>
-              <div className="relative z-10 px-4 py-10 text-right sm:px-6 md:py-16">
-                <h3 className="mb-6 text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-blue-400 sm:text-4xl md:text-5xl lg:text-6xl">
-                  Vision
-                </h3>
-                <p className="ml-auto max-w-3xl text-base leading-relaxed text-right text-slate-400">
+              <div className="px-4 py-6 text-right sm:px-6 md:py-8">
+                <div className="relative flex min-h-20 items-center justify-end md:min-h-36">
+                  <div className="pointer-events-none absolute inset-0 flex items-center justify-end">
+                    <h2
+                      className="select-none whitespace-nowrap text-6xl font-extrabold uppercase leading-none tracking-wide text-transparent sm:text-8xl md:text-[clamp(5rem,8.5vw,7.5rem)]"
+                      style={{ WebkitTextStroke: "1px rgba(59,130,246,0.16)" }}
+                    >
+                      VISION
+                    </h2>
+                  </div>
+                  <h3 className="relative z-10 text-3xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-blue-400 sm:text-4xl md:text-5xl lg:text-6xl">
+                    Vision
+                  </h3>
+                </div>
+                <p className="mt-3 ml-auto max-w-3xl text-base leading-relaxed text-right text-slate-400">
                   To roll out mentorship programs aimed at raising Next Generation Business Executives. Our vision is to expand our mentorship network, support emerging leaders, and create a community where faith and competency grow together.
                 </p>
               </div>
