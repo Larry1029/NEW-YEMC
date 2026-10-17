@@ -19,8 +19,10 @@ const productionRouteModules = import.meta.glob<ApiRouteModule>(
 	{ eager: true },
 );
 
-// Get current directory
-const __dirname = join(fileURLToPath(new URL('.', import.meta.url)), '../src/app/api');
+// Get current directory (dev only — import.meta.url is unavailable once bundled into the CJS Netlify function)
+const __dirname = import.meta.env.DEV
+  ? join(fileURLToPath(new URL('.', import.meta.url)), '../src/app/api')
+  : '';
 if (globalThis.fetch) {
   globalThis.fetch = updatedFetch;
 }
