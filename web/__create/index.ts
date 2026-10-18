@@ -202,7 +202,7 @@ app.post('/api/join-application', async (c) => {
       return c.json({ error: 'All fields are required' }, 400);
     }
     const cleanPhone = phoneNumber.replace(/\D/g, '');
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
+    if (!/^[^\s@]+@(?:[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?\.)+[A-Za-z]{2,}$/.test(cleanEmail)) {
       return c.json({ error: 'Enter a valid email address, like mailhere@gmail.com' }, 400);
     }
     if (!/^\d{10}$/.test(cleanPhone)) {

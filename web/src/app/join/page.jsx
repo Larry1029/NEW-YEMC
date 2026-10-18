@@ -21,7 +21,7 @@ export default function JoinPage() {
   const emailErrorFor = (value) => {
     const email = value.trim();
     if (!email) return "Email address is required";
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+    return /^[^\s@]+@(?:[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?\.)+[A-Za-z]{2,}$/.test(email)
       ? ""
       : "Enter a valid email address, like mailhere@gmail.com";
   };
@@ -104,6 +104,36 @@ export default function JoinPage() {
       setIsSubmitting(false);
     }
   };
+
+  if (submitted) {
+    return (
+      <main className="relative isolate flex min-h-screen items-center justify-center overflow-hidden bg-slate-950 px-6 py-12 text-white">
+        <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+          <div className="absolute -left-32 top-0 h-96 w-96 rounded-full bg-violet-600/10 blur-[120px]" />
+          <div className="absolute -right-32 bottom-0 h-96 w-96 rounded-full bg-blue-600/10 blur-[120px]" />
+        </div>
+        <div className="relative z-10 w-full max-w-xl">
+          <a href="/" className="mb-6 inline-flex items-center gap-2 text-slate-400 transition-colors hover:text-white">
+            <ArrowLeft size={18} />
+            <span>Back to Home</span>
+          </a>
+          <section role="status" aria-live="polite" className="rounded-3xl border border-slate-800 bg-slate-900 px-8 py-12 text-center md:px-12">
+            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-green-500/10 text-green-400">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            </div>
+            <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-violet-300">YEMC 2026 Registration</p>
+            <h1 className="text-2xl font-bold text-white md:text-3xl">Your registration is confirmed</h1>
+            <p className="mt-4 text-base leading-relaxed text-slate-300">
+              We sent your conference pass to your email address. Keep it handy for check-in.
+            </p>
+          </section>
+        </div>
+      </main>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-slate-950 font-sans selection:bg-violet-500/30 selection:text-violet-200">
       <div className="fixed inset-0 pointer-events-none">
@@ -133,33 +163,7 @@ export default function JoinPage() {
               </h1>
             </div>
             <div className="overflow-hidden bg-slate-900 border border-slate-800 rounded-3xl md:rounded-[40px] p-8 md:p-12">
-              {submitted ? (
-                <div className="text-center py-12">
-                  <div className="w-20 h-20 bg-green-500/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <svg
-                      width="40"
-                      height="40"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="3"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      className="text-green-500"
-                    >
-                      <polyline points="20 6 9 17 4 12"></polyline>
-                    </svg>
-                  </div>
-                  <h3 className="text-2xl md:text-3xl font-bold text-white mb-3">
-                    Welcome to the Team!
-                  </h3>
-                  <p className="text-slate-400 text-lg">
-                    We've sent a confirmation email to your inbox. We'll be in
-                    touch soon!
-                  </p>
-                </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="space-y-6">
+              <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="-mx-8 -mt-8 md:-mx-12 md:-mt-12 overflow-hidden border-b border-slate-800">
                     <div className="relative isolate h-52 md:h-64">
                       <OptimizedImage
@@ -432,8 +436,7 @@ export default function JoinPage() {
                       </>
                     )}
                   </button>
-                </form>
-              )}
+              </form>
             </div>
           </div>
         </div>
