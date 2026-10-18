@@ -238,21 +238,72 @@ app.post('/api/join-application', async (c) => {
         '"': '&quot;',
         "'": '&#39;',
       })[character]!);
+      const ticketId = `YEMC-2026-${String(applicationId).padStart(6, '0')}`;
 
       await sendEmail({
         to: email,
         subject: 'Your YEMC 2026 Conference Pass',
         html: `
-          <h1>Your YEMC 2026 Conference Pass</h1>
-          <p>Hello ${safeName},</p>
-          <p>Your registration is confirmed. Present this unique QR pass at the conference entrance on Saturday, 7th November 2026.</p>
-          <p><strong>Venue:</strong> Palms by Eagles (formerly Holiday Inn)</p>
-          <p><strong>Theme:</strong> AI for the next Gen of career and business executives</p>
-          <p><img src="cid:yemc2026pass" alt="Your unique YEMC conference entry QR code" width="320" height="320" /></p>
-          <p>Keep this pass private. Scanning it at the entrance confirms your check-in.</p>
-          <p>Best regards,<br />The YEMC Team</p>
+          <!doctype html>
+          <html lang="en">
+            <body style="margin:0;padding:0;background-color:#f3f0f8;color:#241b2f;font-family:Arial,Helvetica,sans-serif;">
+              <div style="display:none;max-height:0;overflow:hidden;opacity:0;">Your YEMC 2026 conference registration is confirmed. Your pass is inside.</div>
+              <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#f3f0f8;">
+                <tr>
+                  <td align="center" style="padding:32px 16px;">
+                    <table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="width:100%;max-width:600px;">
+                      <tr>
+                        <td style="padding:0 0 24px;">
+                          <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+                            <tr>
+                              <td width="48" height="48" align="center" valign="middle" style="width:48px;height:48px;border-radius:50%;background-color:#7139a8;color:#ffffff;font-size:26px;font-weight:bold;">Y</td>
+                              <td style="padding-left:13px;color:#2c2039;font-size:18px;font-weight:bold;">Young Executive Master Class<br /><span style="color:#766983;font-size:12px;font-weight:normal;letter-spacing:1px;">YEMC 2026</span></td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding:0 0 22px;">
+                          <p style="margin:0 0 10px;color:#49365a;font-size:16px;">Hello ${safeName},</p>
+                          <h1 style="margin:0 0 12px;color:#241b2f;font-size:28px;line-height:1.2;">Your registration is confirmed</h1>
+                          <p style="margin:0;color:#5d5266;font-size:15px;line-height:1.6;">Keep this email and present the pass below at the conference entrance on Saturday, November 7, 2026.</p>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="border:2px dashed #8c62b0;border-radius:12px;background-color:#ffffff;">
+                          <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+                            <tr>
+                              <td align="center" style="padding:24px 20px 12px;color:#7139a8;font-size:12px;font-weight:bold;letter-spacing:2px;">CONFERENCE PASS</td>
+                            </tr>
+                            <tr>
+                              <td align="center" style="padding:0 20px 8px;color:#241b2f;font-size:24px;font-weight:bold;">YEMC 2026</td>
+                            </tr>
+                            <tr>
+                              <td align="center" style="padding:12px 20px 20px;"><img src="cid:yemc2026pass" alt="Unique QR code for ${safeName}'s YEMC conference pass" width="200" height="200" style="display:block;width:200px;height:200px;border:0;" /></td>
+                            </tr>
+                            <tr>
+                              <td style="padding:0 24px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="border-top:1px solid #e8e1ed;">
+                                <tr><td style="padding:14px 0 10px;color:#766983;font-size:11px;font-weight:bold;letter-spacing:1px;">NAME</td><td align="right" style="padding:14px 0 10px;color:#241b2f;font-size:14px;font-weight:bold;">${safeName}</td></tr>
+                                <tr><td style="padding:10px 0;color:#766983;font-size:11px;font-weight:bold;letter-spacing:1px;border-top:1px solid #eee9f1;">VENUE</td><td align="right" style="padding:10px 0;color:#241b2f;font-size:14px;border-top:1px solid #eee9f1;">Palms by Eagles<br />(formerly Holiday Inn)</td></tr>
+                                <tr><td style="padding:10px 0;color:#766983;font-size:11px;font-weight:bold;letter-spacing:1px;border-top:1px solid #eee9f1;">DATE</td><td align="right" style="padding:10px 0;color:#241b2f;font-size:14px;border-top:1px solid #eee9f1;">Saturday, November 7, 2026</td></tr>
+                                <tr><td style="padding:10px 0;color:#766983;font-size:11px;font-weight:bold;letter-spacing:1px;border-top:1px solid #eee9f1;">TIME</td><td align="right" style="padding:10px 0;color:#241b2f;font-size:14px;border-top:1px solid #eee9f1;">9:00 AM</td></tr>
+                                <tr><td style="padding:10px 0 16px;color:#766983;font-size:11px;font-weight:bold;letter-spacing:1px;border-top:1px solid #eee9f1;">TICKET ID</td><td align="right" style="padding:10px 0 16px;color:#7139a8;font-size:14px;font-weight:bold;border-top:1px solid #eee9f1;">${ticketId}</td></tr>
+                              </table></td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td align="center" style="padding:20px 12px 0;color:#766983;font-size:13px;line-height:1.6;">Keep your QR pass private. It will be scanned at the entrance to confirm your check-in.<br />We look forward to seeing you there.<br /><strong style="color:#49365a;">The YEMC Team</strong></td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </body>
+          </html>
         `,
-        text: `Your YEMC 2026 Conference Pass\n\nHello ${fullName},\nYour registration is confirmed. Present the attached unique QR pass at the conference entrance on Saturday, 7th November 2026.\nVenue: Palms by Eagles (formerly Holiday Inn)\nTheme: AI for the next Gen of career and business executives\nKeep this pass private. Scanning it at the entrance confirms your check-in.\n\nThe QR code is attached as yemc-2026-pass.png.\n\nBest regards, The YEMC Team`,
+        text: `YEMC 2026 CONFERENCE PASS\n\nHello ${fullName},\nYour registration is confirmed. Present your unique QR pass at the conference entrance.\n\nNAME: ${fullName}\nVENUE: Palms by Eagles (formerly Holiday Inn)\nDATE: Saturday, November 7, 2026\nTIME: 9:00 AM\nTICKET ID: ${ticketId}\n\nKeep this pass private. Scanning it at the entrance confirms your check-in. The QR code is attached as yemc-2026-pass.png.\n\nWe look forward to seeing you there.\nThe YEMC Team`,
         attachments: [{
           filename: 'yemc-2026-pass.png',
           content: qrImage.toString('base64'),
