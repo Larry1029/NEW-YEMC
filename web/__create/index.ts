@@ -40,7 +40,7 @@ const adapter = AppAdapter();
 const app = new Hono();
 
 function formatRegistrationNumber(id: string | number | bigint): string {
-  return `YEMC-2026-${String(id).padStart(6, '0')}`;
+  return `YEMC-2026-${String(id).padStart(2, '0')}`;
 }
 
 app.use('*', requestId());
