@@ -185,12 +185,13 @@ app.post('/api/join-application', async (c) => {
       return c.json({ error: 'Invalid application payload' }, 400);
     }
     const { fullName, email, phoneNumber, status, otherStatus, institution, message, consentGiven } = body;
+    const cleanEmail = typeof email === 'string' ? email.trim() : '';
     const customStatus = typeof otherStatus === 'string' ? otherStatus.trim() : '';
     const recordedStatus = status === 'Other' ? `Other: ${customStatus}` : status;
 
     if (
       typeof fullName !== 'string' || !fullName.trim() ||
-      typeof email !== 'string' || !email.trim() ||
+      !cleanEmail ||
       typeof phoneNumber !== 'string' || !phoneNumber.trim() ||
       typeof status !== 'string' || !status.trim() ||
       typeof message !== 'string' || !message.trim() ||
@@ -201,8 +202,11 @@ app.post('/api/join-application', async (c) => {
       return c.json({ error: 'All fields are required' }, 400);
     }
     const cleanPhone = phoneNumber.replace(/\D/g, '');
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || !/^\d{10}$/.test(cleanPhone)) {
-      return c.json({ error: 'Enter a valid email and 10-digit phone number' }, 400);
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
+      return c.json({ error: 'Enter a valid email address, like mailhere@gmail.com' }, 400);
+    }
+    if (!/^\d{10}$/.test(cleanPhone)) {
+      return c.json({ error: 'Enter a valid 10-digit phone number' }, 400);
     }
 
     if (!process.env.RESEND_API_KEY) {
@@ -225,7 +229,7 @@ app.post('/api/join-application', async (c) => {
          consent_given, consent_given_at, qr_token
        ) VALUES ($1, $2, $3, $4, $5, $6, TRUE, CURRENT_TIMESTAMP, $7)
        RETURNING id`,
-      [fullName.trim(), email.trim(), cleanPhone, recordedStatus, institution || null, message.trim(), qrToken],
+      [fullName.trim(), cleanEmail, cleanPhone, recordedStatus, institution || null, message.trim(), qrToken],
     );
     const applicationId = insertResult.rows[0].id;
 
@@ -246,7 +250,7 @@ app.post('/api/join-application', async (c) => {
       const registrationNumber = formatRegistrationNumber(applicationId, qrToken);
 
       await sendEmail({
-        to: email,
+        to: cleanEmail,
         subject: 'Your YEMC 2026 Conference Pass',
         html: `
           <!doctype html>

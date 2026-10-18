@@ -19,10 +19,11 @@ export default function JoinPage() {
   const [validationErrors, setValidationErrors] = useState({});
   const [submitError, setSubmitError] = useState("");
   const emailErrorFor = (value) => {
-    if (!value.trim()) return "Please enter a valid email address";
-    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value.trim())
+    const email = value.trim();
+    if (!email) return "Email address is required";
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
       ? ""
-      : "Please enter a valid email address";
+      : "Enter a valid email address, like mailhere@gmail.com";
   };
   const phoneErrorFor = (value) => {
     if (!value.trim()) return "Phone number is required";
@@ -83,26 +84,17 @@ export default function JoinPage() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ ...formData, consentGiven: consentChecked }),
+        body: JSON.stringify({
+          ...formData,
+          email: formData.email.trim(),
+          consentGiven: consentChecked,
+        }),
       });
       const data = await response.json();
       if (!response.ok) {
         throw new Error(data.error || "Failed to submit application");
       }
       setSubmitted(true);
-      setTimeout(() => {
-        setFormData({
-          fullName: "",
-          email: "",
-          phoneNumber: "",
-          status: "",
-          otherStatus: "",
-          institution: "",
-          message: "",
-        });
-        setConsentChecked(false);
-        setSubmitted(false);
-      }, 5000);
     } catch (error) {
       console.error("Error submitting application:", error);
       setSubmitError(
@@ -234,13 +226,17 @@ export default function JoinPage() {
                       type="email"
                       id="email"
                       name="email"
+                      autoComplete="email"
+                      maxLength={254}
                       value={formData.email}
                       onChange={handleChange}
+                      aria-invalid={Boolean(validationErrors.email)}
+                      aria-describedby={validationErrors.email ? "email-error" : undefined}
                       className={`w-full bg-slate-950 border ${validationErrors.email ? "border-red-500" : "border-slate-800"} rounded-xl md:rounded-2xl px-4 md:px-6 py-3 md:py-4 text-white placeholder-slate-500 focus:outline-none focus:border-violet-500 transition-colors text-sm md:text-base`}
                       placeholder="your.email@example.com"
                     />
                     {validationErrors.email && (
-                      <p className="mt-2 text-sm text-red-400">
+                      <p id="email-error" role="alert" className="mt-2 text-sm text-red-400">
                         {validationErrors.email}
                       </p>
                     )}
