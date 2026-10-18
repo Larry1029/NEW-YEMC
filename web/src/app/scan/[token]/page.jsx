@@ -111,6 +111,10 @@ export default function ConferencePassPage() {
               <p className="text-xs font-semibold uppercase tracking-wider text-slate-500">Attendee</p>
               <h2 className="mt-1 break-words text-2xl font-bold">{attendee.fullName}</h2>
             </div>
+            <div className="rounded-lg border border-violet-400/20 bg-violet-400/5 px-4 py-3">
+              <p className="text-xs font-semibold uppercase tracking-wider text-violet-200/70">Registration Number</p>
+              <p className="mt-1 font-mono text-lg font-bold text-violet-100">{attendee.registrationNumber}</p>
+            </div>
             <dl className="space-y-4">
               <div className="flex items-start gap-3">
                 <Mail size={19} className="mt-0.5 shrink-0 text-emerald-300" />

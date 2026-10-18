@@ -39,6 +39,10 @@ const adapter = AppAdapter();
 
 const app = new Hono();
 
+function formatRegistrationNumber(id: string | number | bigint): string {
+  return `YEMC-2026-${String(id).padStart(6, '0')}`;
+}
+
 app.use('*', requestId());
 
 app.use('*', (c, next) => {
@@ -238,7 +242,7 @@ app.post('/api/join-application', async (c) => {
         '"': '&quot;',
         "'": '&#39;',
       })[character]!);
-      const ticketId = `YEMC-2026-${String(applicationId).padStart(6, '0')}`;
+      const registrationNumber = formatRegistrationNumber(applicationId);
 
       await sendEmail({
         to: email,
@@ -287,7 +291,7 @@ app.post('/api/join-application', async (c) => {
                                 <tr><td style="padding:10px 0;color:#766983;font-size:11px;font-weight:bold;letter-spacing:1px;border-top:1px solid #eee9f1;">VENUE</td><td align="right" style="padding:10px 0;color:#241b2f;font-size:14px;border-top:1px solid #eee9f1;">Palms by Eagles<br />(formerly Holiday Inn)</td></tr>
                                 <tr><td style="padding:10px 0;color:#766983;font-size:11px;font-weight:bold;letter-spacing:1px;border-top:1px solid #eee9f1;">DATE</td><td align="right" style="padding:10px 0;color:#241b2f;font-size:14px;border-top:1px solid #eee9f1;">Saturday, November 7, 2026</td></tr>
                                 <tr><td style="padding:10px 0;color:#766983;font-size:11px;font-weight:bold;letter-spacing:1px;border-top:1px solid #eee9f1;">TIME</td><td align="right" style="padding:10px 0;color:#241b2f;font-size:14px;border-top:1px solid #eee9f1;">9:00 AM</td></tr>
-                                <tr><td style="padding:10px 0 16px;color:#766983;font-size:11px;font-weight:bold;letter-spacing:1px;border-top:1px solid #eee9f1;">TICKET ID</td><td align="right" style="padding:10px 0 16px;color:#7139a8;font-size:14px;font-weight:bold;border-top:1px solid #eee9f1;">${ticketId}</td></tr>
+                                <tr><td style="padding:10px 0 16px;color:#766983;font-size:11px;font-weight:bold;letter-spacing:1px;border-top:1px solid #eee9f1;">REGISTRATION NUMBER</td><td align="right" style="padding:10px 0 16px;color:#7139a8;font-size:14px;font-weight:bold;border-top:1px solid #eee9f1;">${registrationNumber}</td></tr>
                               </table></td>
                             </tr>
                           </table>
@@ -303,7 +307,7 @@ app.post('/api/join-application', async (c) => {
             </body>
           </html>
         `,
-        text: `YEMC 2026 CONFERENCE PASS\n\nHello ${fullName},\nYour registration is confirmed. Present your unique QR pass at the conference entrance.\n\nNAME: ${fullName}\nVENUE: Palms by Eagles (formerly Holiday Inn)\nDATE: Saturday, November 7, 2026\nTIME: 9:00 AM\nTICKET ID: ${ticketId}\n\nKeep this pass private. Scanning it at the entrance confirms your check-in. The QR code is attached as yemc-2026-pass.png.\n\nWe look forward to seeing you there.\nThe YEMC Team`,
+        text: `YEMC 2026 CONFERENCE PASS\n\nHello ${fullName},\nYour registration is confirmed. Present your unique QR pass at the conference entrance.\n\nNAME: ${fullName}\nVENUE: Palms by Eagles (formerly Holiday Inn)\nDATE: Saturday, November 7, 2026\nTIME: 9:00 AM\nREGISTRATION NUMBER: ${registrationNumber}\n\nKeep this pass private. Scanning it at the entrance confirms your check-in. The QR code is attached as yemc-2026-pass.png.\n\nWe look forward to seeing you there.\nThe YEMC Team`,
         attachments: [{
           filename: 'yemc-2026-pass.png',
           content: qrImage.toString('base64'),
@@ -343,13 +347,13 @@ app.post('/api/conference-pass/:token/check-in', async (c) => {
          UPDATE applications
          SET checked_in_at = CURRENT_TIMESTAMP
          WHERE qr_token = $1 AND checked_in_at IS NULL
-         RETURNING full_name, email, phone, status, institution, checked_in_at
+         RETURNING id, full_name, email, phone, status, institution, checked_in_at
        )
-       SELECT full_name, email, phone, status, institution, checked_in_at,
+       SELECT id, full_name, email, phone, status, institution, checked_in_at,
               FALSE AS already_checked_in
        FROM checked_in
        UNION ALL
-       SELECT full_name, email, phone, status, institution, checked_in_at,
+       SELECT id, full_name, email, phone, status, institution, checked_in_at,
               TRUE AS already_checked_in
        FROM applications
        WHERE qr_token = $1 AND checked_in_at IS NOT NULL
@@ -358,6 +362,7 @@ app.post('/api/conference-pass/:token/check-in', async (c) => {
       [token],
     );
     const attendee = result.rows[0] as {
+      id: string | number | bigint;
       full_name: string;
       email: string;
       phone: string;
@@ -374,6 +379,7 @@ app.post('/api/conference-pass/:token/check-in', async (c) => {
     const confirmation: Record<string, unknown> = {
       valid: true,
       alreadyCheckedIn: attendee.already_checked_in,
+      registrationNumber: formatRegistrationNumber(attendee.id),
       fullName: attendee.full_name,
       email: attendee.email,
       phoneNumber: attendee.phone,
