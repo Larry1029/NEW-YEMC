@@ -39,8 +39,9 @@ const adapter = AppAdapter();
 
 const app = new Hono();
 
-function formatRegistrationNumber(id: string | number | bigint): string {
-  return `YEMC-2026-${String(id).padStart(2, '0')}`;
+function formatRegistrationNumber(id: string | number | bigint, qrToken: string): string {
+  const randomPrefix = (crypto.createHash('sha256').update(qrToken).digest().readUInt32BE(0) % 9000) + 1000;
+  return `YEMC-2026-${randomPrefix}${String(id).padStart(2, '0')}`;
 }
 
 app.use('*', requestId());
@@ -242,7 +243,7 @@ app.post('/api/join-application', async (c) => {
         '"': '&quot;',
         "'": '&#39;',
       })[character]!);
-      const registrationNumber = formatRegistrationNumber(applicationId);
+      const registrationNumber = formatRegistrationNumber(applicationId, qrToken);
 
       await sendEmail({
         to: email,
@@ -379,7 +380,7 @@ app.post('/api/conference-pass/:token/check-in', async (c) => {
     const confirmation: Record<string, unknown> = {
       valid: true,
       alreadyCheckedIn: attendee.already_checked_in,
-      registrationNumber: formatRegistrationNumber(attendee.id),
+      registrationNumber: formatRegistrationNumber(attendee.id, token),
       fullName: attendee.full_name,
       email: attendee.email,
       phoneNumber: attendee.phone,
