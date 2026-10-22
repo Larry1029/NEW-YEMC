@@ -37,7 +37,7 @@ export function AdminHeader({
       className={`${isDark ? "bg-slate-900/50 border-b border-slate-800" : "bg-white/40"} backdrop-blur-md relative z-20 md:sticky md:top-0`}
     >
       <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 sm:py-8">
-        <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between md:mb-8">
+        <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between md:mb-8">
           <div className="flex items-center justify-between gap-8 md:justify-start md:gap-6">
             <a href="/" className="flex shrink-0 items-center gap-2 group">
               <OptimizedImage
@@ -234,7 +234,7 @@ export function AdminHeader({
             </a>
           </div>
         </div>
-        <div className="relative">
+        <div className="relative mt-2 md:mt-0">
           <Search
             className={`absolute left-4 top-1/2 -translate-y-1/2 ${isDark ? "text-slate-500" : "text-gray-400"}`}
             size={20}
