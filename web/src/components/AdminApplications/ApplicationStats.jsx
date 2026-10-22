@@ -31,7 +31,7 @@ const metrics = [
   },
 ];
 
-export function ApplicationStats({ stats = {}, isDark }) {
+export function ApplicationStats({ stats, isDark }) {
   return (
     <section
       aria-label="Applicant statistics"
@@ -62,7 +62,7 @@ export function ApplicationStats({ stats = {}, isDark }) {
                 isDark ? "text-white" : "text-slate-900"
               }`}
             >
-              {stats[key] ?? 0}
+              {stats?.[key] ?? "—"}
             </p>
           </div>
           <p

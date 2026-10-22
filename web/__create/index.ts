@@ -404,11 +404,24 @@ app.post('/api/conference-pass/:token/check-in', async (c) => {
 app.get('/api/applications/list', async (c) => {
   const searchQuery = c.req.query('search');
   try {
+    const sessionToken = getCookie(c, 'sessionToken');
+    if (!sessionToken) {
+      return c.json({ error: 'Unauthorized' }, 401);
+    }
+
+    const sessionAndUser = await adapter.getSessionAndUser!(sessionToken);
+    if (!sessionAndUser || sessionAndUser.session.expires < new Date()) {
+      return c.json({ error: 'Unauthorized' }, 401);
+    }
+
+    const adminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+    const userEmail = sessionAndUser.user.email?.trim().toLowerCase();
+    const isAdmin = Boolean(adminEmail && userEmail && adminEmail === userEmail);
     const searchPattern = searchQuery ? `%${searchQuery}%` : null;
-    const [applicationResult, countResult] = await Promise.all([
+    const [applicationResult, countResult, statsResult] = await Promise.all([
       getDatabasePool().query(
         `SELECT id, full_name, email, phone, status, institution, message,
-                consent_given, consent_given_at, created_at
+                consent_given, consent_given_at, checked_in_at, created_at
          FROM applications
          WHERE $1::text IS NULL OR full_name ILIKE $1 OR email ILIKE $1 OR phone ILIKE $1
          ORDER BY created_at DESC`,
@@ -420,10 +433,47 @@ app.get('/api/applications/list', async (c) => {
          WHERE $1::text IS NULL OR full_name ILIKE $1 OR email ILIKE $1 OR phone ILIKE $1`,
         [searchPattern],
       ),
+      getDatabasePool().query(
+        `WITH reporting_day AS (
+           SELECT
+             date_trunc(
+               'day',
+               CURRENT_TIMESTAMP AT TIME ZONE 'America/Toronto'
+             ) AT TIME ZONE 'America/Toronto' AS starts_at,
+             (
+               date_trunc(
+                 'day',
+                 CURRENT_TIMESTAMP AT TIME ZONE 'America/Toronto'
+               ) + INTERVAL '1 day'
+             ) AT TIME ZONE 'America/Toronto' AS ends_at
+         )
+         SELECT
+           COUNT(*) AS total,
+           COUNT(*) FILTER (
+             WHERE applications.created_at >= reporting_day.starts_at
+               AND applications.created_at < reporting_day.ends_at
+           ) AS applications_today,
+           COUNT(*) FILTER (
+             WHERE applications.consent_given = TRUE
+           ) AS consent_confirmed,
+           COUNT(*) FILTER (
+             WHERE applications.checked_in_at IS NOT NULL
+           ) AS checked_in
+         FROM applications
+         CROSS JOIN reporting_day`,
+      ),
     ]);
+    const stats = statsResult.rows[0];
     return c.json({
       applications: applicationResult.rows,
       total: Number(countResult.rows[0].total),
+      isAdmin,
+      stats: {
+        total: Number(stats.total),
+        applicationsToday: Number(stats.applications_today),
+        consentConfirmed: Number(stats.consent_confirmed),
+        checkedIn: Number(stats.checked_in),
+      },
     });
   } catch (error: any) {
     console.error('Failed to fetch YEMC applications:', error);
@@ -433,11 +483,33 @@ app.get('/api/applications/list', async (c) => {
 
 app.delete('/api/applications/delete', async (c) => {
   try {
+    const sessionToken = getCookie(c, 'sessionToken');
+    if (!sessionToken) {
+      return c.json({ error: 'Unauthorized' }, 401);
+    }
+
+    const sessionAndUser = await adapter.getSessionAndUser!(sessionToken);
+    if (!sessionAndUser || sessionAndUser.session.expires < new Date()) {
+      return c.json({ error: 'Unauthorized' }, 401);
+    }
+
+    const adminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+    const userEmail = sessionAndUser.user.email?.trim().toLowerCase();
+    if (!adminEmail || !userEmail || adminEmail !== userEmail) {
+      return c.json({ error: 'Admin access required' }, 403);
+    }
+
     const body = await c.req.json();
     if (!body.id) return c.json({ error: 'ID is required' }, 400);
 
-    await getDatabasePool().query('DELETE FROM applications WHERE id = $1', [body.id]);
-    return c.json({ success: true });
+    const result = await getDatabasePool().query(
+      'DELETE FROM applications WHERE id = $1 RETURNING id',
+      [body.id],
+    );
+    if (result.rowCount === 0) {
+      return c.json({ error: 'Application not found' }, 404);
+    }
+    return c.json({ success: true, id: result.rows[0].id });
   } catch (error: any) {
     console.error('Failed to delete YEMC application:', error);
     return c.json({ error: 'Failed to delete application' }, 500);
