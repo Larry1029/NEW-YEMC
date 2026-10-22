@@ -29,7 +29,10 @@ export async function GET(request) {
           status,
           institution,
           message, 
-          created_at
+          created_at,
+          consent_given,
+          consent_given_at,
+          checked_in_at
         FROM applications
         WHERE 
           LOWER(full_name) LIKE LOWER(${"%" + search + "%"})
@@ -49,7 +52,10 @@ export async function GET(request) {
           status,
           institution,
           message, 
-          created_at
+          created_at,
+          consent_given,
+          consent_given_at,
+          checked_in_at
         FROM applications
         ORDER BY created_at DESC
         LIMIT ${limit}
@@ -57,18 +63,33 @@ export async function GET(request) {
       `;
     }
     const summaryResult = await sql`
+      WITH reporting_day AS (
+        SELECT
+          date_trunc(
+            'day',
+            CURRENT_TIMESTAMP AT TIME ZONE 'America/Toronto'
+          ) AT TIME ZONE 'America/Toronto' AS starts_at,
+          (
+            date_trunc(
+              'day',
+              CURRENT_TIMESTAMP AT TIME ZONE 'America/Toronto'
+            ) + INTERVAL '1 day'
+          ) AT TIME ZONE 'America/Toronto' AS ends_at
+      )
       SELECT
         COUNT(*) AS total,
         COUNT(*) FILTER (
-          WHERE created_at >= CURRENT_DATE
-        ) AS added_today,
+          WHERE applications.created_at >= reporting_day.starts_at
+            AND applications.created_at < reporting_day.ends_at
+        ) AS applications_today,
         COUNT(*) FILTER (
-          WHERE consent_given = TRUE
+          WHERE applications.consent_given = TRUE
         ) AS consent_confirmed,
         COUNT(*) FILTER (
-          WHERE checked_in_at IS NOT NULL
+          WHERE applications.checked_in_at IS NOT NULL
         ) AS checked_in
       FROM applications
+      CROSS JOIN reporting_day
     `;
     const summary = summaryResult[0];
     const total = parseInt(summary.total, 10);
@@ -80,7 +101,7 @@ export async function GET(request) {
       isAdmin: isAdminUser(user),
       stats: {
         total,
-        addedToday: parseInt(summary.added_today, 10),
+        applicationsToday: parseInt(summary.applications_today, 10),
         consentConfirmed: parseInt(summary.consent_confirmed, 10),
         checkedIn: parseInt(summary.checked_in, 10),
       },

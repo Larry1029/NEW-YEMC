@@ -9,8 +9,8 @@ const metrics = [
     iconBackground: "bg-blue-50",
   },
   {
-    key: "addedToday",
-    label: "New Today",
+    key: "applicationsToday",
+    label: "Applications Today",
     Icon: CalendarPlus,
     iconClass: "text-violet-600",
     iconBackground: "bg-violet-50",
