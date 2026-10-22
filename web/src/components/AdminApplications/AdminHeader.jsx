@@ -38,8 +38,8 @@ export function AdminHeader({
     >
       <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 sm:py-8">
         <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between md:mb-8">
-          <div className="flex items-center justify-between gap-3 md:justify-start md:gap-6">
-            <a href="/" className="flex items-center gap-2 group">
+          <div className="flex items-center justify-between gap-8 md:justify-start md:gap-6">
+            <a href="/" className="flex shrink-0 items-center gap-2 group">
               <OptimizedImage
                 src="https://ucarecdn.com/dcbe7a42-7e7a-473b-96c1-4a135fdecc95/-/format/auto/"
                 alt="YEMC Logo"
@@ -55,7 +55,7 @@ export function AdminHeader({
             <div
               className={`hidden md:block w-px h-12 ${isDark ? "bg-slate-700" : "bg-gray-300"}`}
             ></div>
-            <div className="relative md:hidden">
+            <div className="relative ml-auto shrink-0 md:hidden">
               <button
                 type="button"
                 onClick={() => setIsMenuOpen(!isMenuOpen)}

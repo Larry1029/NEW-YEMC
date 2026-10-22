@@ -20,6 +20,7 @@ export default function AdminApplicationsPage() {
   const [isSavingEdit, setIsSavingEdit] = useState(false);
   const [actionNotice, setActionNotice] = useState(null);
   const [actionError, setActionError] = useState(null);
+  const [showApprovalNotice, setShowApprovalNotice] = useState(false);
   const [uploadError, setUploadError] = useState(null);
   const [uploadSuccess, setUploadSuccess] = useState(null);
   const { data: user, loading: userLoading } = useUser();
@@ -40,6 +41,39 @@ export default function AdminApplicationsPage() {
       window.location.href = "/account/signin";
     }
   }, [user, userLoading]);
+  useEffect(() => {
+    if (isAdmin || isLoading || !user?.id) return;
+
+    const noticeKey = `application-approval-notice-seen-${user.id}`;
+    const storedValue = window.localStorage.getItem(noticeKey);
+    if (storedValue === "true") return;
+
+    const startedAt = storedValue ? Number(storedValue) : Date.now();
+    if (!storedValue) {
+      window.localStorage.setItem(noticeKey, String(startedAt));
+    }
+    const remainingTime = 30000 - (Date.now() - startedAt);
+    if (remainingTime <= 0) {
+      window.localStorage.setItem(noticeKey, "true");
+      return;
+    }
+    setShowApprovalNotice(true);
+    const timeout = window.setTimeout(() => {
+      window.localStorage.setItem(noticeKey, "true");
+      setShowApprovalNotice(false);
+    }, remainingTime);
+
+    return () => window.clearTimeout(timeout);
+  }, [isAdmin, isLoading, user?.id]);
+  const dismissApprovalNotice = () => {
+    if (user?.id) {
+      window.localStorage.setItem(
+        `application-approval-notice-seen-${user.id}`,
+        "true",
+      );
+    }
+    setShowApprovalNotice(false);
+  };
   const handleDelete = (application) => {
     setActionError(null);
     setDeleteConfirm(application);
@@ -159,17 +193,30 @@ export default function AdminApplicationsPage() {
           <div className="mb-6 md:hidden">
             <ApplicationStats stats={stats} isDark={isDark} />
           </div>
-          {!isAdmin && !isLoading && (
+          {!isAdmin && showApprovalNotice && (
             <div
+              role="status"
               className={`mb-6 rounded-xl border p-4 ${
                 isDark
                   ? "bg-amber-500/10 border-amber-500/30 text-amber-200"
                   : "bg-amber-50 border-amber-200 text-amber-800"
               }`}
             >
-              Applicant edits and deletions must be reviewed and approved by the
-              admin before they take effect. CSV imports and applicant emails
-              remain available.
+              <div className="flex items-start justify-between gap-3">
+                <p className="min-w-0">
+                  Applicant edits and deletions must be reviewed and approved by
+                  the admin before they take effect. CSV imports and applicant
+                  emails remain available.
+                </p>
+                <button
+                  type="button"
+                  onClick={dismissApprovalNotice}
+                  aria-label="Dismiss notice"
+                  className="shrink-0 font-bold"
+                >
+                  ×
+                </button>
+              </div>
             </div>
           )}
           {actionNotice && (
