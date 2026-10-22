@@ -56,16 +56,34 @@ export async function GET(request) {
         OFFSET ${offset}
       `;
     }
-    const countResult = await sql`
-      SELECT COUNT(*) as total FROM applications
+    const summaryResult = await sql`
+      SELECT
+        COUNT(*) AS total,
+        COUNT(*) FILTER (
+          WHERE created_at >= CURRENT_DATE
+        ) AS added_today,
+        COUNT(*) FILTER (
+          WHERE consent_given = TRUE
+        ) AS consent_confirmed,
+        COUNT(*) FILTER (
+          WHERE checked_in_at IS NOT NULL
+        ) AS checked_in
+      FROM applications
     `;
-    const total = parseInt(countResult[0].total);
+    const summary = summaryResult[0];
+    const total = parseInt(summary.total, 10);
     return Response.json({
       applications,
       total,
       limit,
       offset,
       isAdmin: isAdminUser(user),
+      stats: {
+        total,
+        addedToday: parseInt(summary.added_today, 10),
+        consentConfirmed: parseInt(summary.consent_confirmed, 10),
+        checkedIn: parseInt(summary.checked_in, 10),
+      },
     });
   } catch (error) {
     console.error("Error fetching applications:", error);

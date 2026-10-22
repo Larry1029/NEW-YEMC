@@ -10,6 +10,7 @@ import { EmailModal } from "@/components/AdminApplications/EmailModal";
 import { DeleteConfirmModal } from "@/components/AdminApplications/DeleteConfirmModal";
 import { EditApplicationModal } from "@/components/AdminApplications/EditApplicationModal";
 import { ApprovalRequests } from "@/components/AdminApplications/ApprovalRequests";
+import { ApplicationStats } from "@/components/AdminApplications/ApplicationStats";
 import { LoadingScreen } from "@/components/AdminApplications/LoadingScreen";
 export default function AdminApplicationsPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -26,6 +27,7 @@ export default function AdminApplicationsPage() {
   const {
     applications,
     total,
+    stats,
     isAdmin,
     isLoading,
     error,
@@ -154,6 +156,9 @@ export default function AdminApplicationsPage() {
           isAdmin={isAdmin}
         />
         <div className="max-w-7xl mx-auto px-4 py-5 sm:px-6 sm:py-8">
+          <div className="mb-6 md:hidden">
+            <ApplicationStats stats={stats} isDark={isDark} />
+          </div>
           {!isAdmin && !isLoading && (
             <div
               className={`mb-6 rounded-xl border p-4 ${
@@ -215,6 +220,22 @@ export default function AdminApplicationsPage() {
             </div>
           )}
           {isAdmin && <ApprovalRequests isDark={isDark} />}
+          <div className="mb-4 flex items-center justify-between">
+            <h2
+              className={`text-xl font-bold ${
+                isDark ? "text-white" : "text-slate-800"
+              }`}
+            >
+              Applicants
+            </h2>
+            <span
+              className={`text-sm ${
+                isDark ? "text-slate-400" : "text-slate-500"
+              }`}
+            >
+              {total} total
+            </span>
+          </div>
           <ApplicationsList
             applications={applications}
             isLoading={isLoading}

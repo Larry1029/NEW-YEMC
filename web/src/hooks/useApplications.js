@@ -55,6 +55,7 @@ export function useApplications(searchQuery) {
   return {
     applications: data?.applications || [],
     total: data?.total || 0,
+    stats: data?.stats || {},
     isAdmin: data?.isAdmin || false,
     isLoading,
     error,
