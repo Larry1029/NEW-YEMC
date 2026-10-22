@@ -18,6 +18,7 @@ import { getCookie, setCookie, deleteCookie } from 'hono/cookie';
 import crypto from 'node:crypto';
 import QRCode from 'qrcode';
 import { sendEmail } from '../src/app/api/utils/send-email.js';
+import { isAdminUser } from '../src/app/api/utils/authorization.js';
 import { getDatabasePool } from '../src/db.server.js';
 
 const als = new AsyncLocalStorage<{ requestId: string }>();
@@ -414,9 +415,7 @@ app.get('/api/applications/list', async (c) => {
       return c.json({ error: 'Unauthorized' }, 401);
     }
 
-    const adminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
-    const userEmail = sessionAndUser.user.email?.trim().toLowerCase();
-    const isAdmin = Boolean(adminEmail && userEmail && adminEmail === userEmail);
+    const isAdmin = isAdminUser(sessionAndUser.user);
     const searchPattern = searchQuery ? `%${searchQuery}%` : null;
     const [applicationResult, countResult, statsResult] = await Promise.all([
       getDatabasePool().query(
@@ -493,9 +492,7 @@ app.delete('/api/applications/delete', async (c) => {
       return c.json({ error: 'Unauthorized' }, 401);
     }
 
-    const adminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
-    const userEmail = sessionAndUser.user.email?.trim().toLowerCase();
-    if (!adminEmail || !userEmail || adminEmail !== userEmail) {
+    if (!isAdminUser(sessionAndUser.user)) {
       return c.json({ error: 'Admin access required' }, 403);
     }
 

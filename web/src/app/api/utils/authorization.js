@@ -1,12 +1,29 @@
-import { auth } from "@/auth";
+import { getContext } from "hono/context-storage";
+import { getCookie } from "hono/cookie";
+import AppAdapter from "../../../../__create/adapter.ts";
+
+const adapter = AppAdapter();
+const defaultAdminEmail = "mr.glover1029@gmail.com";
 
 export async function getAuthenticatedUser() {
-  const session = await auth();
-  return session?.user || null;
+  const context = getContext();
+  const sessionToken = getCookie(context, "sessionToken");
+  if (!sessionToken) return null;
+
+  const sessionAndUser = await adapter.getSessionAndUser(sessionToken);
+  if (
+    !sessionAndUser ||
+    new Date(sessionAndUser.session.expires) <= new Date()
+  ) {
+    return null;
+  }
+
+  return sessionAndUser.user;
 }
 
 export function isAdminUser(user) {
-  const adminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+  const adminEmail =
+    process.env.ADMIN_EMAIL?.trim().toLowerCase() || defaultAdminEmail;
   const userEmail = user?.email?.trim().toLowerCase();
   return Boolean(adminEmail && userEmail && adminEmail === userEmail);
 }
@@ -16,16 +33,6 @@ export async function requireAdmin() {
   if (!user) {
     return {
       response: Response.json({ error: "Unauthorized" }, { status: 401 }),
-    };
-  }
-
-  if (!process.env.ADMIN_EMAIL?.trim()) {
-    console.error("ADMIN_EMAIL must be configured to enable admin access.");
-    return {
-      response: Response.json(
-        { error: "Admin access is not configured" },
-        { status: 503 },
-      ),
     };
   }
 
