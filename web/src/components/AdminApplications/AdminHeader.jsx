@@ -234,7 +234,7 @@ export function AdminHeader({
             </a>
           </div>
         </div>
-        <div className="relative mt-2 md:mt-0">
+        <div className="relative mt-6 md:mt-0">
           <Search
             className={`absolute left-4 top-1/2 -translate-y-1/2 ${isDark ? "text-slate-500" : "text-gray-400"}`}
             size={20}
