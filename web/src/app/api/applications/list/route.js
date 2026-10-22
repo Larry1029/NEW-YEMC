@@ -67,14 +67,14 @@ export async function GET(request) {
         SELECT
           date_trunc(
             'day',
-            CURRENT_TIMESTAMP AT TIME ZONE 'America/Toronto'
-          ) AT TIME ZONE 'America/Toronto' AS starts_at,
+            CURRENT_TIMESTAMP AT TIME ZONE 'Africa/Accra'
+          ) AT TIME ZONE 'Africa/Accra' AS starts_at,
           (
             date_trunc(
               'day',
-              CURRENT_TIMESTAMP AT TIME ZONE 'America/Toronto'
+              CURRENT_TIMESTAMP AT TIME ZONE 'Africa/Accra'
             ) + INTERVAL '1 day'
-          ) AT TIME ZONE 'America/Toronto' AS ends_at
+          ) AT TIME ZONE 'Africa/Accra' AS ends_at
       )
       SELECT
         COUNT(*) AS total,
