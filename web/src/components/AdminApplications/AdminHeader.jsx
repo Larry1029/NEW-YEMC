@@ -20,15 +20,16 @@ export function AdminHeader({
   hasApplications,
   theme,
   onToggleTheme,
+  isAdmin,
 }) {
   const isDark = theme === "dark";
   return (
     <div
-      className={`${isDark ? "bg-slate-900/50 border-b border-slate-800" : "bg-white/40"} backdrop-blur-md sticky top-0 z-20`}
+      className={`${isDark ? "bg-slate-900/50 border-b border-slate-800" : "bg-white/40"} backdrop-blur-md relative z-20 md:sticky md:top-0`}
     >
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        <div className="flex items-start justify-between mb-8">
-          <div className="flex items-center gap-6">
+      <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 sm:py-8">
+        <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between md:mb-8">
+          <div className="flex items-center gap-3 md:gap-6">
             <a href="/" className="flex items-center gap-2 group">
               <OptimizedImage
                 src="https://ucarecdn.com/dcbe7a42-7e7a-473b-96c1-4a135fdecc95/-/format/auto/"
@@ -61,9 +62,9 @@ export function AdminHeader({
           </div>
           <div className="md:hidden">
             <h1
-              className={`text-2xl font-extrabold mb-1 ${isDark ? "text-white" : "text-gray-800"}`}
+              className={`text-xl sm:text-2xl font-extrabold mb-1 ${isDark ? "text-white" : "text-gray-800"}`}
             >
-              {getGreeting()}! 👋
+              {getGreeting()}, {getFirstName(user?.name)}! 👋
             </h1>
             <p
               className={`text-sm ${isDark ? "text-slate-400" : "text-gray-600"}`}
@@ -71,19 +72,23 @@ export function AdminHeader({
               {total} application{total !== 1 ? "s" : ""}
             </p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="grid w-full grid-cols-3 gap-2 md:flex md:w-auto md:items-center">
             <button
               onClick={onToggleTheme}
-              className={`p-3 rounded-xl transition-all ${isDark ? "bg-slate-800/50 hover:bg-slate-800 text-slate-300" : "bg-white/60 hover:bg-white text-gray-700 shadow-sm"}`}
+              aria-label={`Switch to ${isDark ? "light" : "dark"} mode`}
+              className={`flex h-14 w-full flex-col items-center justify-center gap-1 rounded-xl p-2 transition-all md:h-auto md:w-auto md:flex-row md:p-3 ${isDark ? "bg-slate-800/50 hover:bg-slate-800 text-slate-300" : "bg-white/60 hover:bg-white text-gray-700 shadow-sm"}`}
               title={`Switch to ${isDark ? "light" : "dark"} mode`}
             >
               {isDark ? <Sun size={20} /> : <Moon size={20} />}
+              <span className="text-[10px] leading-none md:hidden">Theme</span>
             </button>
             <label
-              className={`p-3 rounded-xl transition-all cursor-pointer ${isDark ? "bg-slate-800/50 hover:bg-slate-800 text-slate-300" : "bg-white/60 hover:bg-white text-gray-700 shadow-sm"}`}
+              aria-label="Upload CSV"
+              className={`flex h-14 w-full flex-col items-center justify-center gap-1 rounded-xl p-2 transition-all cursor-pointer md:h-auto md:w-auto md:flex-row md:p-3 ${isDark ? "bg-slate-800/50 hover:bg-slate-800 text-slate-300" : "bg-white/60 hover:bg-white text-gray-700 shadow-sm"}`}
               title="Upload CSV"
             >
               <Upload size={20} />
+              <span className="text-[10px] leading-none md:hidden">Import</span>
               <input
                 type="file"
                 accept=".csv"
@@ -94,31 +99,41 @@ export function AdminHeader({
             <button
               onClick={onExport}
               disabled={!hasApplications}
-              className={`p-3 rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed ${isDark ? "bg-slate-800/50 hover:bg-slate-800 text-slate-300" : "bg-white/60 hover:bg-white text-gray-700 shadow-sm"}`}
+              aria-label="Export applications to CSV"
+              className={`flex h-14 w-full flex-col items-center justify-center gap-1 rounded-xl p-2 transition-all disabled:opacity-50 disabled:cursor-not-allowed md:h-auto md:w-auto md:flex-row md:p-3 ${isDark ? "bg-slate-800/50 hover:bg-slate-800 text-slate-300" : "bg-white/60 hover:bg-white text-gray-700 shadow-sm"}`}
               title="Export to CSV"
             >
               <Download size={20} />
+              <span className="text-[10px] leading-none md:hidden">Export</span>
             </button>
-            <a
-              href="/admin/users"
-              className={`p-3 rounded-xl transition-all ${isDark ? "bg-slate-800/50 hover:bg-slate-800 text-slate-300" : "bg-white/60 hover:bg-white text-gray-700 shadow-sm"}`}
-              title="Manage Users"
-            >
-              <Users size={20} />
-            </a>
+            {isAdmin && (
+              <a
+                href="/admin/users"
+                aria-label="Manage users"
+                className={`flex h-14 w-full flex-col items-center justify-center gap-1 rounded-xl p-2 transition-all md:h-auto md:w-auto md:flex-row md:p-3 ${isDark ? "bg-slate-800/50 hover:bg-slate-800 text-slate-300" : "bg-white/60 hover:bg-white text-gray-700 shadow-sm"}`}
+                title="Manage Users"
+              >
+                <Users size={20} />
+                <span className="text-[10px] leading-none md:hidden">Users</span>
+              </a>
+            )}
             <a
               href="/account/logout"
-              className={`p-3 rounded-xl transition-all ${isDark ? "bg-slate-800/50 hover:bg-slate-800 text-slate-300" : "bg-white/60 hover:bg-white text-gray-700 shadow-sm"}`}
+              aria-label="Log out"
+              className={`flex h-14 w-full flex-col items-center justify-center gap-1 rounded-xl p-2 transition-all md:h-auto md:w-auto md:flex-row md:p-3 ${isDark ? "bg-slate-800/50 hover:bg-slate-800 text-slate-300" : "bg-white/60 hover:bg-white text-gray-700 shadow-sm"}`}
               title="Logout"
             >
               <LogOut size={20} />
+              <span className="text-[10px] leading-none md:hidden">Log out</span>
             </a>
             <a
               href="/"
-              className={`p-3 rounded-xl transition-all ${isDark ? "bg-slate-800/50 hover:bg-slate-800 text-slate-300" : "bg-white/60 hover:bg-white text-gray-700 shadow-sm"}`}
+              aria-label="Back to home"
+              className={`flex h-14 w-full flex-col items-center justify-center gap-1 rounded-xl p-2 transition-all md:h-auto md:w-auto md:flex-row md:p-3 ${isDark ? "bg-slate-800/50 hover:bg-slate-800 text-slate-300" : "bg-white/60 hover:bg-white text-gray-700 shadow-sm"}`}
               title="Back to Home"
             >
               <ArrowLeft size={20} />
+              <span className="text-[10px] leading-none md:hidden">Home</span>
             </a>
           </div>
         </div>
@@ -132,7 +147,7 @@ export function AdminHeader({
             placeholder="Search by name, email, or phone..."
             value={searchQuery}
             onChange={(e) => onSearchChange(e.target.value)}
-            className={`w-full rounded-2xl pl-12 pr-4 py-4 focus:outline-none transition-all ${isDark ? "bg-slate-900 border border-slate-800 text-white placeholder-slate-500 focus:border-violet-500" : "bg-white/60 backdrop-blur-sm border border-purple-200/50 text-gray-900 placeholder-gray-400 focus:border-purple-400 shadow-sm"}`}
+            className={`w-full rounded-2xl pl-12 pr-4 py-3.5 sm:py-4 text-base focus:outline-none transition-all ${isDark ? "bg-slate-900 border border-slate-800 text-white placeholder-slate-500 focus:border-violet-500" : "bg-white/60 backdrop-blur-sm border border-purple-200/50 text-gray-900 placeholder-gray-400 focus:border-purple-400 shadow-sm"}`}
           />
         </div>
       </div>

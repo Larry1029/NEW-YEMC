@@ -1,11 +1,9 @@
 import sql from "@/app/api/utils/sql";
-import { auth } from "@/auth";
+import { requireAdmin } from "@/app/api/utils/authorization";
 export async function GET() {
   try {
-    const session = await auth();
-    if (!session || !session.user?.id) {
-      return Response.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const authorization = await requireAdmin();
+    if (authorization.response) return authorization.response;
     const users = await sql`
       SELECT 
         id, 

@@ -1,13 +1,18 @@
 import "dotenv/config";
-import { readFile } from "node:fs/promises";
+import { readdir, readFile } from "node:fs/promises";
 import { getDatabasePool } from "../src/db.server.js";
 
-const migrationUrl = new URL("../migrations/001_initial_schema.sql", import.meta.url);
-const migration = await readFile(migrationUrl, "utf8");
+const migrationsDirectory = new URL("../migrations/", import.meta.url);
+const migrations = (await readdir(migrationsDirectory))
+  .filter((file) => file.endsWith(".sql"))
+  .sort();
 const pool = getDatabasePool();
 
 try {
-  await pool.query(migration);
+  for (const migration of migrations) {
+    const contents = await readFile(new URL(migration, migrationsDirectory), "utf8");
+    await pool.query(contents);
+  }
   console.log("PostgreSQL schema migration completed.");
 } finally {
   await pool.end();

@@ -1,9 +1,9 @@
-import { auth } from "@/auth";
+import { getAuthenticatedUser } from "@/app/api/utils/authorization";
 import { sendEmail } from "@/app/api/utils/send-email";
 export async function POST(request) {
   try {
-    const session = await auth();
-    if (!session?.user) {
+    const user = await getAuthenticatedUser();
+    if (!user) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
     const { to, subject, message, applicantName } = await request.json();

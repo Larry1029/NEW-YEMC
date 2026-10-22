@@ -1,10 +1,23 @@
 import sql from "@/app/api/utils/sql";
+import {
+  getAuthenticatedUser,
+  isAdminUser,
+} from "@/app/api/utils/authorization";
+
 export async function GET(request) {
   try {
+    const user = await getAuthenticatedUser();
+    if (!user) {
+      return Response.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
     const { searchParams } = new URL(request.url);
     const search = searchParams.get("search") || "";
-    const limit = parseInt(searchParams.get("limit") || "50");
-    const offset = parseInt(searchParams.get("offset") || "0");
+    const limit = Math.min(
+      Math.max(parseInt(searchParams.get("limit") || "50", 10), 1),
+      100,
+    );
+    const offset = Math.max(parseInt(searchParams.get("offset") || "0", 10), 0);
     let applications;
     if (search) {
       applications = await sql`
@@ -52,6 +65,7 @@ export async function GET(request) {
       total,
       limit,
       offset,
+      isAdmin: isAdminUser(user),
     });
   } catch (error) {
     console.error("Error fetching applications:", error);

@@ -1,13 +1,12 @@
 import sql from "@/app/api/utils/sql";
-import { auth } from "@/auth";
+import { requireAdmin } from "@/app/api/utils/authorization";
 export async function DELETE(request, { params }) {
   try {
-    const session = await auth();
-    if (!session || !session.user?.id) {
-      return Response.json({ error: "Unauthorized" }, { status: 401 });
-    }
+    const authorization = await requireAdmin();
+    if (authorization.response) return authorization.response;
+
     const userId = params.id;
-    if (userId === session.user.id) {
+    if (String(userId) === String(authorization.user.id)) {
       return Response.json(
         { error: "You cannot delete your own account" },
         { status: 400 },

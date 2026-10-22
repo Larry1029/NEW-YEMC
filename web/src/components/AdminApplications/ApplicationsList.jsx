@@ -7,6 +7,7 @@ export function ApplicationsList({
   searchQuery,
   onEmail,
   onDelete,
+  onEdit,
   isDark,
 }) {
   if (isLoading) {
@@ -59,6 +60,7 @@ export function ApplicationsList({
           application={application}
           onEmail={onEmail}
           onDelete={onDelete}
+          onEdit={onEdit}
           isDark={isDark}
         />
       ))}

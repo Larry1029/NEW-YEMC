@@ -42,8 +42,11 @@ export default function AdminUsersPage() {
     queryKey: ["admin-users"],
     queryFn: async () => {
       const response = await fetch("/api/admin/users");
-      if (!response.ok) throw new Error("Failed to fetch users");
-      return response.json();
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to fetch users");
+      }
+      return result;
     },
     enabled: !!currentUser,
   });
@@ -181,7 +184,9 @@ export default function AdminUsersPage() {
               className={`rounded-2xl p-6 text-center ${isDark ? "bg-red-500/10 border border-red-500" : "bg-red-50 border border-red-200"}`}
             >
               <p className={isDark ? "text-red-400" : "text-red-600"}>
-                Failed to load users. Please try again.
+                {error.message === "Admin access required"
+                  ? "Only the designated admin can manage users."
+                  : `Failed to load users: ${error.message}`}
               </p>
             </div>
           ) : (

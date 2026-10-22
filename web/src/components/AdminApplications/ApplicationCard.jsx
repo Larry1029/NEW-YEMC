@@ -8,13 +8,20 @@ import {
   Briefcase,
   GraduationCap,
   BadgeCheck,
+  Pencil,
   Trash2,
   ChevronDown,
   ChevronUp,
 } from "lucide-react";
 import { formatDate, formatPhone } from "@/utils/formatters";
 import { useState } from "react";
-export function ApplicationCard({ application, onEmail, onDelete, isDark }) {
+export function ApplicationCard({
+  application,
+  onEmail,
+  onDelete,
+  onEdit,
+  isDark,
+}) {
   const [isExpanded, setIsExpanded] = useState(false);
   return (
     <div
@@ -22,26 +29,27 @@ export function ApplicationCard({ application, onEmail, onDelete, isDark }) {
     >
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full p-6 text-left"
+        aria-expanded={isExpanded}
+        className="w-full p-4 text-left sm:p-6"
       >
         <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-4 flex-1 min-w-0">
+          <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
             <div
-              className={`w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0 ${isDark ? "bg-violet-500/10" : "bg-purple-100"}`}
+              className={`w-10 h-10 sm:w-12 sm:h-12 rounded-full flex items-center justify-center flex-shrink-0 ${isDark ? "bg-violet-500/10" : "bg-purple-100"}`}
             >
               <User
-                size={24}
+                size={20}
                 className={isDark ? "text-violet-400" : "text-purple-600"}
               />
             </div>
             <div className="flex-1 min-w-0">
               <p
-                className={`font-bold text-lg mb-1 truncate ${isDark ? "text-white" : "text-gray-800"}`}
+                className={`font-bold text-base sm:text-lg mb-1 break-words ${isDark ? "text-white" : "text-gray-800"}`}
               >
                 {application.full_name}
               </p>
               <p
-                className={`text-sm truncate ${isDark ? "text-blue-400" : "text-blue-600"}`}
+                className={`text-sm break-all sm:truncate ${isDark ? "text-blue-400" : "text-blue-600"}`}
               >
                 {application.email}
               </p>
@@ -89,7 +97,7 @@ export function ApplicationCard({ application, onEmail, onDelete, isDark }) {
             )}
           </div>
         </div>
-        <div className="md:hidden flex items-center gap-4 mt-3 ml-16">
+        <div className="md:hidden flex flex-wrap items-center gap-x-4 gap-y-1 mt-3 ml-[3.25rem]">
           {application.status && (
             <div>
               <p
@@ -97,7 +105,7 @@ export function ApplicationCard({ application, onEmail, onDelete, isDark }) {
               >
                 Status:{" "}
                 <span
-                  className={`font-semibold ${isDark ? "text-slate-300" : "text-gray-700"}`}
+                  className={`font-semibold break-words ${isDark ? "text-slate-300" : "text-gray-700"}`}
                 >
                   {application.status}
                 </span>
@@ -115,9 +123,9 @@ export function ApplicationCard({ application, onEmail, onDelete, isDark }) {
       </button>
       {isExpanded && (
         <div
-          className={`px-6 pb-6 ${isDark ? "border-t border-slate-800/50" : "border-t border-purple-100"}`}
+          className={`px-4 pb-4 sm:px-6 sm:pb-6 ${isDark ? "border-t border-slate-800/50" : "border-t border-purple-100"}`}
         >
-          <div className="grid md:grid-cols-2 gap-6 pt-6">
+          <div className="grid md:grid-cols-2 gap-5 sm:gap-6 pt-5 sm:pt-6">
             <div className="space-y-4">
               <div className="flex items-start gap-3">
                 <div
@@ -128,7 +136,7 @@ export function ApplicationCard({ application, onEmail, onDelete, isDark }) {
                     className={isDark ? "text-green-400" : "text-green-600"}
                   />
                 </div>
-                <div className="flex-1">
+                <div className="flex-1 min-w-0">
                   <p
                     className={`text-xs mb-1 ${isDark ? "text-slate-500" : "text-gray-500"}`}
                   >
@@ -235,7 +243,7 @@ export function ApplicationCard({ application, onEmail, onDelete, isDark }) {
                 </p>
               </div>
               <div
-                className={`rounded-xl p-4 max-h-48 overflow-y-auto ${isDark ? "bg-slate-950 border border-slate-800" : "bg-purple-50/50 border border-purple-100"}`}
+                className={`rounded-xl p-3 sm:p-4 max-h-48 overflow-y-auto ${isDark ? "bg-slate-950 border border-slate-800" : "bg-purple-50/50 border border-purple-100"}`}
               >
                 <p
                   className={`whitespace-pre-wrap leading-relaxed ${isDark ? "text-slate-300" : "text-gray-700"}`}
@@ -247,23 +255,36 @@ export function ApplicationCard({ application, onEmail, onDelete, isDark }) {
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
+                    onEdit(application);
+                  }}
+                  aria-label="Edit application"
+                  className={`min-h-11 min-w-0 flex-1 rounded-xl px-2 py-3 sm:px-4 flex items-center justify-center gap-2 font-semibold transition-all ${isDark ? "bg-blue-600/10 hover:bg-blue-600/20 text-blue-400 border border-blue-500/30" : "bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200"}`}
+                >
+                  <Pencil size={18} className="shrink-0" />
+                  <span className="hidden sm:inline">Edit</span>
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
                     onEmail({
                       id: application.id,
                       name: application.full_name,
                       email: application.email,
                     });
                   }}
-                  className={`flex-1 rounded-xl px-4 py-3 flex items-center justify-center gap-2 font-semibold transition-all ${isDark ? "bg-violet-600 hover:bg-violet-700 text-white" : "bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white shadow-md hover:shadow-lg"}`}
+                  aria-label="Email applicant"
+                  className={`min-h-11 min-w-0 flex-1 rounded-xl px-2 py-3 sm:px-4 flex items-center justify-center gap-2 font-semibold transition-all ${isDark ? "bg-violet-600 hover:bg-violet-700 text-white" : "bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white shadow-md hover:shadow-lg"}`}
                 >
-                  <Send size={18} />
-                  Email
+                  <Send size={18} className="shrink-0" />
+                  <span className="hidden sm:inline">Email</span>
                 </button>
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
                     onDelete(application);
                   }}
-                  className={`rounded-xl px-4 py-3 flex items-center justify-center gap-2 font-semibold transition-all ${isDark ? "bg-red-600/10 hover:bg-red-600/20 text-red-400 border border-red-500/30" : "bg-red-50 hover:bg-red-100 text-red-600 border border-red-200"}`}
+                  aria-label="Delete application"
+                  className={`min-h-11 min-w-11 rounded-xl px-2 py-3 sm:px-4 flex items-center justify-center gap-2 font-semibold transition-all ${isDark ? "bg-red-600/10 hover:bg-red-600/20 text-red-400 border border-red-500/30" : "bg-red-50 hover:bg-red-100 text-red-600 border border-red-200"}`}
                   title="Delete application"
                 >
                   <Trash2 size={18} />

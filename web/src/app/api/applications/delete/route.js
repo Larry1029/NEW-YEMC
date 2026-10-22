@@ -1,6 +1,11 @@
 import sql from "@/app/api/utils/sql";
+import { requireAdmin } from "@/app/api/utils/authorization";
+
 export async function DELETE(request) {
   try {
+    const authorization = await requireAdmin();
+    if (authorization.response) return authorization.response;
+
     const { id } = await request.json();
     if (!id) {
       return Response.json(

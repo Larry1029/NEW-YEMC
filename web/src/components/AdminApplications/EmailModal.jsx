@@ -38,9 +38,9 @@ export function EmailModal({ emailModal, onClose, isDark }) {
   };
   if (!emailModal) return null;
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-3 sm:p-4">
       <div
-        className={`w-full max-w-2xl rounded-2xl p-8 relative ${isDark ? "bg-slate-900 border border-slate-800" : "bg-white border border-purple-200 shadow-2xl"}`}
+        className={`w-full max-w-2xl rounded-2xl p-5 sm:p-8 relative max-h-[calc(100dvh-1.5rem)] overflow-y-auto ${isDark ? "bg-slate-900 border border-slate-800" : "bg-white border border-purple-200 shadow-2xl"}`}
       >
         <button
           onClick={handleClose}
@@ -85,23 +85,23 @@ export function EmailModal({ emailModal, onClose, isDark }) {
               value={emailMessage}
               onChange={(e) => setEmailMessage(e.target.value)}
               placeholder={`Hi ${emailModal.name.split(" ")[0]},\n\nThank you for applying to YEMC...`}
-              rows={12}
+              rows={8}
               className={`w-full rounded-xl px-4 py-3 focus:outline-none transition-all resize-none ${isDark ? "bg-slate-950 border border-slate-800 text-white placeholder-slate-500 focus:border-violet-500" : "bg-purple-50/50 border border-purple-200 text-gray-900 placeholder-gray-400 focus:border-purple-400"}`}
             />
           </div>
         </div>
-        <div className="mt-6 flex items-center justify-end gap-3">
+        <div className="mt-6 flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-3">
           <button
             onClick={handleClose}
             disabled={isSending}
-            className={`px-6 py-3 rounded-xl font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed ${isDark ? "bg-slate-950 border border-slate-800 text-slate-300 hover:border-slate-700 hover:text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}
+            className={`min-h-11 px-6 py-3 rounded-xl font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed ${isDark ? "bg-slate-950 border border-slate-800 text-slate-300 hover:border-slate-700 hover:text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}
           >
             Cancel
           </button>
           <button
             onClick={sendEmailToApplicant}
             disabled={isSending || !emailSubject.trim() || !emailMessage.trim()}
-            className={`px-6 py-3 rounded-xl font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 ${isDark ? "bg-violet-600 hover:bg-violet-500 text-white" : "bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white shadow-md"}`}
+            className={`min-h-11 px-6 py-3 rounded-xl font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 ${isDark ? "bg-violet-600 hover:bg-violet-500 text-white" : "bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white shadow-md"}`}
           >
             {isSending ? (
               <>
