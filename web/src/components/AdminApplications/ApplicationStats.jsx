@@ -35,7 +35,7 @@ export function ApplicationStats({ stats, isDark }) {
   return (
     <section
       aria-label="Applicant statistics"
-      className="grid grid-cols-2 gap-3 sm:gap-4"
+      className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4"
     >
       {metrics.map(({ key, label, Icon, iconClass, iconBackground }) => (
         <article

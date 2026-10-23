@@ -190,7 +190,7 @@ export default function AdminApplicationsPage() {
           isAdmin={isAdmin}
         />
         <div className="max-w-7xl mx-auto px-4 py-5 sm:px-6 sm:py-8">
-          <div className="mb-6 md:hidden">
+          <div className="mb-6">
             <ApplicationStats stats={stats} isDark={isDark} />
           </div>
           {!isAdmin && showApprovalNotice && (
