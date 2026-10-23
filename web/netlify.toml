@@ -1,6 +1,6 @@
 [build]
 base = "web"
-command = "npm run build"
+command = "npm run db:migrate && npm run build"
 publish = "build/client"
 
 [build.environment]
