@@ -2,6 +2,7 @@
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import OptimizedImage from "../../components/OptimizedImage";
+import ComingSoonNotice from "../../components/ComingSoonNotice";
 import { Play, Filter, Star, X, Download, Video, FileText } from "lucide-react";
 import { useState } from "react";
 export default function LessonsPage() {
@@ -493,6 +494,7 @@ export default function LessonsPage() {
           </div>
         </div>
       )}
+      <ComingSoonNotice />
     </div>
   );
 }

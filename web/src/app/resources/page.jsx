@@ -2,6 +2,7 @@
 import Header from "../../components/Header";
 import Footer from "../../components/Footer";
 import OptimizedImage from "../../components/OptimizedImage";
+import ComingSoonNotice from "../../components/ComingSoonNotice";
 import {
   BookOpen,
   Video,
@@ -305,6 +306,7 @@ export default function ResourcesPage() {
         </section>
       </main>
       <Footer />
+      <ComingSoonNotice />
     </div>
   );
 }
