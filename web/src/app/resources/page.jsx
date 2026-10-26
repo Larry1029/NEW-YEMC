@@ -306,7 +306,7 @@ export default function ResourcesPage() {
         </section>
       </main>
       <Footer />
-      <ComingSoonNotice />
+      <ComingSoonNotice page="Resources" />
     </div>
   );
 }

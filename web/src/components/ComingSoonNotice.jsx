@@ -1,20 +1,16 @@
-export default function ComingSoonNotice() {
+export default function ComingSoonNotice({ page }) {
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center bg-slate-950/55 px-5 py-8 backdrop-blur-md">
       <div
         role="status"
         aria-live="polite"
-        className="w-full max-w-lg rounded-3xl border border-violet-400/25 bg-slate-950/90 p-8 text-center shadow-2xl shadow-violet-950/30 sm:p-12"
+        className="w-full max-w-lg rounded-xl border border-slate-700 bg-slate-950/95 p-7 text-center sm:p-9"
       >
-        <p className="mb-4 text-xs font-bold uppercase tracking-[0.25em] text-violet-300">
-          YEMC
-        </p>
-        <h2 className="mb-4 font-plus-jakarta text-3xl font-extrabold text-white sm:text-4xl">
-          Coming Soon
+        <h2 className="mb-3 font-plus-jakarta text-2xl font-bold text-white sm:text-3xl">
+          {page} are coming soon
         </h2>
         <p className="text-sm leading-relaxed text-slate-300 sm:text-base">
-          We’re putting the finishing touches on this page. Please check back
-          soon.
+          This page will be updated with this year&apos;s lessons.
         </p>
       </div>
     </div>

@@ -494,7 +494,7 @@ export default function LessonsPage() {
           </div>
         </div>
       )}
-      <ComingSoonNotice />
+      <ComingSoonNotice page="Lessons" />
     </div>
   );
 }
