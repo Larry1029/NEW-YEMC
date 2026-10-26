@@ -38,7 +38,7 @@ export default function ComingSoonNotice({ page }) {
       <div
         role="status"
         aria-live="polite"
-        className="w-full max-w-lg rounded-xl border border-slate-700 bg-slate-950/95 p-7 text-center sm:p-9"
+        className="w-full max-w-lg rounded-3xl border border-white/10 bg-slate-950/45 p-7 text-center shadow-xl backdrop-blur-xl sm:p-9"
       >
         <div className="mb-5 flex justify-center">
           <img
