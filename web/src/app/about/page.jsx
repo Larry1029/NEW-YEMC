@@ -366,7 +366,7 @@ export default function AboutPage() {
                     <h3 className="text-lg font-bold leading-snug text-white sm:text-xl lg:text-lg xl:text-xl">
                       {member.name}
                     </h3>
-                    <p className="mt-auto pt-4 text-sm leading-relaxed text-violet-400 sm:text-base lg:text-sm xl:text-base">
+                    <p className="mt-2 text-sm leading-relaxed text-violet-400 sm:text-base lg:text-sm xl:text-base">
                       {member.role}
                     </p>
                   </div>
