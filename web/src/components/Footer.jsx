@@ -14,8 +14,8 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-[#040713] px-4 pb-5 pt-14 text-white sm:px-6 lg:px-10 lg:pt-20">
-      <div className="mx-auto max-w-7xl overflow-hidden rounded-[28px] border border-white/10 bg-[#040713] shadow-[0_30px_90px_rgba(0,0,0,0.45)]">
+    <footer className="mt-0 border-t border-[#8B5CF6]/30 bg-[#080d1d] px-4 pb-8 pt-14 text-white sm:px-6 lg:px-10 lg:pb-10 lg:pt-20">
+      <div className="mx-auto max-w-7xl overflow-hidden rounded-[28px] border border-white/15 bg-[#040713] shadow-[0_30px_90px_rgba(139,92,246,0.12),0_30px_90px_rgba(0,0,0,0.55)]">
         <div className="grid items-center gap-7 bg-[#8B5CF6] px-6 py-8 sm:px-9 lg:grid-cols-[1fr_auto] lg:px-12 lg:py-10">
           <div>
             <h2 className="font-plus-jakarta text-3xl font-bold leading-tight sm:text-4xl">Stay connected with YEMC</h2>
