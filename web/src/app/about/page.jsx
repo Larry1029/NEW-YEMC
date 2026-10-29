@@ -73,7 +73,7 @@ export default function AboutPage() {
       name: "Apostle Isaac Ali Asomah",
       role: "Founder & CEO",
       image:
-        "public\IMG_7335.JPG.jpeg",
+        "./public/IMG_7335.JPG.jpeg",
     },
     {
       name: "Hon Dr. Julius Debrah",
