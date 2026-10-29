@@ -1,13 +1,24 @@
-import {
-  Facebook,
-  Twitter,
-  Instagram,
-  Linkedin,
-  Mail,
-  MapPin,
-  Phone,
-} from "lucide-react";
+import { Facebook, Instagram, Linkedin, Mail, MapPin, Phone } from "lucide-react";
+import logoSrc from "../public/yef-logo.jpg";
 import OptimizedImage from "./OptimizedImage";
+
+const socialLinks = [
+  {
+    Icon: Instagram,
+    href: "https://www.instagram.com/p/Deq2vj3lrab/?mdxt=OXp4aW85Y3ptZjFn",
+    label: "Instagram",
+  },
+  {
+    Icon: Linkedin,
+    href: "https://www.linkedin.com/feed/update/activity:7517867059071012864",
+    label: "LinkedIn",
+  },
+  {
+    Icon: Facebook,
+    href: "https://m.facebook.com/story.php?story_fbid=pfbid02GJXpUDLykaSf3GdjVkYcWLpc3GHC9vJzEhPvZw7TYBWD3sgcAQ7TVEt4kYbn9oXbl&id=61587141539332",
+    label: "Facebook",
+  },
+];
 export default function Footer() {
   return (
     <footer className="bg-slate-950 pt-12 md:pt-16 lg:pt-20 pb-6 md:pb-8 lg:pb-10 border-t border-slate-900 text-center md:text-left">
@@ -19,9 +30,10 @@ export default function Footer() {
               className="flex items-center justify-center gap-2 mb-4 md:mb-5 lg:mb-6 md:justify-start"
             >
               <OptimizedImage
-                src="https://ucarecdn.com/9442830f-b64a-4b7c-9724-5bfdf0161590/-/format/auto/"
+                loading="eager"
+                src={logoSrc}
                 alt="YEMC Logo"
-                className="w-8 h-8 md:w-9 md:h-9 lg:w-10 lg:h-10 rounded-lg md:rounded-xl"
+                className="w-8 h-8 md:w-9 md:h-9 lg:w-10 lg:h-10 rounded-lg md:rounded-xl object-contain bg-white"
               />
               <span className="text-white font-bold text-xl md:text-2xl tracking-tight">
                 YEMC
@@ -31,10 +43,13 @@ export default function Footer() {
               Raising the next generation of Christian business executives.
             </p>
             <div className="flex justify-center gap-3 md:gap-4 md:justify-start">
-              {[Facebook, Twitter, Instagram, Linkedin].map((Icon, i) => (
+              {socialLinks.map(({ Icon, href, label }) => (
                 <a
-                  key={i}
-                  href="#"
+                  key={label}
+                  href={href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label={label}
                   className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:border-violet-500 transition-all"
                 >
                   <Icon className="w-4 h-4 md:w-[18px] md:h-[18px]" />
@@ -74,7 +89,7 @@ export default function Footer() {
                 <MapPin
                   className="w-[18px] h-[18px] md:w-5 md:h-5 text-violet-500 flex-shrink-0 mt-1"
                 />
-                <span>123 Business Ave, Suite 100, City, ST 12345</span>
+                <span>Accra, Ghana</span>
               </li>
               <li className="flex items-center justify-center gap-2 md:gap-3 text-slate-400 text-sm md:text-base md:justify-start">
                 <Phone
