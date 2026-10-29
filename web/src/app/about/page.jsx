@@ -6,14 +6,14 @@ import OptimizedImage from "../../components/OptimizedImage";
 import aboutImage1 from "../../public/632A81(296) - Copy.jpg";
 import aboutImage2 from "../../public/632A81(264) - Copy.jpg";
 import aboutImage3 from "../../public/632A81(316) - Copy.jpg";
-import ceoImage from "../../public/IMG_7335.JPG.jpeg";
-import chiefOfStaffImage from "../../public/COS copy 2.jpg.jpeg";
-import jospongChairmanImage from "../../public/Dr. Agyapong.jpeg";
-import christianAsanteImage from "../../public/CB_1bi.png";
-import davidBoisonImage from "../../public/Doc.jpeg";
-import oliverAkubiaImage from "../../public/Mr. Millenium.jpeg";
-import josephBoatengImage from "../../public/Mr. appiah.jpeg";
-import jacobYeboahImage from "../../public/person-3.jpg";
+import ceoImage from "../../public/team/ceo.webp";
+import chiefOfStaffImage from "../../public/team/julius-debrah.webp";
+import jospongChairmanImage from "../../public/team/joseph-agyepong.webp";
+import christianAsanteImage from "../../public/team/christian-asante.webp";
+import davidBoisonImage from "../../public/team/david-boison.webp";
+import oliverAkubiaImage from "../../public/team/oliver-akubia.webp";
+import josephBoatengImage from "../../public/team/joseph-boateng.webp";
+import jacobYeboahImage from "../../public/team/jacob-yeboah.webp";
 import {
   ArrowRight,
   Award,
