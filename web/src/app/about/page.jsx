@@ -318,7 +318,7 @@ export default function AboutPage() {
                   src={jacobYeboahImage}
                   alt="Mr. Jacob Yeboah"
                   loading="eager"
-                  className="h-full w-full object-cover object-center"
+                  className="h-full w-full object-contain object-center"
                 />
               </div>
             </div>
