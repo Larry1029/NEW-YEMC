@@ -313,7 +313,7 @@ export default function AboutPage() {
             </div>
             <div className="relative mx-auto h-[280px] w-full max-w-2xl sm:h-[360px] lg:h-[540px]">
               <div className="absolute inset-0 rounded-[40px] bg-gradient-to-br from-violet-500/10 to-blue-500/10 blur-3xl" />
-              <div className="relative overflow-hidden rounded-[40px] border border-slate-800 shadow-xl">
+              <div className="relative h-full overflow-hidden rounded-[40px] border border-slate-800 shadow-xl">
                 <OptimizedImage
                   src={jacobYeboahImage}
                   alt="Mr. Jacob Yeboah"
