@@ -73,47 +73,47 @@ export default function AboutPage() {
       name: "Apostle Isaac Ali Asomah",
       role: "Founder & CEO",
       image:
-        "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=800&q=80",
+        "public\IMG_7335.JPG.jpeg",
     },
     {
-      name: "Rev. Nora Ali",
-      role: "Spiritual Director",
+      name: "Hon Dr. Julius Debrah",
+      role: "Chief of Staff, Office of the President",
       image:
         "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=800&q=80",
     },
     {
-      name: "Mr. C.B Asante",
-      role: "Chief Strategy Officer",
+      name: "Dr. Joseph Siaw Agyepong",
+      role: "Executive Chairman, Jospong Group of Companies",
       image:
         "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=800&q=80",
     },
     {
-      name: "Esther Mensah",
-      role: "Program Director",
+      name: "Mr. Christian B. Asante",
+      role: "CEO. Eagles Properties Ghana Limited",
       image:
         "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=800&q=80",
     },
     {
-      name: "Daniel Owusu",
-      role: "Operations Director",
+      name: "Dr. David King Boison (Phd)",
+      role: "CEO, Knowledge Web Center",
       image:
         "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=800&q=80",
     },
     {
-      name: "Grace Boateng",
-      role: "Community Director",
+      name: "Mr. Oliver Akubia",
+      role: "CEO. Millenium Insurance",
       image:
         "https://images.unsplash.com/photo-1531124136-2c7f6f7d8c09?auto=format&fit=crop&w=800&q=80",
     },
     {
-      name: "Kwame Mensah",
-      role: "Partnerships Lead",
+      name: "Mr. Joseph Appiah Boateng",
+      role: "CEO, Bait Consulting Limited",
       image:
         "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=800&q=80",
     },
     {
-      name: "Adwoa Asante",
-      role: "Finance Director",
+      name: "Mr. Jacob Yeboah",
+      role: "Partner, Bait Consulting Limited",
       image:
         "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=800&q=80",
     },

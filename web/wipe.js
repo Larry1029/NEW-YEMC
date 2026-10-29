@@ -14,7 +14,8 @@ import('@neondatabase/serverless').then(async ({ Pool }) => {
     await pool.query('DELETE FROM auth_users');
     
     console.log('Successfully cleared users and accounts.');
-  } catch (err) {
+  } catch (err) {3
+    -
     console.error('Error clearing DB:', err);
   } finally {
     await pool.end();
