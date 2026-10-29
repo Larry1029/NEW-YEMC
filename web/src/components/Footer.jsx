@@ -21,10 +21,11 @@ const socialLinks = [
 ];
 export default function Footer() {
   return (
-    <footer className="bg-slate-950 pt-12 md:pt-16 lg:pt-20 pb-6 md:pb-8 lg:pb-10 border-t border-slate-900 text-center md:text-left">
-      <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-10">
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10 lg:gap-12 mb-10 md:mb-12 lg:mb-16">
-          <div className="col-span-1 lg:col-span-1">
+    <footer className="relative isolate overflow-hidden border-t-2 border-violet-500/60 bg-[radial-gradient(circle_at_top_left,rgba(124,58,237,0.16),transparent_32%),linear-gradient(180deg,#090817_0%,#030712_100%)] pb-6 pt-14 text-center shadow-[0_-18px_60px_rgba(15,23,42,0.55)] md:pb-8 md:pt-16 md:text-left lg:pb-10 lg:pt-20">
+      <div className="absolute left-0 top-0 h-px w-full bg-gradient-to-r from-transparent via-violet-400 to-transparent opacity-80" />
+      <div className="mx-auto max-w-7xl px-4 md:px-6 lg:px-10">
+        <div className="mb-10 grid gap-8 md:mb-12 md:grid-cols-2 md:gap-6 lg:mb-16 lg:grid-cols-4 lg:gap-5">
+          <div className="col-span-1 rounded-2xl border border-white/[0.06] bg-white/[0.025] p-5 lg:col-span-1 lg:p-6">
             <a
               href="/"
               className="flex items-center justify-center gap-2 mb-4 md:mb-5 lg:mb-6 md:justify-start"
@@ -57,7 +58,7 @@ export default function Footer() {
               ))}
             </div>
           </div>
-          <div>
+          <div className="rounded-2xl border border-white/[0.06] bg-white/[0.025] p-5 lg:p-6">
             <h4 className="text-white font-bold mb-4 md:mb-5 lg:mb-6 text-base md:text-lg">
               Quick Links
             </h4>
@@ -80,7 +81,7 @@ export default function Footer() {
               ))}
             </ul>
           </div>
-          <div>
+          <div className="rounded-2xl border border-white/[0.06] bg-white/[0.025] p-5 lg:p-6">
             <h4 className="text-white font-bold mb-4 md:mb-5 lg:mb-6 text-base md:text-lg">
               Contact Us
             </h4>
@@ -105,7 +106,7 @@ export default function Footer() {
               </li>
             </ul>
           </div>
-          <div>
+          <div className="rounded-2xl border border-white/[0.06] bg-white/[0.025] p-5 lg:p-6">
             <h4 className="text-white font-bold mb-4 md:mb-5 lg:mb-6 text-base md:text-lg">
               Newsletter
             </h4>
