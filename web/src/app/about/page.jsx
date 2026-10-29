@@ -315,9 +315,10 @@ export default function AboutPage() {
               <div className="absolute inset-0 rounded-[40px] bg-gradient-to-br from-violet-500/10 to-blue-500/10 blur-3xl" />
               <div className="relative overflow-hidden rounded-[40px] border border-slate-800 shadow-xl">
                 <OptimizedImage
-                  src="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?auto=format&fit=crop&w=1200&q=80"
-                  alt="IT solutions"
-                  className="h-full w-full object-cover"
+                  src={jacobYeboahImage}
+                  alt="Mr. Jacob Yeboah"
+                  loading="eager"
+                  className="h-full w-full object-cover object-center"
                 />
               </div>
             </div>
