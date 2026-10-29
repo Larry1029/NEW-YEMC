@@ -6,6 +6,14 @@ import OptimizedImage from "../../components/OptimizedImage";
 import aboutImage1 from "../../public/632A81(296) - Copy.jpg";
 import aboutImage2 from "../../public/632A81(264) - Copy.jpg";
 import aboutImage3 from "../../public/632A81(316) - Copy.jpg";
+import ceoImage from "../../public/IMG_7335.JPG.jpeg";
+import chiefOfStaffImage from "../../public/COS copy 2.jpg.jpeg";
+import jospongChairmanImage from "../../public/Dr. Agyapong.jpeg";
+import christianAsanteImage from "../../public/CB_1bi.png";
+import davidBoisonImage from "../../public/Doc.jpeg";
+import oliverAkubiaImage from "../../public/Mr. Millenium.jpeg";
+import josephBoatengImage from "../../public/Mr. appiah.jpeg";
+import jacobYeboahImage from "../../public/person-3.jpg";
 import {
   ArrowRight,
   Award,
@@ -13,7 +21,6 @@ import {
   CheckCircle2,
   Sparkles,
   TrendingUp,
-  UserRound,
   Users,
 } from "lucide-react";
 export default function AboutPage() {
@@ -72,50 +79,42 @@ export default function AboutPage() {
     {
       name: "Apostle Isaac Ali Asomah",
       role: "Founder & CEO",
-      image:
-        "src/public/IMG_7335.JPG.jpeg",
+      image: ceoImage,
     },
     {
       name: "Hon Dr. Julius Debrah",
       role: "Chief of Staff, Office of the President",
-      image:
-        "src/public/COS copy 2.jpg.jpeg",
+      image: chiefOfStaffImage,
     },
     {
       name: "Dr. Joseph Siaw Agyepong",
       role: "Executive Chairman, Jospong Group of Companies",
-      image:
-        "src/public/Dr. Agyapong.jpeg",
+      image: jospongChairmanImage,
     },
     {
       name: "Mr. Christian B. Asante",
       role: "CEO. Eagles Properties Ghana Limited",
-      image:
-        "src\public\CB_1bi.png",
+      image: christianAsanteImage,
     },
     {
       name: "Dr. David King Boison (Phd)",
       role: "CEO, Knowledge Web Center",
-      image:
-        "src\public\Doc.jpeg",
+      image: davidBoisonImage,
     },
     {
       name: "Mr. Oliver Akubia",
       role: "CEO. Millenium Insurance",
-      image:
-        "src\public\Mr. Millenium.jpeg",
+      image: oliverAkubiaImage,
     },
     {
       name: "Mr. Joseph Appiah Boateng",
       role: "CEO, Bait Consulting Limited",
-      image:
-        "src\public\Mr. appiah.jpeg",
+      image: josephBoatengImage,
     },
     {
       name: "Mr. Jacob Yeboah",
       role: "Partner, Bait Consulting Limited",
-      image:
-        "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=800&q=80",
+      image: jacobYeboahImage,
     },
   ];
 
@@ -351,17 +350,26 @@ export default function AboutPage() {
                 Meet the leaders guiding YEMC forward
               </h2>
             </div>
-            <div className="grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-6 lg:grid-cols-4">
               {team.map((member) => (
-                <div key={member.name} className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 shadow-xl">
-                  <div className="flex h-56 items-center justify-center overflow-hidden bg-slate-800 sm:h-64 lg:h-80">
-                    <UserRound aria-hidden="true" className="h-20 w-20 text-slate-600" strokeWidth={1.25} />
+                <article key={member.name} className="flex h-full flex-col overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 shadow-xl">
+                  <div className="aspect-[4/5] w-full overflow-hidden bg-slate-800">
+                    <OptimizedImage
+                      src={member.image}
+                      alt={member.name}
+                      loading="lazy"
+                      className="h-full w-full object-cover object-top transition-transform duration-500 hover:scale-105"
+                    />
                   </div>
-                  <div className="p-3 sm:p-5 lg:p-6">
-                    <h3 className="text-base font-semibold leading-snug text-white sm:text-lg lg:text-xl">{member.name}</h3>
-                    <p className="mt-2 text-sm text-violet-400 sm:text-base">{member.role}</p>
+                  <div className="flex min-h-[150px] flex-1 flex-col p-5 sm:min-h-[160px] sm:p-5 lg:min-h-[176px] lg:p-6">
+                    <h3 className="text-lg font-bold leading-snug text-white sm:text-xl lg:text-lg xl:text-xl">
+                      {member.name}
+                    </h3>
+                    <p className="mt-auto pt-4 text-sm leading-relaxed text-violet-400 sm:text-base lg:text-sm xl:text-base">
+                      {member.role}
+                    </p>
                   </div>
-                </div>
+                </article>
               ))}
             </div>
           </div>
