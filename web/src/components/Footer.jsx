@@ -21,9 +21,9 @@ const socialLinks = [
 ];
 export default function Footer() {
   return (
-    <footer className="bg-slate-950 pt-12 md:pt-16 lg:pt-20 pb-6 md:pb-8 lg:pb-10 border-t border-slate-900 text-center md:text-left">
+    <footer className="border-t border-white/10 bg-[#040713] pt-12 pb-6 text-center md:pt-16 md:pb-8 md:text-left lg:pt-20 lg:pb-10">
       <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-10">
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10 lg:gap-12 mb-10 md:mb-12 lg:mb-16">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-x-10 gap-y-10 mb-10 md:mb-12 lg:mb-16 lg:gap-x-14">
           <div className="col-span-1 lg:col-span-1">
             <a
               href="/"
@@ -50,7 +50,7 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={label}
-                  className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center text-slate-400 hover:text-white hover:border-violet-500 transition-all"
+                  className="w-9 h-9 md:w-10 md:h-10 flex items-center justify-center text-slate-400 hover:text-violet-400 transition-colors"
                 >
                   <Icon className="w-4 h-4 md:w-[18px] md:h-[18px]" />
                 </a>
@@ -117,7 +117,7 @@ export default function Footer() {
               <input
                 type="email"
                 placeholder="Your email"
-                className="w-full bg-slate-900 border border-slate-800 rounded-lg md:rounded-xl py-2.5 md:py-3 px-3 md:px-4 text-white text-sm md:text-base focus:outline-none focus:border-violet-500 transition-colors"
+                className="w-full border-b border-slate-700 bg-transparent py-2.5 pr-20 md:py-3 md:pr-24 text-white text-sm md:text-base focus:outline-none focus:border-violet-400 transition-colors"
               />
               <button className="absolute right-1 top-1 bottom-1 bg-violet-600 hover:bg-violet-500 text-white px-3 md:px-4 rounded-lg transition-colors font-bold text-xs md:text-sm">
                 Join
