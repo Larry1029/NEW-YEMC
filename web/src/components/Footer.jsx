@@ -127,7 +127,7 @@ export default function Footer() {
         </div>
         <div className="pt-6 md:pt-7 lg:pt-8 border-t border-slate-900 flex flex-col md:flex-row justify-between items-center gap-3 md:gap-4">
           <p className="text-slate-500 text-xs md:text-sm">
-            © 2025 Young Executive Master Class. All rights reserved.
+            © {new Date().getFullYear()} Young Executive Master Class. All rights reserved.
           </p>
           <p className="text-slate-500 text-xs md:text-sm flex items-center gap-1">
             Made for the next generation of leaders.
