@@ -22,7 +22,8 @@ export default function RegistrationCountdown() {
       const deadline = getRegistrationDeadline();
       const remainingTime = Math.max(0, deadline - Date.now());
       setRemaining({
-        hours: Math.floor(remainingTime / 3600000),
+        days: Math.floor(remainingTime / 86400000),
+        hours: Math.floor((remainingTime % 86400000) / 3600000),
         minutes: Math.floor((remainingTime % 3600000) / 60000),
         seconds: Math.floor((remainingTime % 60000) / 1000),
       });
@@ -35,31 +36,26 @@ export default function RegistrationCountdown() {
 
   if (!remaining) return null;
 
-  const closed = remaining.hours === 0 && remaining.minutes === 0 && remaining.seconds === 0;
+  const closed =
+    remaining.days === 0 &&
+    remaining.hours === 0 &&
+    remaining.minutes === 0 &&
+    remaining.seconds === 0;
   if (closed) return null;
 
   return (
     <div className="sticky top-0 z-[100] bg-red-600 text-white shadow-md">
-      <div className="mx-auto flex min-h-10 max-w-5xl items-center justify-center gap-4 px-3 py-1.5 md:gap-8">
-        <p className="text-center text-[11px] font-bold uppercase tracking-wide md:text-xs">
+      <div className="mx-auto flex min-h-8 max-w-6xl items-center justify-center gap-3 px-3 py-1 text-center md:gap-8">
+        <p className="hidden text-xs font-bold md:block">
           In-person registration closes at 12:00 PM Ghana time
         </p>
-        <div className="flex items-center gap-2" aria-label="Countdown to in-person registration closing">
-          <div className="min-w-[44px] text-center md:min-w-[52px]">
-            <strong className="block text-lg font-extrabold leading-none tabular-nums md:text-xl">TODAY</strong>
-          </div>
-          {[
-            ["Hours", remaining.hours],
-            ["Minutes", remaining.minutes],
-            ["Seconds", remaining.seconds],
-          ].map(([label, value]) => (
-            <div key={label} className="min-w-[38px] text-center md:min-w-[44px]">
-              <strong className="block text-lg font-extrabold leading-none tabular-nums md:text-xl">
-                {String(value).padStart(2, "0")}
-              </strong>
-              <span className="text-[8px] uppercase tracking-wider text-red-100 md:text-[9px]">{label}</span>
-            </div>
-          ))}
+        <div className="flex items-center whitespace-nowrap text-xs font-bold md:text-sm" aria-label="Countdown to in-person registration closing">
+          <span className="mr-1 md:mr-2">Ends in:</span>
+          <span className="tabular-nums">{String(remaining.days).padStart(1, "0")}D</span>
+          <span className="mx-1 text-red-100">:</span>
+          <span className="tabular-nums">{String(remaining.hours).padStart(1, "0")}H</span>
+          <span className="mx-1 text-red-100">:</span>
+          <span className="tabular-nums">{String(remaining.minutes).padStart(2, "0")}M</span>
         </div>
       </div>
     </div>
