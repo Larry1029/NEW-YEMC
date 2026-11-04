@@ -391,6 +391,9 @@ app.post('/api/join-application', async (c) => {
     return c.json({ success: true }, 201);
   } catch (error: any) {
     console.error('Failed to submit YEMC conference registration:', error);
+    if (error?.message === 'DATABASE_URL is not configured') {
+      return c.json({ error: 'Database configuration is missing. Please configure DATABASE_URL on the server.' }, 503);
+    }
     return c.json({ error: 'Failed to submit application' }, 500);
   }
 });
