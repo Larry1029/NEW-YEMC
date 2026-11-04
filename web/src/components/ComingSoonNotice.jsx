@@ -10,6 +10,7 @@ export default function ComingSoonNotice({
   actionHref = "/",
   blurBackground = true,
   overlay = true,
+  centeredCheck = false,
 }) {
   const [isMounted, setIsMounted] = useState(false);
 
@@ -53,11 +54,20 @@ export default function ComingSoonNotice({
       className="w-full max-w-lg rounded-3xl border border-white/10 bg-slate-950/45 p-7 text-center shadow-xl backdrop-blur-xl sm:p-9"
     >
       <div className="mb-5 flex justify-center">
-        <img
-          src={logoSrc}
-          alt="YEF logo"
-          className="h-12 w-12 rounded-xl bg-white object-contain"
-        />
+        {centeredCheck ? (
+          <div
+            aria-hidden="true"
+            className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-emerald-400 bg-emerald-400/10 text-3xl font-bold text-emerald-400"
+          >
+            ✓
+          </div>
+        ) : (
+          <img
+            src={logoSrc}
+            alt="YEF logo"
+            className="h-12 w-12 rounded-xl bg-white object-contain"
+          />
+        )}
       </div>
       <h2 className="mb-3 font-plus-jakarta text-2xl font-bold text-white sm:text-3xl">
         {title || `${page} are coming soon`}

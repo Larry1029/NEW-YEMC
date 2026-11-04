@@ -215,6 +215,7 @@ export default function JoinPage() {
                     actionHref="/virtual-registration"
                     blurBackground={false}
                     overlay={false}
+                    centeredCheck
                   />
                 ) : null
               )}
