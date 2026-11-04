@@ -3,6 +3,7 @@ import { ArrowLeft, Send } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import OptimizedImage from "../../components/OptimizedImage";
+import ComingSoonNotice from "../../components/ComingSoonNotice";
 import { getRegistrationDeadline } from "../../components/RegistrationCountdown";
 import conferenceImage from "../../public/632A81(264) - Copy.jpg";
 export default function JoinPage() {
@@ -207,20 +208,12 @@ export default function JoinPage() {
             <div className="overflow-hidden bg-slate-900 border border-slate-800 rounded-3xl md:rounded-[40px] p-8 md:p-12">
               {!isVirtualExperience && (
                 inPersonRegistrationClosed ? (
-                  <section role="alert" className="rounded-2xl border border-violet-500/40 bg-violet-500/10 px-5 py-8 text-center md:px-8">
-                    <p className="text-xl font-bold text-white md:text-2xl">
-                      Sorry, our in-person registration is over.
-                    </p>
-                    <p className="mt-3 text-slate-300">
-                      You can still join the conference as a virtual viewer.
-                    </p>
-                    <a
-                      href="/virtual-registration"
-                      className="mt-6 inline-flex items-center justify-center rounded-xl bg-violet-600 px-6 py-3 font-bold text-white transition-colors hover:bg-violet-500"
-                    >
-                      Register for the virtual experience
-                    </a>
-                  </section>
+                  <ComingSoonNotice
+                    title="Sorry, in-person registration is over"
+                    message="You can still join the conference as a virtual viewer."
+                    actionLabel="Register for the virtual experience"
+                    actionHref="/virtual-registration"
+                  />
                 ) : null
               )}
               {!(!isVirtualExperience && inPersonRegistrationClosed) && (

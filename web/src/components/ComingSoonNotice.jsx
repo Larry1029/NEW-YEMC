@@ -2,7 +2,13 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import logoSrc from "../public/yef-logo.jpg";
 
-export default function ComingSoonNotice({ page }) {
+export default function ComingSoonNotice({
+  page,
+  title,
+  message,
+  actionLabel = "Back to Home",
+  actionHref = "/",
+}) {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -48,16 +54,16 @@ export default function ComingSoonNotice({ page }) {
           />
         </div>
         <h2 className="mb-3 font-plus-jakarta text-2xl font-bold text-white sm:text-3xl">
-          {page} are coming soon
+          {title || `${page} are coming soon`}
         </h2>
         <p className="text-sm leading-relaxed text-slate-300 sm:text-base">
-          This page will be updated with this year&apos;s lessons.
+          {message || "This page will be updated with this year's lessons."}
         </p>
         <a
-          href="/"
+          href={actionHref}
           className="mt-6 inline-flex min-h-11 items-center justify-center rounded-lg border border-slate-600 px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:border-slate-400 hover:bg-white/5"
         >
-          Back to Home
+          {actionLabel}
         </a>
       </div>
     </div>,
