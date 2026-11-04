@@ -44,7 +44,7 @@ export default function RegistrationCountdown() {
   if (closed) return null;
 
   return (
-    <div className="sticky top-0 z-[100] bg-red-600 text-white shadow-md">
+    <div data-registration-countdown className="sticky top-0 z-[100] bg-red-600 text-white shadow-md">
       <div className="mx-auto flex min-h-8 max-w-6xl items-center justify-center gap-3 px-3 py-1 text-center md:gap-8">
         <p className="hidden text-xs font-bold md:block">
           In-person registration closes at 12:00 PM Ghana time
@@ -56,6 +56,8 @@ export default function RegistrationCountdown() {
           <span className="tabular-nums">{String(remaining.hours).padStart(1, "0")}H</span>
           <span className="mx-1 text-red-100">:</span>
           <span className="tabular-nums">{String(remaining.minutes).padStart(2, "0")}M</span>
+          <span className="mx-1 text-red-100">:</span>
+          <span className="tabular-nums">{String(remaining.seconds).padStart(2, "0")}S</span>
         </div>
       </div>
     </div>
