@@ -11,6 +11,7 @@ export default function ComingSoonNotice({
   blurBackground = true,
   overlay = true,
   centeredCheck = false,
+  allowBackgroundInteraction = false,
 }) {
   const [isMounted, setIsMounted] = useState(false);
 
@@ -51,7 +52,9 @@ export default function ComingSoonNotice({
     <div
       role="status"
       aria-live="polite"
-      className="w-full max-w-lg rounded-3xl border border-white/10 bg-slate-950/45 p-7 text-center shadow-xl backdrop-blur-xl sm:p-9"
+    className={`w-full max-w-lg rounded-3xl border border-white/10 bg-slate-950/45 p-7 text-center shadow-xl backdrop-blur-xl sm:p-9 ${
+      allowBackgroundInteraction ? "pointer-events-auto" : ""
+    }`}
     >
       <div className="mb-5 flex justify-center">
         {centeredCheck ? (
@@ -88,9 +91,9 @@ export default function ComingSoonNotice({
 
   return createPortal(
     <div
-      className={`fixed inset-0 z-[100] flex h-[100dvh] w-screen items-center justify-center overflow-y-auto bg-slate-950/55 px-5 py-8 ${
+      className={`fixed inset-0 z-[100] flex h-[100dvh] w-screen items-center justify-center overflow-y-auto px-5 py-8 ${
         blurBackground ? "backdrop-blur-md" : ""
-      }`}
+      } ${allowBackgroundInteraction ? "pointer-events-none" : ""}`}
     >
       {notice}
     </div>,

@@ -205,21 +205,17 @@ export default function JoinPage() {
                 </span>
               </h1>
             </div>
-            <div className="overflow-hidden bg-slate-900 border border-slate-800 rounded-3xl md:rounded-[40px] p-8 md:p-12">
-              {!isVirtualExperience && (
-                inPersonRegistrationClosed ? (
-                  <ComingSoonNotice
-                    title="Sorry, in-person registration is over"
-                    message="You can still join the conference as a virtual viewer."
-                    actionLabel="Register for the virtual experience"
-                    actionHref="/virtual-registration"
-                    blurBackground={false}
-                    overlay={false}
-                    centeredCheck
-                  />
-                ) : null
-              )}
-              {!(!isVirtualExperience && inPersonRegistrationClosed) && (
+            {!isVirtualExperience && inPersonRegistrationClosed ? (
+              <ComingSoonNotice
+                title="Sorry, in-person registration is over"
+                message="You can still join the conference as a virtual viewer."
+                actionLabel="Register for the virtual experience"
+                actionHref="/virtual-registration"
+                blurBackground={false}
+                allowBackgroundInteraction
+              />
+            ) : (
+              <div className="overflow-hidden bg-slate-900 border border-slate-800 rounded-3xl md:rounded-[40px] p-8 md:p-12">
               <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="-mx-8 -mt-8 md:-mx-12 md:-mt-12 overflow-hidden border-b border-slate-800">
                     <div className="relative isolate h-52 md:h-64">
@@ -538,8 +534,8 @@ export default function JoinPage() {
                     )}
                   </button>
               </form>
-              )}
-            </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
