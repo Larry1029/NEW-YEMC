@@ -53,7 +53,9 @@ export default function ComingSoonNotice({
       role="status"
       aria-live="polite"
     className={`w-full max-w-lg rounded-3xl border border-white/10 bg-slate-950/45 p-7 text-center shadow-xl backdrop-blur-xl sm:p-9 ${
-      allowBackgroundInteraction ? "pointer-events-auto" : ""
+      allowBackgroundInteraction
+        ? "pointer-events-auto translate-y-16 sm:translate-y-20"
+        : ""
     }`}
     >
       <div className="mb-5 flex justify-center">
