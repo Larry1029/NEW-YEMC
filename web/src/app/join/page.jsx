@@ -213,6 +213,7 @@ export default function JoinPage() {
                     message="You can still join the conference as a virtual viewer."
                     actionLabel="Register for the virtual experience"
                     actionHref="/virtual-registration"
+                    blurBackground={false}
                   />
                 ) : null
               )}

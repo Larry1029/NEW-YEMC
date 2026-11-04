@@ -8,6 +8,7 @@ export default function ComingSoonNotice({
   message,
   actionLabel = "Back to Home",
   actionHref = "/",
+  blurBackground = true,
 }) {
   const [isMounted, setIsMounted] = useState(false);
 
@@ -40,7 +41,11 @@ export default function ComingSoonNotice({
   if (!isMounted) return null;
 
   return createPortal(
-    <div className="fixed inset-0 z-[100] flex h-[100dvh] w-screen items-center justify-center overflow-y-auto bg-slate-950/55 px-5 py-8 backdrop-blur-md">
+    <div
+      className={`fixed inset-0 z-[100] flex h-[100dvh] w-screen items-center justify-center overflow-y-auto bg-slate-950/55 px-5 py-8 ${
+        blurBackground ? "backdrop-blur-md" : ""
+      }`}
+    >
       <div
         role="status"
         aria-live="polite"
