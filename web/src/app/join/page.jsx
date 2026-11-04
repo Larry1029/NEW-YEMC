@@ -1,9 +1,32 @@
 "use client";
 import { ArrowLeft, Send } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import OptimizedImage from "../../components/OptimizedImage";
 import conferenceImage from "../../public/632A81(264) - Copy.jpg";
 export default function JoinPage() {
+  const location = useLocation();
+  const isVirtualExperience = location.pathname === "/virtual-registration";
+  const registrationDeadline = Date.UTC(2026, 10, 7, 12, 0, 0);
+  const [now, setNow] = useState(null);
+  const [countdown, setCountdown] = useState(null);
+  useEffect(() => {
+    const updateCountdown = () => {
+      const currentTime = Date.now();
+      const remaining = Math.max(0, registrationDeadline - currentTime);
+      setNow(currentTime);
+      setCountdown({
+        days: Math.floor(remaining / 86400000),
+        hours: Math.floor((remaining % 86400000) / 3600000),
+        minutes: Math.floor((remaining % 3600000) / 60000),
+        seconds: Math.floor((remaining % 60000) / 1000),
+      });
+    };
+    updateCountdown();
+    const timer = window.setInterval(updateCountdown, 1000);
+    return () => window.clearInterval(timer);
+  }, []);
+  const inPersonRegistrationClosed = now !== null && now >= registrationDeadline;
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -88,6 +111,7 @@ export default function JoinPage() {
           ...formData,
           email: formData.email.trim(),
           consentGiven: consentChecked,
+          registrationType: isVirtualExperience ? "virtual" : "in-person",
         }),
       });
       const data = await response.json();
@@ -123,10 +147,16 @@ export default function JoinPage() {
                 <polyline points="20 6 9 17 4 12" />
               </svg>
             </div>
-            <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-violet-300">YEMC 2026 Registration</p>
-            <h1 className="text-2xl font-bold text-white md:text-3xl">Your registration is confirmed</h1>
+            <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-violet-300">
+              YEMC 2026 {isVirtualExperience ? "Virtual " : ""}Registration
+            </p>
+            <h1 className="text-2xl font-bold text-white md:text-3xl">
+              {isVirtualExperience ? "Your virtual registration is confirmed" : "Your registration is confirmed"}
+            </h1>
             <p className="mt-4 text-base leading-relaxed text-slate-300">
-              We sent your conference pass to your email address. Keep it handy for check-in.
+              {isVirtualExperience
+                ? "We sent your virtual registration details to your email address."
+                : "We sent your conference pass to your email address. Keep it handy for check-in."}
             </p>
           </section>
         </div>
@@ -156,13 +186,55 @@ export default function JoinPage() {
           <div className="max-w-3xl mx-auto">
             <div className="text-center mb-12">
               <h1 className="text-4xl md:text-6xl font-extrabold text-white mb-4 font-plus-jakarta leading-tight">
-                Register for{" "}
+                {isVirtualExperience ? "Register for the" : "Register for"}{" "}
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-blue-400">
-                  YEMC 2026
+                  YEMC 2026{isVirtualExperience ? " Virtual Experience" : ""}
                 </span>
               </h1>
             </div>
             <div className="overflow-hidden bg-slate-900 border border-slate-800 rounded-3xl md:rounded-[40px] p-8 md:p-12">
+              {!isVirtualExperience && (
+                inPersonRegistrationClosed ? (
+                  <section role="alert" className="rounded-2xl border border-violet-500/40 bg-violet-500/10 px-5 py-8 text-center md:px-8">
+                    <p className="text-xl font-bold text-white md:text-2xl">
+                      Sorry, our in-person registration is over.
+                    </p>
+                    <p className="mt-3 text-slate-300">
+                      You can still join the conference as a virtual viewer.
+                    </p>
+                    <a
+                      href="/virtual-registration"
+                      className="mt-6 inline-flex items-center justify-center rounded-xl bg-violet-600 px-6 py-3 font-bold text-white transition-colors hover:bg-violet-500"
+                    >
+                      Register for the virtual experience
+                    </a>
+                  </section>
+                ) : (
+                  countdown && (
+                    <section aria-label="Countdown to in-person registration closing" className="mb-8 rounded-2xl border border-violet-500/30 bg-violet-500/10 px-4 py-5 text-center">
+                      <p className="mb-4 text-xs font-bold uppercase tracking-[0.18em] text-violet-300">
+                        In-person registration closes at 12:00 PM Ghana time
+                      </p>
+                      <div className="grid grid-cols-4 gap-2">
+                        {[
+                          ["Days", countdown.days],
+                          ["Hours", countdown.hours],
+                          ["Minutes", countdown.minutes],
+                          ["Seconds", countdown.seconds],
+                        ].map(([label, value]) => (
+                          <div key={label} className="rounded-xl bg-slate-950 px-2 py-3">
+                            <strong className="block text-2xl font-extrabold text-white md:text-3xl">
+                              {String(value).padStart(2, "0")}
+                            </strong>
+                            <span className="text-[10px] uppercase tracking-wider text-slate-400 md:text-xs">{label}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </section>
+                  )
+                )
+              )}
+              {!(!isVirtualExperience && inPersonRegistrationClosed) && (
               <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="-mx-8 -mt-8 md:-mx-12 md:-mt-12 overflow-hidden border-b border-slate-800">
                     <div className="relative isolate h-52 md:h-64">
@@ -437,6 +509,7 @@ export default function JoinPage() {
                     )}
                   </button>
               </form>
+              )}
             </div>
           </div>
         </div>

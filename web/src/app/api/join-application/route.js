@@ -21,7 +21,16 @@ export async function POST(request) {
       otherStatus,
       institution,
       message,
+      registrationType,
     } = body;
+    const isVirtualRegistration = registrationType === "virtual";
+    const registrationDeadline = Date.UTC(2026, 10, 7, 12, 0, 0);
+    if (!isVirtualRegistration && Date.now() >= registrationDeadline) {
+      return Response.json(
+        { error: "In-person registration closed. Please register for the virtual experience." },
+        { status: 410 },
+      );
+    }
     const customStatus = typeof otherStatus === "string" ? otherStatus.trim() : "";
     const recordedStatus = status === "Other" ? `Other: ${customStatus}` : status;
     if (
@@ -71,9 +80,10 @@ export async function POST(request) {
     try {
       await sendEmail({
         to: "theyoungexecutivemasterclass@gmail.com",
-        subject: "New YEMC Application",
+        subject: isVirtualRegistration ? "New YEMC Virtual Registration" : "New YEMC Application",
         html: `
-          <h2>New Application Received</h2>
+          <h2>${isVirtualRegistration ? "New Virtual Registration Received" : "New Application Received"}</h2>
+          <p><strong>Registration type:</strong> ${isVirtualRegistration ? "Virtual" : "In-person"}</p>
           <p><strong>Name:</strong> ${escapeHtml(fullName.trim())}</p>
           <p><strong>Email:</strong> ${escapeHtml(cleanEmail)}</p>
           <p><strong>Phone:</strong> ${cleanPhone}</p>
@@ -83,7 +93,8 @@ export async function POST(request) {
           <p>${escapeHtml(message.trim()).replace(/\r?\n/g, "<br>")}</p>
         `,
         text: `
-          New Application Received
+          ${isVirtualRegistration ? "New Virtual Registration Received" : "New Application Received"}
+          Registration type: ${isVirtualRegistration ? "Virtual" : "In-person"}
           Name: ${fullName.trim()}
           Email: ${cleanEmail}
           Phone: ${cleanPhone}
