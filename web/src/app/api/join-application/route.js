@@ -78,26 +78,20 @@ export async function POST(request) {
     }
     const customStatus = typeof otherStatus === "string" ? otherStatus.trim() : "";
     const recordedStatus = status === "Other" ? `Other: ${customStatus}` : status;
-    if (
-      typeof fullName !== "string" ||
-      !fullName.trim() ||
-      typeof email !== "string" ||
-      !email.trim() ||
-      typeof phoneNumber !== "string" ||
-      !phoneNumber.trim() ||
-      (isVirtualRegistration && (typeof country !== "string" || !country.trim() || typeof otherDetails !== "string" || !otherDetails.trim())) ||
-      (!isVirtualRegistration && (typeof status !== "string" ||
-      !status.trim() ||
-      typeof message !== "string" ||
-      !message.trim() ||
-      (status === "Other" && !customStatus) ||
-      (!institution && status !== "Other" && status !== "Unemployed")))
-    ) {
-      return Response.json(
-        { error: "All fields are required" },
-        { status: 400 },
-      );
-    }
+    const hasBaseVirtualDetails =
+      typeof fullName === "string" && fullName.trim() &&
+      typeof email === "string" && email.trim() &&
+      typeof phoneNumber === "string" && phoneNumber.trim() &&
+      typeof country === "string" && country.trim() &&
+      typeof otherDetails === "string" && otherDetails.trim();
+    const hasBaseInPersonDetails =
+      typeof fullName === "string" && fullName.trim() &&
+      typeof email === "string" && email.trim() &&
+      typeof phoneNumber === "string" && phoneNumber.trim() &&
+      typeof status === "string" && status.trim() &&
+      typeof message === "string" && message.trim() &&
+      (status !== "Other" || customStatus) &&
+      (status === "Other" || status === "Unemployed" || institution);
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const cleanEmail = email.trim();
     if (!emailRegex.test(cleanEmail)) {

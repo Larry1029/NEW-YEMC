@@ -185,12 +185,34 @@ app.post('/api/join-application', async (c) => {
     if (!body || typeof body !== 'object' || Array.isArray(body)) {
       return c.json({ error: 'Invalid application payload' }, 400);
     }
-    const { fullName, email, phoneNumber, status, otherStatus, institution, message, consentGiven } = body;
+    const {
+      fullName,
+      email,
+      phoneNumber,
+      status,
+      otherStatus,
+      institution,
+      message,
+      country,
+      otherDetails,
+      consentGiven,
+      registrationType,
+    } = body;
+    const isVirtualRegistration = registrationType === 'virtual';
     const cleanEmail = typeof email === 'string' ? email.trim() : '';
     const customStatus = typeof otherStatus === 'string' ? otherStatus.trim() : '';
     const recordedStatus = status === 'Other' ? `Other: ${customStatus}` : status;
 
     if (
+      isVirtualRegistration
+        ? (
+          typeof fullName !== 'string' || !fullName.trim() ||
+          !cleanEmail ||
+          typeof phoneNumber !== 'string' || !phoneNumber.trim() ||
+          typeof country !== 'string' || !country.trim() ||
+          typeof otherDetails !== 'string' || !otherDetails.trim()
+        )
+        : (
       typeof fullName !== 'string' || !fullName.trim() ||
       !cleanEmail ||
       typeof phoneNumber !== 'string' || !phoneNumber.trim() ||
@@ -199,6 +221,7 @@ app.post('/api/join-application', async (c) => {
       consentGiven !== true ||
       (status === 'Other' && !customStatus) ||
       (!institution && status !== 'Other' && status !== 'Unemployed')
+        )
     ) {
       return c.json({ error: 'All fields are required' }, 400);
     }
@@ -206,8 +229,39 @@ app.post('/api/join-application', async (c) => {
     if (!/^[^\s@]+@(?:[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?\.)+[A-Za-z]{2,}$/.test(cleanEmail)) {
       return c.json({ error: 'Enter a valid email address, like mailhere@gmail.com' }, 400);
     }
-    if (!/^\d{10}$/.test(cleanPhone)) {
+    if (!/^\d{7,15}$/.test(cleanPhone) && isVirtualRegistration) {
+      return c.json({ error: 'Enter a valid phone number with 7 to 15 digits' }, 400);
+    }
+    if (!/^\d{10}$/.test(cleanPhone) && !isVirtualRegistration) {
       return c.json({ error: 'Enter a valid 10-digit phone number' }, 400);
+    }
+
+    if (isVirtualRegistration) {
+      await getDatabasePool().query(
+        `INSERT INTO applications (
+           full_name, email, phone, status, institution, message, registration_type
+         ) VALUES ($1, $2, $3, $4, $5, $6, 'virtual')
+         RETURNING id`,
+        [
+          fullName.trim(),
+          cleanEmail,
+          cleanPhone,
+          'Virtual Registration',
+          country.trim(),
+          otherDetails.trim(),
+        ],
+      );
+      try {
+        await sendEmail({
+          to: cleanEmail,
+          subject: 'YEMC 2026 Virtual Access Confirmed',
+          html: `<h1>Virtual registration confirmed</h1><p>Hello ${fullName.trim()},</p><p>Your YEMC 2026 virtual registration has been confirmed.</p><p><strong>Registration type:</strong> Virtual Attendee</p><p>Your secure access details will be shared before the event.</p>`,
+          text: `Virtual registration confirmed\n\nHello ${fullName.trim()},\nYour YEMC 2026 virtual registration has been confirmed.\nRegistration type: Virtual Attendee`,
+        });
+      } catch (emailError) {
+        console.error('Failed to send virtual confirmation email:', emailError);
+      }
+      return c.json({ success: true, registrationType: 'virtual' }, 201);
     }
 
     if (!process.env.RESEND_API_KEY) {

@@ -83,7 +83,7 @@ export default function JoinPage() {
     if (formData.status === "Other" && !formData.otherStatus.trim()) {
       errors.otherStatus = "Please specify your status";
     }
-    if (!formData.institution.trim() && formData.status !== "Other" && formData.status !== "Unemployed") {
+    if (!isVirtualExperience && !formData.institution.trim() && formData.status !== "Other" && formData.status !== "Unemployed") {
       errors.institution = "Please enter your school or place of work";
     }
     if (!isVirtualExperience && !formData.message.trim()) {
