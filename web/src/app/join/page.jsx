@@ -214,6 +214,7 @@ export default function JoinPage() {
                     actionLabel="Register for the virtual experience"
                     actionHref="/virtual-registration"
                     blurBackground={false}
+                    overlay={false}
                   />
                 ) : null
               )}
