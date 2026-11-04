@@ -171,6 +171,32 @@ export default function JoinPage() {
         <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-600/10 blur-[120px] rounded-full"></div>
       </div>
       <div className="relative z-10">
+        {!isVirtualExperience && !inPersonRegistrationClosed && countdown && (
+          <header className="bg-red-600 px-3 py-3 text-white md:px-6">
+            <div className="mx-auto flex max-w-5xl flex-col items-center justify-center gap-3 md:flex-row md:gap-8">
+              <p className="text-center text-xs font-bold uppercase tracking-[0.12em] md:text-sm md:text-left">
+                In-person registration closes at 12:00 PM Ghana time
+              </p>
+              <div className="flex items-center gap-2" aria-label="Countdown to in-person registration closing">
+                {[
+                  ["Days", countdown.days],
+                  ["Hours", countdown.hours],
+                  ["Minutes", countdown.minutes],
+                  ["Seconds", countdown.seconds],
+                ].map(([label, value]) => (
+                  <div key={label} className="min-w-[52px] text-center md:min-w-[64px]">
+                    <strong className="text-lg font-extrabold tabular-nums md:text-2xl">
+                      {String(value).padStart(2, "0")}
+                    </strong>
+                    <span className="block text-[9px] uppercase tracking-wider text-red-100 md:text-[10px]">
+                      {label}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </header>
+        )}
         <div className="pt-8 px-6 md:px-10 max-w-7xl mx-auto">
           <a
             href="/"
@@ -209,30 +235,7 @@ export default function JoinPage() {
                       Register for the virtual experience
                     </a>
                   </section>
-                ) : (
-                  countdown && (
-                    <section aria-label="Countdown to in-person registration closing" className="mb-8 rounded-2xl border border-violet-500/30 bg-violet-500/10 px-4 py-5 text-center">
-                      <p className="mb-4 text-xs font-bold uppercase tracking-[0.18em] text-violet-300">
-                        In-person registration closes at 12:00 PM Ghana time
-                      </p>
-                      <div className="grid grid-cols-4 gap-2">
-                        {[
-                          ["Days", countdown.days],
-                          ["Hours", countdown.hours],
-                          ["Minutes", countdown.minutes],
-                          ["Seconds", countdown.seconds],
-                        ].map(([label, value]) => (
-                          <div key={label} className="rounded-xl bg-slate-950 px-2 py-3">
-                            <strong className="block text-2xl font-extrabold text-white md:text-3xl">
-                              {String(value).padStart(2, "0")}
-                            </strong>
-                            <span className="text-[10px] uppercase tracking-wider text-slate-400 md:text-xs">{label}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </section>
-                  )
-                )
+                ) : null
               )}
               {!(!isVirtualExperience && inPersonRegistrationClosed) && (
               <form onSubmit={handleSubmit} className="space-y-6">
