@@ -33,6 +33,8 @@ export async function GET(request) {
           consent_given,
           consent_given_at,
           checked_in_at
+          ,
+          registration_type
         FROM applications
         WHERE 
           LOWER(full_name) LIKE LOWER(${"%" + search + "%"})
@@ -56,6 +58,8 @@ export async function GET(request) {
           consent_given,
           consent_given_at,
           checked_in_at
+          ,
+          registration_type
         FROM applications
         ORDER BY created_at DESC
         LIMIT ${limit}
@@ -87,7 +91,15 @@ export async function GET(request) {
         ) AS consent_confirmed,
         COUNT(*) FILTER (
           WHERE applications.checked_in_at IS NOT NULL
-        ) AS checked_in
+        ) AS checked_in,
+        COUNT(*) FILTER (
+          WHERE COALESCE(registration_type, '') = 'virtual'
+             OR LOWER(COALESCE(status, '')) = 'virtual registration'
+        ) AS virtual_registrations,
+        COUNT(*) FILTER (
+          WHERE COALESCE(registration_type, 'in_person') = 'in_person'
+             AND LOWER(COALESCE(status, '')) <> 'virtual registration'
+        ) AS in_person_registrations
       FROM applications
       CROSS JOIN reporting_day
     `;
@@ -104,6 +116,8 @@ export async function GET(request) {
         applicationsToday: parseInt(summary.applications_today, 10),
         consentConfirmed: parseInt(summary.consent_confirmed, 10),
         checkedIn: parseInt(summary.checked_in, 10),
+        virtualRegistrations: parseInt(summary.virtual_registrations, 10),
+        inPersonRegistrations: parseInt(summary.in_person_registrations, 10),
       },
     });
   } catch (error) {

@@ -12,6 +12,8 @@ import {
   Trash2,
   ChevronDown,
   ChevronUp,
+  Monitor,
+  MapPin,
 } from "lucide-react";
 import { formatDate, formatPhone } from "@/utils/formatters";
 import { useState } from "react";
@@ -23,6 +25,9 @@ export function ApplicationCard({
   isDark,
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const isVirtual =
+    application.registration_type === "virtual" ||
+    application.status === "Virtual Registration";
   return (
     <div
       className={`rounded-2xl overflow-hidden transition-all ${isDark ? "bg-slate-900 border border-slate-800 hover:border-violet-500/50" : "bg-white/60 backdrop-blur-sm border border-purple-200/50 hover:border-purple-400/70 shadow-sm hover:shadow-md"}`}
@@ -48,6 +53,16 @@ export function ApplicationCard({
               >
                 {application.full_name}
               </p>
+              <span
+                className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold ${
+                  isVirtual
+                    ? "bg-cyan-100 text-cyan-700 dark:bg-cyan-500/15 dark:text-cyan-300"
+                    : "bg-violet-100 text-violet-700 dark:bg-violet-500/15 dark:text-violet-300"
+                }`}
+              >
+                {isVirtual ? <Monitor size={12} /> : <MapPin size={12} />}
+                {isVirtual ? "Virtual Viewer" : "In-Person"}
+              </span>
               <p
                 className={`text-sm break-all sm:truncate ${isDark ? "text-blue-400" : "text-blue-600"}`}
               >
@@ -56,7 +71,7 @@ export function ApplicationCard({
             </div>
           </div>
           <div className="hidden md:flex items-center gap-6">
-            {application.status && (
+            {application.status && !isVirtual && (
               <div className="text-right">
                 <p
                   className={`text-xs mb-1 ${isDark ? "text-slate-500" : "text-gray-500"}`}
@@ -98,7 +113,7 @@ export function ApplicationCard({
           </div>
         </div>
         <div className="md:hidden flex flex-wrap items-center gap-x-4 gap-y-1 mt-3 ml-[3.25rem]">
-          {application.status && (
+          {application.status && !isVirtual && (
             <div>
               <p
                 className={`text-xs ${isDark ? "text-slate-500" : "text-gray-500"}`}
@@ -150,7 +165,7 @@ export function ApplicationCard({
                   </a>
                 </div>
               </div>
-              {application.status && (
+              {application.status && !isVirtual && (
                 <div className="flex items-start gap-3">
                   <div
                     className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${isDark ? "bg-purple-500/10" : "bg-purple-100"}`}
@@ -188,7 +203,9 @@ export function ApplicationCard({
                     <p
                       className={`text-xs mb-1 ${isDark ? "text-slate-500" : "text-gray-500"}`}
                     >
-                      {application.status === "Student"
+                      {isVirtual
+                        ? "Country"
+                        : application.status === "Student"
                         ? "School"
                         : application.status === "Working"
                           ? "Company"
@@ -239,7 +256,7 @@ export function ApplicationCard({
                 <p
                   className={`text-xs font-semibold uppercase tracking-wider ${isDark ? "text-slate-500" : "text-gray-500"}`}
                 >
-                  Message
+                  {isVirtual ? "Other essential details" : "Message"}
                 </p>
               </div>
               <div

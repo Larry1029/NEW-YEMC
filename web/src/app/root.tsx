@@ -31,6 +31,7 @@ import { serializeError } from 'serialize-error';
 import { Toaster, toast } from 'sonner';
 import { useDevServerHeartbeat } from '../__create/useDevServerHeartbeat';
 import type { Route } from './+types/root';
+import RegistrationCountdown from '../components/RegistrationCountdown';
 export const links = () => [
   { rel: 'stylesheet', href: globalCssUrl }
 ];
@@ -389,6 +390,7 @@ export function Layout({ children }: { children: ReactNode }) {
 export default function App() {
   return (
     <SessionProvider>
+      <RegistrationCountdown />
       <Outlet />
     </SessionProvider>
   );

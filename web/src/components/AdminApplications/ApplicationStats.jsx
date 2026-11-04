@@ -1,4 +1,4 @@
-import { BadgeCheck, CalendarPlus, QrCode, Users } from "lucide-react";
+import { BadgeCheck, CalendarPlus, Monitor, QrCode, Users, MapPin } from "lucide-react";
 
 const metrics = [
   {
@@ -29,13 +29,27 @@ const metrics = [
     iconClass: "text-amber-600",
     iconBackground: "bg-amber-50",
   },
+  {
+    key: "inPersonRegistrations",
+    label: "In-Person Registrations",
+    Icon: MapPin,
+    iconClass: "text-violet-600",
+    iconBackground: "bg-violet-50",
+  },
+  {
+    key: "virtualRegistrations",
+    label: "Virtual Registrations",
+    Icon: Monitor,
+    iconClass: "text-cyan-600",
+    iconBackground: "bg-cyan-50",
+  },
 ];
 
 export function ApplicationStats({ stats, isDark }) {
   return (
     <section
       aria-label="Applicant statistics"
-      className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4"
+      className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3"
     >
       {metrics.map(({ key, label, Icon, iconClass, iconBackground }) => (
         <article

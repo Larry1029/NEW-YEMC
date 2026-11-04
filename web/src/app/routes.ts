@@ -22,6 +22,7 @@ const pageRoutes: RouteConfigEntry[] = [
 	route('reset-password', './reset-password/page.jsx'),
 	route('resources', './resources/page.jsx'),
 	route('scan/:token', './scan/[token]/page.jsx'),
+	route('virtual-registration', './virtual-registration/page.jsx'),
 ];
 const routes = [...pageRoutes, notFound];
 export default routes;

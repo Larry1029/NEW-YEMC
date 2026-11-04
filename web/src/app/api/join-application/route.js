@@ -21,6 +21,8 @@ export async function POST(request) {
       otherStatus,
       institution,
       message,
+      country,
+      otherDetails,
       registrationType,
     } = body;
     const isVirtualRegistration = registrationType === "virtual";
@@ -48,12 +50,13 @@ export async function POST(request) {
       !email.trim() ||
       typeof phoneNumber !== "string" ||
       !phoneNumber.trim() ||
-      typeof status !== "string" ||
+      (isVirtualRegistration && (typeof country !== "string" || !country.trim() || typeof otherDetails !== "string" || !otherDetails.trim())) ||
+      (!isVirtualRegistration && (typeof status !== "string" ||
       !status.trim() ||
       typeof message !== "string" ||
       !message.trim() ||
       (status === "Other" && !customStatus) ||
-      (!institution && status !== "Other" && status !== "Unemployed")
+      (!institution && status !== "Other" && status !== "Unemployed")))
     ) {
       return Response.json(
         { error: "All fields are required" },
@@ -65,18 +68,32 @@ export async function POST(request) {
     if (!emailRegex.test(cleanEmail)) {
       return Response.json({ error: "Invalid email format" }, { status: 400 });
     }
-    const phoneRegex = /^\d{10}$/;
     const cleanPhone = phoneNumber.replace(/\D/g, "");
-    if (!phoneRegex.test(cleanPhone)) {
+    const validPhone = isVirtualRegistration
+      ? /^\d{7,15}$/.test(cleanPhone)
+      : /^\d{10}$/.test(cleanPhone);
+    if (!validPhone) {
       return Response.json(
-        { error: "Phone number must be exactly 10 digits" },
+        {
+          error: isVirtualRegistration
+            ? "Phone number must contain 7 to 15 digits"
+            : "Phone number must be exactly 10 digits",
+        },
         { status: 400 },
       );
     }
     try {
       await sql`
-        INSERT INTO applications (full_name, email, phone, status, institution, message)
-        VALUES (${fullName.trim()}, ${cleanEmail}, ${cleanPhone}, ${recordedStatus}, ${institution || null}, ${message.trim()})
+        INSERT INTO applications (full_name, email, phone, status, institution, message, registration_type)
+        VALUES (
+          ${fullName.trim()},
+          ${cleanEmail},
+          ${cleanPhone},
+          ${isVirtualRegistration ? "Virtual Registration" : recordedStatus},
+          ${isVirtualRegistration ? (country || null) : (institution || null)},
+          ${isVirtualRegistration ? otherDetails.trim() : message.trim()},
+          ${isVirtualRegistration ? "virtual" : "in_person"}
+        )
       `;
     } catch (dbError) {
       console.error("Failed to save application to database:", dbError);
@@ -96,9 +113,10 @@ export async function POST(request) {
           <p><strong>Email:</strong> ${escapeHtml(cleanEmail)}</p>
           <p><strong>Phone:</strong> ${cleanPhone}</p>
           <p><strong>Status:</strong> ${escapeHtml(recordedStatus)}</p>
+          ${isVirtualRegistration ? `<p><strong>Country:</strong> ${escapeHtml(country || "")}</p>` : ""}
           <p><strong>Institution:</strong> ${escapeHtml(institution || "")}</p>
-          <p><strong>Message:</strong></p>
-          <p>${escapeHtml(message.trim()).replace(/\r?\n/g, "<br>")}</p>
+          <p><strong>${isVirtualRegistration ? "Other Essential Details" : "Message"}:</strong></p>
+          <p>${escapeHtml(isVirtualRegistration ? otherDetails.trim() : message.trim()).replace(/\r?\n/g, "<br>")}</p>
         `,
         text: `
           ${isVirtualRegistration ? "New Virtual Registration Received" : "New Application Received"}
@@ -108,7 +126,8 @@ export async function POST(request) {
           Phone: ${cleanPhone}
           Status: ${recordedStatus}
           Institution: ${institution}
-          Message: ${message.trim()}
+          ${isVirtualRegistration ? `Country: ${country}` : ""}
+          ${isVirtualRegistration ? "Other Essential Details" : "Message"}: ${isVirtualRegistration ? otherDetails.trim() : message.trim()}
         `,
       });
     } catch (emailError) {

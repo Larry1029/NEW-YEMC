@@ -32,6 +32,8 @@ export default function JoinPage() {
     fullName: "",
     email: "",
     phoneNumber: "",
+    country: "",
+    otherDetails: "",
     status: "",
     otherStatus: "",
     institution: "",
@@ -52,9 +54,12 @@ export default function JoinPage() {
   const phoneErrorFor = (value) => {
     if (!value.trim()) return "Phone number is required";
     if (!/^[\d\s()+-]+$/.test(value)) return "Please enter a valid phone number";
-    return value.replace(/\D/g, "").length === 10
+    const digitCount = value.replace(/\D/g, "").length;
+    return (isVirtualExperience ? digitCount >= 7 && digitCount <= 15 : digitCount === 10)
       ? ""
-      : "Phone number must be exactly 10 digits";
+      : isVirtualExperience
+        ? "Enter a valid phone number with 7 to 15 digits"
+        : "Phone number must be exactly 10 digits";
   };
   const validateForm = () => {
     const errors = {};
@@ -65,7 +70,13 @@ export default function JoinPage() {
     if (!formData.fullName.trim()) {
       errors.fullName = "Full name is required";
     }
-    if (!formData.status) {
+    if (isVirtualExperience && !formData.country.trim()) {
+      errors.country = "Country is required";
+    }
+    if (isVirtualExperience && !formData.otherDetails.trim()) {
+      errors.otherDetails = "Other essential details are required";
+    }
+    if (!isVirtualExperience && !formData.status) {
       errors.status = "Please select your status";
     }
     if (formData.status === "Other" && !formData.otherStatus.trim()) {
@@ -74,10 +85,10 @@ export default function JoinPage() {
     if (!formData.institution.trim() && formData.status !== "Other" && formData.status !== "Unemployed") {
       errors.institution = "Please enter your school or place of work";
     }
-    if (!formData.message.trim()) {
+    if (!isVirtualExperience && !formData.message.trim()) {
       errors.message = "Message is required";
     }
-    if (!consentChecked) {
+    if (!isVirtualExperience && !consentChecked) {
       errors.consent = "Please confirm your membership in the YEMC Forum.";
     }
     setValidationErrors(errors);
@@ -309,7 +320,7 @@ export default function JoinPage() {
                       value={formData.phoneNumber}
                       onChange={handleChange}
                       className={`w-full bg-slate-950 border ${validationErrors.phoneNumber ? "border-red-500" : "border-slate-800"} rounded-xl md:rounded-2xl px-4 md:px-6 py-3 md:py-4 text-white placeholder-slate-500 focus:outline-none focus:border-violet-500 transition-colors text-sm md:text-base`}
-                      placeholder="1234567890 (10 digits)"
+                      placeholder={isVirtualExperience ? "+233 123 456 789" : "1234567890 (10 digits)"}
                     />
                     {validationErrors.phoneNumber && (
                       <p className="mt-2 text-sm text-red-400">
@@ -317,9 +328,49 @@ export default function JoinPage() {
                       </p>
                     )}
                   </div>
-                  <div>
-                    <label
-                      htmlFor="status"
+                    {isVirtualExperience && (
+                      <>
+                        <div>
+                          <label htmlFor="country" className="block text-white font-bold mb-3 text-sm md:text-base">
+                            Country
+                          </label>
+                          <input
+                            type="text"
+                            id="country"
+                            name="country"
+                            value={formData.country}
+                            onChange={handleChange}
+                            className={`w-full bg-slate-950 border ${validationErrors.country ? "border-red-500" : "border-slate-800"} rounded-xl md:rounded-2xl px-4 md:px-6 py-3 md:py-4 text-white placeholder-slate-500 focus:outline-none focus:border-violet-500 transition-colors text-sm md:text-base`}
+                            placeholder="Enter your country"
+                          />
+                          {validationErrors.country && (
+                            <p className="mt-2 text-sm text-red-400">{validationErrors.country}</p>
+                          )}
+                        </div>
+                        <div>
+                          <label htmlFor="otherDetails" className="block text-white font-bold mb-3 text-sm md:text-base">
+                            Other Essential Details
+                          </label>
+                          <textarea
+                            id="otherDetails"
+                            name="otherDetails"
+                            value={formData.otherDetails}
+                            onChange={handleChange}
+                            rows={5}
+                            className={`w-full resize-none bg-slate-950 border ${validationErrors.otherDetails ? "border-red-500" : "border-slate-800"} rounded-xl md:rounded-2xl px-4 md:px-6 py-3 md:py-4 text-white placeholder-slate-500 focus:outline-none focus:border-violet-500 transition-colors text-sm md:text-base`}
+                            placeholder="Add any other information we should know"
+                          />
+                          {validationErrors.otherDetails && (
+                            <p className="mt-2 text-sm text-red-400">{validationErrors.otherDetails}</p>
+                          )}
+                        </div>
+                      </>
+                    )}
+                    {!isVirtualExperience && (
+                    <>
+                    <div>
+                      <label
+                        htmlFor="status"
                       className="block text-white font-bold mb-3 text-sm md:text-base"
                     >
                       Status
@@ -442,6 +493,9 @@ export default function JoinPage() {
                       </p>
                     )}
                   </div>
+                  </>
+                  )}
+                  {!isVirtualExperience && (
                   <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
                     <label className="flex items-start gap-3 text-sm md:text-base text-slate-200 cursor-pointer">
                       <input
@@ -464,6 +518,7 @@ export default function JoinPage() {
                       <p className="mt-2 text-sm text-red-400">{validationErrors.consent}</p>
                     )}
                   </div>
+                  )}
                   {submitError && (
                     <div className="bg-red-500/10 border border-red-500 rounded-xl p-4">
                       <p className="text-sm text-red-400">{submitError}</p>
@@ -481,7 +536,7 @@ export default function JoinPage() {
                       </>
                     ) : (
                       <>
-                        Submit Application
+                        {isVirtualExperience ? "Register for Virtual Experience" : "Submit Application"}
                         <Send size={18} />
                       </>
                     )}
