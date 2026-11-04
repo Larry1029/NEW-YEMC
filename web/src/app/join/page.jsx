@@ -197,14 +197,16 @@ export default function JoinPage() {
         </div>
         <div className="py-20 px-6 md:px-10">
           <div className="max-w-3xl mx-auto">
-            <div className="text-center mb-12">
-              <h1 className="text-4xl md:text-6xl font-extrabold text-white mb-4 font-plus-jakarta leading-tight">
-                {isVirtualExperience ? "Register for the" : "Register for"}{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-blue-400">
-                  YEMC 2026{isVirtualExperience ? " Virtual Experience" : ""}
-                </span>
-              </h1>
-            </div>
+            {!(!isVirtualExperience && inPersonRegistrationClosed) && (
+              <div className="text-center mb-12">
+                <h1 className="text-4xl md:text-6xl font-extrabold text-white mb-4 font-plus-jakarta leading-tight">
+                  {isVirtualExperience ? "Register for the" : "Register for"}{" "}
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-blue-400">
+                    YEMC 2026{isVirtualExperience ? " Virtual Experience" : ""}
+                  </span>
+                </h1>
+              </div>
+            )}
             {!isVirtualExperience && inPersonRegistrationClosed ? (
               <ComingSoonNotice
                 title="Sorry, in-person registration is over"
