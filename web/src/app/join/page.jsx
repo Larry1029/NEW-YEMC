@@ -3,19 +3,12 @@ import { ArrowLeft, Send } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import OptimizedImage from "../../components/OptimizedImage";
+import { getRegistrationDeadline } from "../../components/RegistrationCountdown";
 import conferenceImage from "../../public/632A81(264) - Copy.jpg";
 export default function JoinPage() {
   const location = useLocation();
   const isVirtualExperience = location.pathname === "/virtual-registration";
-  const nowInGhana = new Date();
-  const registrationDeadline = Date.UTC(
-    nowInGhana.getUTCFullYear(),
-    nowInGhana.getUTCMonth(),
-    nowInGhana.getUTCDate(),
-    12,
-    0,
-    0,
-  );
+  const registrationDeadline = getRegistrationDeadline();
   const [now, setNow] = useState(null);
   const [countdown, setCountdown] = useState(null);
   useEffect(() => {
@@ -179,32 +172,6 @@ export default function JoinPage() {
         <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-600/10 blur-[120px] rounded-full"></div>
       </div>
       <div className="relative z-10">
-        {!isVirtualExperience && !inPersonRegistrationClosed && countdown && (
-          <header className="bg-red-600 px-3 py-3 text-white md:px-6">
-            <div className="mx-auto flex max-w-5xl flex-col items-center justify-center gap-3 md:flex-row md:gap-8">
-              <p className="text-center text-xs font-bold uppercase tracking-[0.12em] md:text-sm md:text-left">
-                In-person registration closes at 12:00 PM Ghana time
-              </p>
-              <div className="flex items-center gap-2" aria-label="Countdown to in-person registration closing">
-                {[
-                  ["Today", countdown.days === 0 ? 0 : countdown.days],
-                  ["Hours", countdown.hours],
-                  ["Minutes", countdown.minutes],
-                  ["Seconds", countdown.seconds],
-                ].map(([label, value]) => (
-                  <div key={label} className="min-w-[52px] text-center md:min-w-[64px]">
-                    <strong className="text-lg font-extrabold tabular-nums md:text-2xl">
-                      {String(value).padStart(2, "0")}
-                    </strong>
-                    <span className="block text-[9px] uppercase tracking-wider text-red-100 md:text-[10px]">
-                      {label}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </header>
-        )}
         <div className="pt-8 px-6 md:px-10 max-w-7xl mx-auto">
           <a
             href="/"
