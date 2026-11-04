@@ -24,7 +24,15 @@ export async function POST(request) {
       registrationType,
     } = body;
     const isVirtualRegistration = registrationType === "virtual";
-    const registrationDeadline = Date.UTC(2026, 10, 7, 12, 0, 0);
+    const nowInGhana = new Date();
+    const registrationDeadline = Date.UTC(
+      nowInGhana.getUTCFullYear(),
+      nowInGhana.getUTCMonth(),
+      nowInGhana.getUTCDate(),
+      12,
+      0,
+      0,
+    );
     if (!isVirtualRegistration && Date.now() >= registrationDeadline) {
       return Response.json(
         { error: "In-person registration closed. Please register for the virtual experience." },

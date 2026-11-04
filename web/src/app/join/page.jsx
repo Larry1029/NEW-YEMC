@@ -7,7 +7,15 @@ import conferenceImage from "../../public/632A81(264) - Copy.jpg";
 export default function JoinPage() {
   const location = useLocation();
   const isVirtualExperience = location.pathname === "/virtual-registration";
-  const registrationDeadline = Date.UTC(2026, 10, 7, 12, 0, 0);
+  const nowInGhana = new Date();
+  const registrationDeadline = Date.UTC(
+    nowInGhana.getUTCFullYear(),
+    nowInGhana.getUTCMonth(),
+    nowInGhana.getUTCDate(),
+    12,
+    0,
+    0,
+  );
   const [now, setNow] = useState(null);
   const [countdown, setCountdown] = useState(null);
   useEffect(() => {
@@ -179,7 +187,7 @@ export default function JoinPage() {
               </p>
               <div className="flex items-center gap-2" aria-label="Countdown to in-person registration closing">
                 {[
-                  ["Days", countdown.days],
+                  ["Today", countdown.days === 0 ? 0 : countdown.days],
                   ["Hours", countdown.hours],
                   ["Minutes", countdown.minutes],
                   ["Seconds", countdown.seconds],
