@@ -480,7 +480,8 @@ app.get('/api/applications/list', async (c) => {
     const [applicationResult, countResult, statsResult] = await Promise.all([
       getDatabasePool().query(
         `SELECT id, full_name, email, phone, status, institution, message,
-                consent_given, consent_given_at, checked_in_at, created_at
+                consent_given, consent_given_at, checked_in_at, created_at,
+                registration_type
          FROM applications
          WHERE $1::text IS NULL OR full_name ILIKE $1 OR email ILIKE $1 OR phone ILIKE $1
          ORDER BY created_at DESC`,
@@ -517,7 +518,15 @@ app.get('/api/applications/list', async (c) => {
            ) AS consent_confirmed,
            COUNT(*) FILTER (
              WHERE applications.checked_in_at IS NOT NULL
-           ) AS checked_in
+           ) AS checked_in,
+           COUNT(*) FILTER (
+             WHERE LOWER(REPLACE(COALESCE(applications.registration_type, ''), '-', '_')) IN ('virtual', 'virtual_registration', 'virtual registration')
+                OR LOWER(TRIM(COALESCE(applications.status, ''))) IN ('virtual', 'virtual registration')
+           ) AS virtual_registrations,
+           COUNT(*) FILTER (
+             WHERE LOWER(REPLACE(COALESCE(applications.registration_type, 'in_person'), '-', '_')) NOT IN ('virtual', 'virtual_registration', 'virtual registration')
+               AND LOWER(TRIM(COALESCE(applications.status, ''))) NOT IN ('virtual', 'virtual registration')
+           ) AS in_person_registrations
          FROM applications
          CROSS JOIN reporting_day`,
       ),
@@ -532,6 +541,8 @@ app.get('/api/applications/list', async (c) => {
         applicationsToday: Number(stats.applications_today),
         consentConfirmed: Number(stats.consent_confirmed),
         checkedIn: Number(stats.checked_in),
+        virtualRegistrations: Number(stats.virtual_registrations),
+        inPersonRegistrations: Number(stats.in_person_registrations),
       },
     });
   } catch (error: any) {
