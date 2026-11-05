@@ -340,23 +340,6 @@ export default function JoinPage() {
                             <p className="mt-2 text-sm text-red-400">{validationErrors.country}</p>
                           )}
                         </div>
-                        <div>
-                          <label htmlFor="otherDetails" className="block text-white font-bold mb-3 text-sm md:text-base">
-                            Other Essential Details
-                          </label>
-                          <textarea
-                            id="otherDetails"
-                            name="otherDetails"
-                            value={formData.otherDetails}
-                            onChange={handleChange}
-                            rows={5}
-                            className={`w-full resize-none bg-slate-950 border ${validationErrors.otherDetails ? "border-red-500" : "border-slate-800"} rounded-xl md:rounded-2xl px-4 md:px-6 py-3 md:py-4 text-white placeholder-slate-500 focus:outline-none focus:border-violet-500 transition-colors text-sm md:text-base`}
-                            placeholder="Add any other information we should know"
-                          />
-                          {validationErrors.otherDetails && (
-                            <p className="mt-2 text-sm text-red-400">{validationErrors.otherDetails}</p>
-                          )}
-                        </div>
                       </>
                     )}
                     <div>
@@ -459,6 +442,25 @@ export default function JoinPage() {
                         <p className="mt-2 text-sm text-red-400">
                           {validationErrors.institution}
                         </p>
+                      )}
+                    </div>
+                  )}
+                  {isVirtualExperience && (
+                    <div>
+                      <label htmlFor="otherDetails" className="block text-white font-bold mb-3 text-sm md:text-base">
+                        Other Essential Details
+                      </label>
+                      <textarea
+                        id="otherDetails"
+                        name="otherDetails"
+                        value={formData.otherDetails}
+                        onChange={handleChange}
+                        rows={5}
+                        className={`w-full resize-none bg-slate-950 border ${validationErrors.otherDetails ? "border-red-500" : "border-slate-800"} rounded-xl md:rounded-2xl px-4 md:px-6 py-3 md:py-4 text-white placeholder-slate-500 focus:outline-none focus:border-violet-500 transition-colors text-sm md:text-base`}
+                        placeholder="Add any other information we should know"
+                      />
+                      {validationErrors.otherDetails && (
+                        <p className="mt-2 text-sm text-red-400">{validationErrors.otherDetails}</p>
                       )}
                     </div>
                   )}
