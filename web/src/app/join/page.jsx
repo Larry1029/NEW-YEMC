@@ -210,7 +210,7 @@ export default function JoinPage() {
             {!isVirtualExperience && inPersonRegistrationClosed ? (
               <ComingSoonNotice
                 title="Sorry, in-person registration is over"
-                message="You can still join the conference as a virtual viewer."
+                message="You can still be part of the conference by joining us virtually."
                 actionLabel="Register for the virtual experience"
                 actionHref="/virtual-registration"
                 blurBackground={false}
