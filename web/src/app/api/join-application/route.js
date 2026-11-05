@@ -77,7 +77,10 @@ export async function POST(request) {
       typeof email === "string" && email.trim() &&
       typeof phoneNumber === "string" && phoneNumber.trim() &&
       typeof country === "string" && country.trim() &&
-      typeof otherDetails === "string" && otherDetails.trim();
+      typeof otherDetails === "string" && otherDetails.trim() &&
+      typeof status === "string" && status.trim() &&
+      (status !== "Other" || customStatus) &&
+      (status === "Other" || status === "Unemployed" || institution);
     const hasBaseInPersonDetails =
       typeof fullName === "string" && fullName.trim() &&
       typeof email === "string" && email.trim() &&
@@ -112,9 +115,9 @@ export async function POST(request) {
           ${fullName.trim()},
           ${cleanEmail},
           ${cleanPhone},
-          ${isVirtualRegistration ? "Virtual Registration" : recordedStatus},
-          ${isVirtualRegistration ? (country || null) : (institution || null)},
-          ${isVirtualRegistration ? otherDetails.trim() : message.trim()},
+          ${recordedStatus},
+          ${isVirtualRegistration ? (institution || null) : (institution || null)},
+          ${isVirtualRegistration ? `Country: ${country.trim()}\n\n${otherDetails.trim()}` : message.trim()},
           ${isVirtualRegistration ? "virtual" : "in_person"}
         )
       `;

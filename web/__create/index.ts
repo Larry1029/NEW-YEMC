@@ -210,7 +210,10 @@ app.post('/api/join-application', async (c) => {
           !cleanEmail ||
           typeof phoneNumber !== 'string' || !phoneNumber.trim() ||
           typeof country !== 'string' || !country.trim() ||
-          typeof otherDetails !== 'string' || !otherDetails.trim()
+          typeof otherDetails !== 'string' || !otherDetails.trim() ||
+          typeof status !== 'string' || !status.trim() ||
+          (status === 'Other' && !customStatus) ||
+          (status !== 'Other' && status !== 'Unemployed' && (typeof institution !== 'string' || !institution.trim()))
         )
         : (
       typeof fullName !== 'string' || !fullName.trim() ||
@@ -246,9 +249,9 @@ app.post('/api/join-application', async (c) => {
           fullName.trim(),
           cleanEmail,
           cleanPhone,
-          'Virtual Registration',
-          country.trim(),
-          otherDetails.trim(),
+          recordedStatus,
+          status === 'Other' || status === 'Unemployed' ? null : institution.trim(),
+          `Country: ${country.trim()}\n\n${otherDetails.trim()}`,
         ],
       );
       try {

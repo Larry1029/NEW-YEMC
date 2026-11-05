@@ -76,13 +76,13 @@ export default function JoinPage() {
     if (isVirtualExperience && !formData.otherDetails.trim()) {
       errors.otherDetails = "Other essential details are required";
     }
-    if (!isVirtualExperience && !formData.status) {
+    if (!formData.status) {
       errors.status = "Please select your status";
     }
     if (formData.status === "Other" && !formData.otherStatus.trim()) {
       errors.otherStatus = "Please specify your status";
     }
-    if (!isVirtualExperience && !formData.institution.trim() && formData.status !== "Other" && formData.status !== "Unemployed") {
+    if (!formData.institution.trim() && formData.status !== "Other" && formData.status !== "Unemployed") {
       errors.institution = "Please enter your school or place of work";
     }
     if (!isVirtualExperience && !formData.message.trim()) {
@@ -359,8 +359,6 @@ export default function JoinPage() {
                         </div>
                       </>
                     )}
-                    {!isVirtualExperience && (
-                    <>
                     <div>
                       <label
                         htmlFor="status"
@@ -464,6 +462,7 @@ export default function JoinPage() {
                       )}
                     </div>
                   )}
+                  {!isVirtualExperience && (
                   <div>
                     <label
                       htmlFor="message"
@@ -486,7 +485,6 @@ export default function JoinPage() {
                       </p>
                     )}
                   </div>
-                  </>
                   )}
                   {!isVirtualExperience && (
                   <div className="rounded-2xl border border-slate-800 bg-slate-950/60 p-4">
