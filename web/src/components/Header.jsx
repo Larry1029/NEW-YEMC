@@ -9,23 +9,6 @@ export default function Header({ hideUntilScroll = false }) {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isResourcesOpen, setIsResourcesOpen] = useState(false);
-  const [countdownHeight, setCountdownHeight] = useState(32);
-  useEffect(() => {
-    const updateCountdownOffset = () => {
-      const countdown = document.querySelector("[data-registration-countdown]");
-      setCountdownHeight(countdown?.getBoundingClientRect().height ?? 0);
-    };
-    updateCountdownOffset();
-    window.addEventListener("resize", updateCountdownOffset);
-    const observer = new MutationObserver(updateCountdownOffset);
-    observer.observe(document.body, { childList: true, subtree: true });
-    const timer = window.setInterval(updateCountdownOffset, 1000);
-    return () => {
-      window.removeEventListener("resize", updateCountdownOffset);
-      observer.disconnect();
-      window.clearInterval(timer);
-    };
-  }, []);
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 20);
@@ -46,7 +29,7 @@ export default function Header({ hideUntilScroll = false }) {
   return (
     <>
       <header
-        style={{ top: countdownHeight }}
+        style={{ top: 0 }}
         className={`fixed top-0 left-0 right-0 z-50 px-4 pt-4 pb-2 transition-[opacity,transform] duration-300 md:px-0 md:pt-0 md:pb-0 ${hideUntilScroll && !isScrolled ? "pointer-events-none -translate-y-full opacity-0 md:pointer-events-auto md:translate-y-0 md:opacity-100" : "translate-y-0 opacity-100"}`}
       >
         <div className={`w-full mx-auto flex flex-col justify-center rounded-3xl border border-transparent transition-all duration-300 max-w-[1600px] ${isScrolled ? `md:max-w-5xl md:h-20 md:px-5 ${isMenuOpen ? "bg-transparent shadow-none backdrop-blur-none" : "bg-slate-950/45 shadow-xl backdrop-blur-xl"} md:border md:border-white/10` : "md:h-24 bg-transparent md:border-0 md:px-4 lg:px-4"}`}>

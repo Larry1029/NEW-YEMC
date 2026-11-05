@@ -4,12 +4,11 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import OptimizedImage from "../../components/OptimizedImage";
 import ComingSoonNotice from "../../components/ComingSoonNotice";
-import { getRegistrationDeadline } from "../../components/RegistrationCountdown";
 import conferenceImage from "../../public/632A81(264) - Copy.jpg";
 export default function JoinPage() {
   const location = useLocation();
   const isVirtualExperience = location.pathname === "/virtual-registration";
-  const registrationDeadline = getRegistrationDeadline();
+  const registrationDeadline = Date.UTC(2026, 10, 4, 12, 0, 0);
   const [now, setNow] = useState(null);
   const [countdown, setCountdown] = useState(null);
   useEffect(() => {
