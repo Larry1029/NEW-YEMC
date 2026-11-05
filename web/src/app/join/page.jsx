@@ -5,6 +5,7 @@ import { useLocation } from "react-router-dom";
 import OptimizedImage from "../../components/OptimizedImage";
 import ComingSoonNotice from "../../components/ComingSoonNotice";
 import conferenceImage from "../../public/632A81(264) - Copy.jpg";
+import virtualConferenceImage from "../../public/632A81(323) - Copy.jpg";
 export default function JoinPage() {
   const location = useLocation();
   const isVirtualExperience = location.pathname === "/virtual-registration";
@@ -221,7 +222,7 @@ export default function JoinPage() {
                   <div className="-mx-8 -mt-8 md:-mx-12 md:-mt-12 overflow-hidden border-b border-slate-800">
                     <div className="relative isolate h-52 md:h-64">
                       <OptimizedImage
-                        src={conferenceImage}
+                        src={isVirtualExperience ? virtualConferenceImage : conferenceImage}
                         alt="A YEMC conference attendee speaking to the audience"
                         loading="eager"
                         className="absolute inset-0 h-full w-full object-cover object-[center_42%]"
