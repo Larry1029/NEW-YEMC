@@ -1,21 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+
+const IN_PERSON_REGISTRATION_DEADLINE = Date.UTC(2026, 10, 4, 12, 0, 0);
 
 export function getRegistrationDeadline() {
-  const now = new Date();
-  return Date.UTC(
-    now.getUTCFullYear(),
-    now.getUTCMonth(),
-    now.getUTCDate(),
-    12,
-    0,
-    0,
-  );
+  return IN_PERSON_REGISTRATION_DEADLINE;
 }
 
 export default function RegistrationCountdown() {
   const [remaining, setRemaining] = useState(null);
+  const location = useLocation();
 
   useEffect(() => {
     const updateCountdown = () => {
@@ -34,6 +30,7 @@ export default function RegistrationCountdown() {
     return () => window.clearInterval(timer);
   }, []);
 
+  if (location.pathname === "/virtual-registration") return null;
   if (!remaining) return null;
 
   const closed =

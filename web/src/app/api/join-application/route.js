@@ -1,6 +1,8 @@
 import { sendEmail } from "@/app/api/utils/send-email";
 import sql from "@/app/api/utils/sql";
 
+const IN_PERSON_REGISTRATION_DEADLINE = Date.UTC(2026, 10, 4, 12, 0, 0);
+
 const escapeHtml = (value) =>
   String(value ?? "").replace(/[&<>"']/g, (character) => ({
     "&": "&amp;",
@@ -61,15 +63,7 @@ export async function POST(request) {
       registrationType,
     } = body;
     const isVirtualRegistration = registrationType === "virtual";
-    const nowInGhana = new Date();
-    const registrationDeadline = Date.UTC(
-      nowInGhana.getUTCFullYear(),
-      nowInGhana.getUTCMonth(),
-      nowInGhana.getUTCDate(),
-      12,
-      0,
-      0,
-    );
+    const registrationDeadline = IN_PERSON_REGISTRATION_DEADLINE;
     if (!isVirtualRegistration && Date.now() >= registrationDeadline) {
       return Response.json(
         { error: "In-person registration closed. Please register for the virtual experience." },
