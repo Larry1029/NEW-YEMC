@@ -25,9 +25,16 @@ export function ApplicationCard({
   isDark,
 }) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const registrationType = String(application.registration_type || "")
+    .trim()
+    .toLowerCase();
+  const status = String(application.status || "").trim().toLowerCase();
   const isVirtual =
-    application.registration_type === "virtual" ||
-    application.status === "Virtual Registration";
+    registrationType === "virtual" ||
+    registrationType === "virtual_registration" ||
+    registrationType === "virtual registration" ||
+    status === "virtual" ||
+    status === "virtual registration";
   return (
     <div
       className={`rounded-2xl overflow-hidden transition-all ${isDark ? "bg-slate-900 border border-slate-800 hover:border-violet-500/50" : "bg-white/60 backdrop-blur-sm border border-purple-200/50 hover:border-purple-400/70 shadow-sm hover:shadow-md"}`}

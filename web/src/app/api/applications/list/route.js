@@ -93,12 +93,12 @@ export async function GET(request) {
           WHERE applications.checked_in_at IS NOT NULL
         ) AS checked_in,
         COUNT(*) FILTER (
-          WHERE COALESCE(registration_type, '') = 'virtual'
-             OR LOWER(COALESCE(status, '')) = 'virtual registration'
+          WHERE LOWER(REPLACE(COALESCE(registration_type, ''), '-', '_')) IN ('virtual', 'virtual_registration', 'virtual registration')
+             OR LOWER(TRIM(COALESCE(status, ''))) IN ('virtual', 'virtual registration')
         ) AS virtual_registrations,
         COUNT(*) FILTER (
-          WHERE COALESCE(registration_type, 'in_person') = 'in_person'
-             AND LOWER(COALESCE(status, '')) <> 'virtual registration'
+          WHERE LOWER(REPLACE(COALESCE(registration_type, 'in_person'), '-', '_')) NOT IN ('virtual', 'virtual_registration', 'virtual registration')
+             AND LOWER(TRIM(COALESCE(status, ''))) NOT IN ('virtual', 'virtual registration')
         ) AS in_person_registrations
       FROM applications
       CROSS JOIN reporting_day
