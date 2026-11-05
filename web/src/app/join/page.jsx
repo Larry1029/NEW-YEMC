@@ -225,7 +225,7 @@ export default function JoinPage() {
                         src={isVirtualExperience ? virtualConferenceImage : conferenceImage}
                         alt="A YEMC conference attendee speaking to the audience"
                         loading="eager"
-                        className="absolute inset-0 h-full w-full object-cover object-[center_42%]"
+                        className={`absolute inset-0 h-full w-full object-cover ${isVirtualExperience ? "object-[center_30%]" : "object-[center_42%]"}`}
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/25 to-slate-950/5" />
                       <div className="absolute inset-x-5 bottom-5 md:inset-x-8 md:bottom-7">
