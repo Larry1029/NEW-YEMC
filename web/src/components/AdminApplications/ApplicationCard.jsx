@@ -68,7 +68,7 @@ export function ApplicationCard({
                 }`}
               >
                 {isVirtual ? <Monitor size={12} /> : <MapPin size={12} />}
-                {isVirtual ? "Virtual Viewer" : "In-Person"}
+                {isVirtual ? "Virtual Attendee" : "In-Person"}
               </span>
               <p
                 className={`text-sm break-all sm:truncate ${isDark ? "text-blue-400" : "text-blue-600"}`}
