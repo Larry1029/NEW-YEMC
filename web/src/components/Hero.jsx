@@ -101,10 +101,12 @@ function ZigzagRail({ side }) {
 
 export default function Hero() {
   const [activeMobileCard, setActiveMobileCard] = useState(2);
+  const [heroReady, setHeroReady] = useState(false);
 
   useEffect(() => {
+    const frame = window.requestAnimationFrame(() => setHeroReady(true));
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      return;
+      return () => window.cancelAnimationFrame(frame);
     }
 
     let nextCardTimeout;
@@ -115,13 +117,14 @@ export default function Hero() {
     const initialHoldTimeout = window.setTimeout(advanceCard, 2000);
 
     return () => {
+      window.cancelAnimationFrame(frame);
       window.clearTimeout(initialHoldTimeout);
       window.clearTimeout(nextCardTimeout);
     };
   }, []);
 
   return (
-    <section className="relative overflow-hidden bg-slate-950 pt-28 text-white md:pt-36">
+    <section className={`relative overflow-hidden bg-slate-950 pt-28 text-white md:pt-36 ${heroReady ? "hero-ready" : ""}`}>
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_46%,rgba(124,58,237,0.16),transparent_34%),linear-gradient(180deg,#020617_0%,#0f172a_70%,#020617_100%)]" />
 
       <div className="relative z-10 mx-auto max-w-[1500px] px-5 md:px-10 lg:px-16">
