@@ -50,12 +50,12 @@ function MobileCarouselCard({ person, index, position }) {
       style={{
         position: "absolute",
         "--mobile-card-delay": `${350 + Math.abs(index - 2) * 100}ms`,
+        "--mobile-card-opacity": position.opacity,
         left: position.left,
         top: position.top,
         width: position.width,
         height: position.height,
         zIndex: position.zIndex,
-        opacity: position.opacity,
         transform: `translate(-50%, calc(-50% + 100svh - 45rem)) rotate(${position.rotation}deg)`,
         transition: "left 600ms cubic-bezier(0.22, 1, 0.36, 1), top 600ms cubic-bezier(0.22, 1, 0.36, 1), width 600ms cubic-bezier(0.22, 1, 0.36, 1), height 600ms cubic-bezier(0.22, 1, 0.36, 1), opacity 600ms ease, transform 600ms cubic-bezier(0.22, 1, 0.36, 1)",
       }}

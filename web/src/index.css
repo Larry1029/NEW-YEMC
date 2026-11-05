@@ -28,7 +28,7 @@
 	}
 }
 
-.hero-card-slide {
+.hero-ready .hero-card-slide {
 	animation: hero-card-slide 7s ease-in-out infinite alternate;
 }
 
