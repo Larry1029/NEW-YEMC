@@ -13,7 +13,8 @@ export function useApplications(searchQuery) {
       }
       return result;
     },
-    refetchInterval: 30000,
+    refetchInterval: 3000,
+    refetchIntervalInBackground: true,
   });
   const deleteMutation = useMutation({
     mutationFn: async (id) => {
