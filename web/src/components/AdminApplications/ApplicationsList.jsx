@@ -5,6 +5,7 @@ export function ApplicationsList({
   isLoading,
   error,
   searchQuery,
+  emptyState,
   onEmail,
   onDelete,
   onEdit,
@@ -42,12 +43,13 @@ export function ApplicationsList({
         <h3
           className={`text-xl font-bold mb-2 ${isDark ? "text-white" : "text-gray-800"}`}
         >
-          No Applications Yet
+          {emptyState?.title || "No Applications Yet"}
         </h3>
         <p className={isDark ? "text-slate-400" : "text-gray-600"}>
           {searchQuery
             ? "No applications match your search."
-            : "Applications will appear here when people submit the join form."}
+            : emptyState?.description ||
+              "Applications will appear here when people submit the join form."}
         </p>
       </div>
     );

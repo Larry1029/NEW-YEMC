@@ -14,6 +14,7 @@ import { ApplicationStats } from "@/components/AdminApplications/ApplicationStat
 import { LoadingScreen } from "@/components/AdminApplications/LoadingScreen";
 export default function AdminApplicationsPage() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [activeTab, setActiveTab] = useState("applications");
   const [emailModal, setEmailModal] = useState(null);
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [editApplication, setEditApplication] = useState(null);
@@ -133,8 +134,14 @@ export default function AdminApplicationsPage() {
     }
   };
   const handleExport = () => {
-    exportToCSV(applications);
+    const recordsToExport = activeTab === "attendance"
+      ? applications.filter((application) => application.checked_in_at)
+      : applications;
+    exportToCSV(recordsToExport);
   };
+  const displayedApplications = activeTab === "attendance"
+    ? applications.filter((application) => application.checked_in_at)
+    : applications;
   const handleUpload = async (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -267,27 +274,71 @@ export default function AdminApplicationsPage() {
             </div>
           )}
           {isAdmin && <ApprovalRequests isDark={isDark} />}
+          <div
+            className={`mb-6 flex gap-1 rounded-xl border p-1 ${
+              isDark ? "border-slate-800 bg-slate-900/70" : "border-slate-200 bg-white/70"
+            }`}
+            role="tablist"
+            aria-label="Admin application views"
+          >
+            {[
+              ["applications", "Applications"],
+              ["attendance", "Attendance"],
+            ].map(([tab, label]) => (
+              <button
+                key={tab}
+                type="button"
+                role="tab"
+                aria-selected={activeTab === tab}
+                onClick={() => setActiveTab(tab)}
+                className={`rounded-lg px-4 py-2.5 text-sm font-bold transition-colors ${
+                  activeTab === tab
+                    ? isDark
+                      ? "bg-violet-500 text-white"
+                      : "bg-violet-600 text-white shadow-sm"
+                    : isDark
+                      ? "text-slate-400 hover:bg-slate-800 hover:text-white"
+                      : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"
+                }`}
+              >
+                {label}
+                {tab === "attendance" && (
+                  <span className="ml-2 rounded-full bg-black/15 px-2 py-0.5 text-xs">
+                    {stats?.checkedIn ?? 0}
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
           <div className="mb-4 flex items-center justify-between">
             <h2
               className={`text-xl font-bold ${
                 isDark ? "text-white" : "text-slate-800"
               }`}
             >
-              Applicants
+              {activeTab === "attendance" ? "Event Attendance" : "Applicants"}
             </h2>
             <span
               className={`text-sm ${
                 isDark ? "text-slate-400" : "text-slate-500"
               }`}
             >
-              {total} total
+              {activeTab === "attendance" ? `${displayedApplications.length} checked in` : `${total} total`}
             </span>
           </div>
           <ApplicationsList
-            applications={applications}
+            applications={displayedApplications}
             isLoading={isLoading}
             error={error}
             searchQuery={searchQuery}
+            emptyState={
+              activeTab === "attendance"
+                ? {
+                    title: "No Attendance Recorded",
+                    description: "Scanned conference passes will appear here.",
+                  }
+                : undefined
+            }
             onEmail={setEmailModal}
             onDelete={handleDelete}
             onEdit={(application) => {

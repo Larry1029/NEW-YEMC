@@ -14,6 +14,7 @@ import {
   ChevronUp,
   Monitor,
   MapPin,
+  QrCode,
 } from "lucide-react";
 import { formatDate, formatPhone } from "@/utils/formatters";
 import { useState } from "react";
@@ -222,6 +223,26 @@ export function ApplicationCard({
                       className={`font-medium ${isDark ? "text-slate-300" : "text-gray-700"}`}
                     >
                       {application.institution}
+                    </p>
+                  </div>
+                </div>
+              )}
+              {application.checked_in_at && (
+                <div className="flex items-start gap-3">
+                  <div
+                    className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${isDark ? "bg-amber-500/10" : "bg-amber-100"}`}
+                  >
+                    <QrCode
+                      size={20}
+                      className={isDark ? "text-amber-400" : "text-amber-600"}
+                    />
+                  </div>
+                  <div className="flex-1">
+                    <p className={`text-xs mb-1 ${isDark ? "text-slate-500" : "text-gray-500"}`}>
+                      Checked In
+                    </p>
+                    <p className={`font-medium ${isDark ? "text-slate-300" : "text-gray-700"}`}>
+                      {formatDate(application.checked_in_at)}
                     </p>
                   </div>
                 </div>
