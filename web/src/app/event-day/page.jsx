@@ -6,6 +6,8 @@ import Footer from "../../components/Footer";
 import Header from "../../components/Header";
 import OptimizedImage from "../../components/OptimizedImage";
 import convenerImage from "../../public/yemc-2026-convener.png";
+import morningProgrammeImage from "../../public/conference-programme-morning.png";
+import afternoonProgrammeImage from "../../public/conference-programme-afternoon.png";
 
 export default function EventDayPage() {
   const [isProgrammeOpen, setIsProgrammeOpen] = useState(false);
@@ -82,10 +84,15 @@ export default function EventDayPage() {
               className="group mt-7 block w-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_12px_35px_rgba(15,23,42,0.08)]"
               aria-label="Open conference programme"
             >
-              <div className="relative">
-                <img
-                  src="/conference-programme.png"
-                  alt="YEMC conference programme"
+              <div className="relative space-y-px bg-slate-200">
+                <OptimizedImage
+                  src={morningProgrammeImage}
+                  alt="YEMC morning conference programme"
+                  className="h-auto w-full object-contain"
+                />
+                <OptimizedImage
+                  src={afternoonProgrammeImage}
+                  alt="YEMC afternoon conference programme"
                   className="h-auto w-full object-contain"
                 />
                 <span className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 rounded-full bg-slate-950/85 px-3 py-2 text-xs font-bold text-white backdrop-blur-sm">
@@ -139,10 +146,15 @@ export default function EventDayPage() {
             <X className="h-6 w-6" />
           </button>
           <div className="h-full w-full overflow-auto">
-            <img
-              src="/conference-programme.png"
-              alt="YEMC conference programme full size"
-              className="min-h-full w-full object-contain"
+            <OptimizedImage
+              src={morningProgrammeImage}
+              alt="YEMC morning conference programme full size"
+              className="w-full object-contain"
+            />
+            <OptimizedImage
+              src={afternoonProgrammeImage}
+              alt="YEMC afternoon conference programme full size"
+              className="w-full object-contain"
             />
           </div>
         </div>
