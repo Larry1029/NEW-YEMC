@@ -78,7 +78,7 @@ export default function EventDayPage() {
           <div className="mx-auto max-w-4xl">
             <div className="text-center">
               <h2 className="font-plus-jakarta text-3xl font-extrabold text-slate-950 sm:text-4xl">
-                Conference Programme
+                Program Lineup
               </h2>
             </div>
             <button
