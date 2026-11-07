@@ -17,13 +17,13 @@ export default function EventDayPage() {
       <Header />
 
       <main>
-        <section className="relative overflow-hidden px-4 pb-10 pt-28 sm:px-6 md:pb-16 md:pt-32">
+        <section className="relative overflow-hidden px-0 pb-0 pt-24 sm:px-6 md:pt-32">
           <div className="absolute inset-x-0 top-0 h-[70%] bg-gradient-to-b from-violet-950 via-violet-950 to-white" />
           <div className="absolute left-[-4rem] top-28 h-52 w-52 rounded-full bg-fuchsia-500/25 blur-3xl" />
           <div className="absolute right-[-4rem] top-52 h-52 w-52 rounded-full bg-blue-400/20 blur-3xl" />
 
-          <div className="relative mx-auto max-w-6xl">
-            <div className="mb-7 text-center text-white">
+          <div className="relative mx-auto flex max-w-6xl flex-col">
+            <div className="mb-5 px-4 text-center text-white sm:px-0 md:mb-7">
               <p className="text-xs font-bold uppercase tracking-[0.24em] text-violet-200">
                 YEMC 2026 Conference Guide
               </p>
@@ -35,7 +35,7 @@ export default function EventDayPage() {
               </h1>
             </div>
 
-            <div className="-mx-4 overflow-hidden bg-white shadow-[0_28px_80px_rgba(76,29,149,0.25)] ring-1 ring-violet-100 sm:mx-0 sm:rounded-[2rem]">
+            <div className="mt-auto w-full overflow-hidden bg-white shadow-[0_28px_80px_rgba(76,29,149,0.25)] ring-1 ring-violet-100 sm:rounded-[2rem]">
               <OptimizedImage
                 src={convenerImage}
                 alt="Apostle Isaac Ali Asomah and his wife"
