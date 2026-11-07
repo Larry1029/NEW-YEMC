@@ -53,7 +53,7 @@ export default function EventDayPage() {
                 alt="Apostle Isaac Ali Asomah and his wife"
                 loading="eager"
                 fetchPriority="high"
-                className="h-auto w-full object-contain object-center [mask-image:linear-gradient(to_bottom,transparent_0%,rgba(0,0,0,0.2)_12%,rgba(0,0,0,0.65)_28%,black_48%)]"
+                className="h-auto w-full object-contain object-center"
               />
             </div>
           </div>
