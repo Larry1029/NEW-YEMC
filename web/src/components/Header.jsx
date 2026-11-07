@@ -19,6 +19,7 @@ export default function Header({ hideUntilScroll = false }) {
   const navLinks = [
     { name: "About Us", href: "/about" },
     { name: "Gallery", href: "/gallery" },
+    { name: "Event Day", href: "/event-day" },
     { name: "Lessons", href: "/lessons" },
   ];
   const resourcesLinks = [

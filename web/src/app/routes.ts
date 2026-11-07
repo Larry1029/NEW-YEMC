@@ -18,6 +18,7 @@ const pageRoutes: RouteConfigEntry[] = [
 	route('forgot-password', './forgot-password/page.jsx'),
 	route('gallery', './gallery/page.jsx'),
 	route('join', './join/page.jsx'),
+	route('event-day', './event-day/page.jsx'),
 	route('lessons', './lessons/page.jsx'),
 	route('reset-password', './reset-password/page.jsx'),
 	route('resources', './resources/page.jsx'),
