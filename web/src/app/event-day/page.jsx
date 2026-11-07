@@ -10,7 +10,19 @@ import morningProgrammeImage from "../../public/conference-programme-morning.png
 import afternoonProgrammeImage from "../../public/conference-programme-afternoon.png";
 
 export default function EventDayPage() {
-  const [isProgrammeOpen, setIsProgrammeOpen] = useState(false);
+  const [openProgramme, setOpenProgramme] = useState(null);
+  const programmeImages = [
+    {
+      key: "morning",
+      src: morningProgrammeImage,
+      alt: "YEMC morning program lineup",
+    },
+    {
+      key: "afternoon",
+      src: afternoonProgrammeImage,
+      alt: "YEMC afternoon program lineup",
+    },
+  ];
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-white text-slate-900">
@@ -81,29 +93,29 @@ export default function EventDayPage() {
                 Program Lineup
               </h2>
             </div>
-            <button
-              type="button"
-              onClick={() => setIsProgrammeOpen(true)}
-              className="group mt-7 block w-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_12px_35px_rgba(15,23,42,0.08)]"
-              aria-label="Open conference programme"
-            >
-              <div className="relative space-y-px bg-slate-200">
-                <OptimizedImage
-                  src={morningProgrammeImage}
-                  alt="YEMC morning conference programme"
-                  className="h-auto w-full object-contain"
-                />
-                <OptimizedImage
-                  src={afternoonProgrammeImage}
-                  alt="YEMC afternoon conference programme"
-                  className="h-auto w-full object-contain"
-                />
-                <span className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 rounded-full bg-slate-950/85 px-3 py-2 text-xs font-bold text-white backdrop-blur-sm">
-                  <Expand className="h-4 w-4" />
-                  Open full size
-                </span>
-              </div>
-            </button>
+            <div className="mt-7 grid gap-5">
+              {programmeImages.map((programme, index) => (
+                <button
+                  key={programme.key}
+                  type="button"
+                  onClick={() => setOpenProgramme(programme)}
+                  className="group block w-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_12px_35px_rgba(15,23,42,0.08)]"
+                  aria-label={`Open ${index === 0 ? "morning" : "afternoon"} program lineup`}
+                >
+                  <div className="relative">
+                    <OptimizedImage
+                      src={programme.src}
+                      alt={programme.alt}
+                      className="h-auto w-full object-contain"
+                    />
+                    <span className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 rounded-full bg-slate-950/85 px-3 py-2 text-xs font-bold text-white backdrop-blur-sm">
+                      <Expand className="h-4 w-4" />
+                      Open full size
+                    </span>
+                  </div>
+                </button>
+              ))}
+            </div>
           </div>
         </section>
 
@@ -133,16 +145,16 @@ export default function EventDayPage() {
         </section>
       </main>
 
-      {isProgrammeOpen && (
+      {openProgramme && (
         <div
           className="fixed inset-0 z-[100] flex flex-col bg-black"
           role="dialog"
           aria-modal="true"
-          aria-label="Conference programme"
+          aria-label={`${openProgramme.alt} full size`}
         >
           <button
             type="button"
-            onClick={() => setIsProgrammeOpen(false)}
+            onClick={() => setOpenProgramme(null)}
             className="absolute right-4 top-4 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-black/70 text-white backdrop-blur-sm"
             aria-label="Close conference programme"
           >
@@ -150,13 +162,8 @@ export default function EventDayPage() {
           </button>
           <div className="h-full w-full overflow-auto">
             <OptimizedImage
-              src={morningProgrammeImage}
-              alt="YEMC morning conference programme full size"
-              className="w-full object-contain"
-            />
-            <OptimizedImage
-              src={afternoonProgrammeImage}
-              alt="YEMC afternoon conference programme full size"
+              src={openProgramme.src}
+              alt={`${openProgramme.alt} full size`}
               className="w-full object-contain"
             />
           </div>
