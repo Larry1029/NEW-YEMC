@@ -30,7 +30,7 @@ export default function EventDayPage() {
 
       <main>
         <section className="relative overflow-hidden px-0 pb-0 pt-24 sm:px-6 md:pt-32">
-          <div className="absolute inset-x-0 top-0 h-[70%] bg-gradient-to-b from-violet-950 via-violet-950 to-white" />
+          <div className="absolute inset-x-0 top-0 h-full bg-violet-950" />
           <div className="absolute left-[-4rem] top-28 h-52 w-52 rounded-full bg-fuchsia-500/25 blur-3xl" />
           <div className="absolute right-[-4rem] top-52 h-52 w-52 rounded-full bg-blue-400/20 blur-3xl" />
 
