@@ -1,34 +1,16 @@
 "use client";
 import { ArrowLeft, Send } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useLocation } from "react-router-dom";
 import OptimizedImage from "../../components/OptimizedImage";
-import ComingSoonNotice from "../../components/ComingSoonNotice";
 import conferenceImage from "../../public/632A81(264) - Copy.jpg";
 import virtualConferenceImage from "../../public/632A81(323) - Copy.jpg";
 export default function JoinPage() {
   const location = useLocation();
-  const isVirtualExperience = location.pathname === "/virtual-registration";
-  const registrationDeadline = Date.UTC(2026, 10, 4, 12, 0, 0);
-  const [now, setNow] = useState(null);
-  const [countdown, setCountdown] = useState(null);
-  useEffect(() => {
-    const updateCountdown = () => {
-      const currentTime = Date.now();
-      const remaining = Math.max(0, registrationDeadline - currentTime);
-      setNow(currentTime);
-      setCountdown({
-        days: Math.floor(remaining / 86400000),
-        hours: Math.floor((remaining % 86400000) / 3600000),
-        minutes: Math.floor((remaining % 3600000) / 60000),
-        seconds: Math.floor((remaining % 60000) / 1000),
-      });
-    };
-    updateCountdown();
-    const timer = window.setInterval(updateCountdown, 1000);
-    return () => window.clearInterval(timer);
-  }, []);
-  const inPersonRegistrationClosed = now !== null && now >= registrationDeadline;
+  const [registrationType, setRegistrationType] = useState(
+    location.pathname === "/virtual-registration" ? "virtual" : "in-person",
+  );
+  const isVirtualExperience = registrationType === "virtual";
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -197,28 +179,47 @@ export default function JoinPage() {
         </div>
         <div className="py-20 px-6 md:px-10">
           <div className="max-w-3xl mx-auto">
-            {!(!isVirtualExperience && inPersonRegistrationClosed) && (
-              <div className="text-center mb-12">
-                <h1 className="text-4xl md:text-6xl font-extrabold text-white mb-4 font-plus-jakarta leading-tight">
-                  {isVirtualExperience ? "Register for the" : "Register for"}{" "}
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-blue-400">
-                    YEMC 2026{isVirtualExperience ? " Virtual Experience" : ""}
-                  </span>
-                </h1>
-              </div>
-            )}
-            {!isVirtualExperience && inPersonRegistrationClosed ? (
-              <ComingSoonNotice
-                title="Sorry, in-person registration is over"
-                message="You can still be part of the conference by joining us virtually."
-                actionLabel="Register for the virtual experience"
-                actionHref="/virtual-registration"
-                blurBackground={false}
-                allowBackgroundInteraction
-              />
-            ) : (
+            <div className="text-center mb-12">
+              <h1 className="text-4xl md:text-6xl font-extrabold text-white mb-4 font-plus-jakarta leading-tight">
+                Register for{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-blue-400">
+                  YEMC 2026
+                </span>
+              </h1>
+            </div>
               <div className="overflow-hidden bg-slate-900 border border-slate-800 rounded-3xl md:rounded-[40px] p-8 md:p-12">
               <form onSubmit={handleSubmit} className="space-y-6">
+                  <fieldset>
+                    <legend className="mb-3 block text-sm font-bold text-white md:text-base">
+                      How will you attend?
+                    </legend>
+                    <div className="grid grid-cols-2 rounded-2xl border border-slate-800 bg-slate-950 p-1">
+                      <button
+                        type="button"
+                        aria-pressed={registrationType === "in-person"}
+                        onClick={() => setRegistrationType("in-person")}
+                        className={`rounded-xl px-4 py-3 text-sm font-bold transition-colors md:text-base ${
+                          registrationType === "in-person"
+                            ? "bg-violet-600 text-white shadow-lg shadow-violet-950/40"
+                            : "text-slate-400 hover:text-white"
+                        }`}
+                      >
+                        In Person
+                      </button>
+                      <button
+                        type="button"
+                        aria-pressed={registrationType === "virtual"}
+                        onClick={() => setRegistrationType("virtual")}
+                        className={`rounded-xl px-4 py-3 text-sm font-bold transition-colors md:text-base ${
+                          registrationType === "virtual"
+                            ? "bg-violet-600 text-white shadow-lg shadow-violet-950/40"
+                            : "text-slate-400 hover:text-white"
+                        }`}
+                      >
+                        Online
+                      </button>
+                    </div>
+                  </fieldset>
                   <div className="-mx-8 -mt-8 md:-mx-12 md:-mt-12 overflow-hidden border-b border-slate-800">
                     <div className="relative isolate h-52 md:h-64">
                       <OptimizedImage
@@ -537,7 +538,6 @@ export default function JoinPage() {
                   </button>
               </form>
               </div>
-            )}
           </div>
         </div>
       </div>
