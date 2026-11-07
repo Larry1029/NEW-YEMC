@@ -25,6 +25,9 @@ export default function EventDayPage() {
               <p className="text-xs font-bold uppercase tracking-[0.24em] text-violet-200">
                 YEMC 2026 Conference Guide
               </p>
+              <h1 className="mt-3 font-plus-jakarta text-4xl font-extrabold leading-[1.05] sm:text-5xl md:text-6xl">
+                Lead with Purpose. Grow with Impact.
+              </h1>
             </div>
 
             <div className="overflow-hidden rounded-[2rem] bg-white shadow-[0_28px_80px_rgba(76,29,149,0.25)] ring-1 ring-violet-100">
