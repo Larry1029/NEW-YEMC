@@ -24,6 +24,7 @@ export default function AdminApplicationsPage() {
   const [showApprovalNotice, setShowApprovalNotice] = useState(false);
   const [uploadError, setUploadError] = useState(null);
   const [uploadSuccess, setUploadSuccess] = useState(null);
+  const [isSendingLiveLink, setIsSendingLiveLink] = useState(false);
   const { data: user, loading: userLoading } = useUser();
   const { theme, toggleTheme, isDark } = useTheme();
   const {
@@ -169,6 +170,29 @@ export default function AdminApplicationsPage() {
     }
     event.target.value = "";
   };
+  const handleSendLiveLink = async () => {
+    if (!window.confirm("Email the live conference link to all virtual registrants?")) {
+      return;
+    }
+    setActionError(null);
+    setActionNotice(null);
+    setIsSendingLiveLink(true);
+    try {
+      const response = await fetch("/api/applications/send-live-link", {
+        method: "POST",
+      });
+      const data = await response.json();
+      if (!response.ok && response.status !== 207) {
+        throw new Error(data.error || "Failed to send live-link emails");
+      }
+      const failureText = data.failed?.length ? ` ${data.failed.length} could not be sent.` : "";
+      setActionNotice(`Live conference link sent to ${data.sent} virtual registrants.${failureText}`);
+    } catch (error) {
+      setActionError(error.message);
+    } finally {
+      setIsSendingLiveLink(false);
+    }
+  };
   if (userLoading) {
     return <LoadingScreen isDark={isDark} />;
   }
@@ -200,6 +224,20 @@ export default function AdminApplicationsPage() {
           <div className="mb-6">
             <ApplicationStats stats={stats} isDark={isDark} />
           </div>
+          {isAdmin && (
+            <div className="mb-6 flex justify-end">
+              <button
+                type="button"
+                onClick={handleSendLiveLink}
+                disabled={isSendingLiveLink}
+                className={`rounded-xl px-4 py-3 text-sm font-bold text-white transition-colors disabled:cursor-not-allowed disabled:opacity-60 ${
+                  isDark ? "bg-violet-600 hover:bg-violet-500" : "bg-violet-700 hover:bg-violet-800"
+                }`}
+              >
+                {isSendingLiveLink ? "Sending live-link emails..." : "Email Live Link to Virtual Registrants"}
+              </button>
+            </div>
+          )}
           {!isAdmin && showApprovalNotice && (
             <div
               role="status"
