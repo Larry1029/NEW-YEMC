@@ -187,39 +187,39 @@ export default function JoinPage() {
                 </span>
               </h1>
             </div>
+              <div className="mb-6 flex justify-center">
+                <fieldset className="inline-flex rounded-2xl border border-slate-700/80 bg-slate-900/90 p-1.5 shadow-[0_18px_50px_rgba(2,6,23,0.35)] backdrop-blur-sm">
+                  <legend className="sr-only">How will you attend?</legend>
+                  <div className="grid grid-cols-2 gap-1">
+                    <button
+                      type="button"
+                      aria-pressed={registrationType === "in-person"}
+                      onClick={() => setRegistrationType("in-person")}
+                      className={`min-w-32 rounded-xl px-5 py-3 text-sm font-bold transition-all duration-200 md:min-w-40 md:text-base ${
+                        registrationType === "in-person"
+                          ? "bg-gradient-to-r from-violet-600 to-indigo-500 text-white shadow-[0_8px_24px_rgba(124,58,237,0.35)]"
+                          : "text-slate-400 hover:bg-slate-800 hover:text-white"
+                      }`}
+                    >
+                      In Person
+                    </button>
+                    <button
+                      type="button"
+                      aria-pressed={registrationType === "virtual"}
+                      onClick={() => setRegistrationType("virtual")}
+                      className={`min-w-32 rounded-xl px-5 py-3 text-sm font-bold transition-all duration-200 md:min-w-40 md:text-base ${
+                        registrationType === "virtual"
+                          ? "bg-gradient-to-r from-violet-600 to-indigo-500 text-white shadow-[0_8px_24px_rgba(124,58,237,0.35)]"
+                          : "text-slate-400 hover:bg-slate-800 hover:text-white"
+                      }`}
+                    >
+                      Online
+                    </button>
+                  </div>
+                </fieldset>
+              </div>
               <div className="overflow-hidden bg-slate-900 border border-slate-800 rounded-3xl md:rounded-[40px] p-8 md:p-12">
-              <form onSubmit={handleSubmit} className="space-y-6">
-                  <fieldset>
-                    <legend className="mb-3 block text-sm font-bold text-white md:text-base">
-                      How will you attend?
-                    </legend>
-                    <div className="grid grid-cols-2 rounded-2xl border border-slate-800 bg-slate-950 p-1">
-                      <button
-                        type="button"
-                        aria-pressed={registrationType === "in-person"}
-                        onClick={() => setRegistrationType("in-person")}
-                        className={`rounded-xl px-4 py-3 text-sm font-bold transition-colors md:text-base ${
-                          registrationType === "in-person"
-                            ? "bg-violet-600 text-white shadow-lg shadow-violet-950/40"
-                            : "text-slate-400 hover:text-white"
-                        }`}
-                      >
-                        In Person
-                      </button>
-                      <button
-                        type="button"
-                        aria-pressed={registrationType === "virtual"}
-                        onClick={() => setRegistrationType("virtual")}
-                        className={`rounded-xl px-4 py-3 text-sm font-bold transition-colors md:text-base ${
-                          registrationType === "virtual"
-                            ? "bg-violet-600 text-white shadow-lg shadow-violet-950/40"
-                            : "text-slate-400 hover:text-white"
-                        }`}
-                      >
-                        Online
-                      </button>
-                    </div>
-                  </fieldset>
+                <form onSubmit={handleSubmit} className="space-y-6">
                   <div className="-mx-8 -mt-8 md:-mx-12 md:-mt-12 overflow-hidden border-b border-slate-800">
                     <div className="relative isolate h-52 md:h-64">
                       <OptimizedImage
