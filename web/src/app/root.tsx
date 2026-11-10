@@ -371,9 +371,9 @@ export function Layout({ children }: { children: ReactNode }) {
         <Meta />
         <Links />
         <script type="module" src="/src/__create/dev-error-overlay.js"></script>
-        <link rel="icon" type="image/png" sizes="64x64" href="/favicon.png?v=yemc-logo-2026" />
-        <link rel="shortcut icon" type="image/png" href="/favicon.png?v=yemc-logo-2026" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=yemc-logo-2026" />
+        <link rel="icon" type="image/png" sizes="64x64" href="/favicon.png?v=yemc-logo" />
+        <link rel="shortcut icon" type="image/png" href="/favicon.png?v=yemc-logo" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=yemc-logo" />
         {LoadFontsSSR ? <LoadFontsSSR /> : null}
       </head>
       <body>

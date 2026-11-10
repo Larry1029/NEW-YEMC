@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
-import logoSrc from "../public/yemc-logo.png";
+import logoSrc from "../public/yef-logo.jpg";
 
 export default function ComingSoonNotice({
   page,
@@ -67,8 +67,8 @@ export default function ComingSoonNotice({
         ) : (
           <img
             src={logoSrc}
-            alt="Young Executive Master Class"
-            className="h-16 w-16 rounded-full bg-white p-1 object-contain"
+            alt="YEF logo"
+            className="h-12 w-12 rounded-xl bg-white object-contain"
           />
         )}
       </div>

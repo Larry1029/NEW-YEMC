@@ -12,7 +12,6 @@ import {
 import { useState } from "react";
 import { getGreeting, getFirstName } from "@/utils/formatters";
 import OptimizedImage from "../OptimizedImage";
-import logoSrc from "../../public/yemc-logo.png";
 export function AdminHeader({
   user,
   total,
@@ -42,10 +41,16 @@ export function AdminHeader({
           <div className="flex items-center justify-between gap-8 md:justify-start md:gap-6">
             <a href="/" className="flex shrink-0 items-center gap-2 group">
               <OptimizedImage
-                src={logoSrc}
-                alt="Young Executive Master Class"
-                className="h-14 w-14 rounded-full bg-white p-1 shadow-lg transition-transform group-hover:scale-105 sm:h-16 sm:w-16"
+                src="https://ucarecdn.com/dcbe7a42-7e7a-473b-96c1-4a135fdecc95/-/format/auto/"
+                alt="YEMC Logo"
+                className="h-9 w-9 rounded-xl shadow-lg transition-transform group-hover:scale-105 sm:h-12 sm:w-12"
               />
+              <span
+                className={`font-bold text-xl tracking-tight sm:text-2xl ${isDark ? "text-white" : "text-gray-800"}`}
+                style={{ fontFamily: "'Dela Gothic One', sans-serif" }}
+              >
+                YEMC
+              </span>
             </a>
             <div
               className={`hidden md:block w-px h-12 ${isDark ? "bg-slate-700" : "bg-gray-300"}`}
