@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { BadgeCheck, Building2, Mail, Phone, ShieldCheck } from "lucide-react";
-import logoSrc from "../../../public/yef-logo.jpg";
+import logoSrc from "../../../public/yemc-logo.png";
 import OptimizedImage from "../../../components/OptimizedImage";
 
 const activeCheckIns = new Map();
@@ -65,8 +65,8 @@ export default function ConferencePassPage() {
         <a href="/" aria-label="YEMC home" className="mb-6 flex justify-center">
           <OptimizedImage
             src={logoSrc}
-            alt="YEMC logo"
-            className="h-16 w-16 rounded-2xl object-contain"
+            alt="Young Executive Master Class"
+            className="h-20 w-24 rounded-2xl bg-white p-1 object-contain"
           />
         </a>
         <section className="w-full overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 shadow-2xl">

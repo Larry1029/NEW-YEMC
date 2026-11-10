@@ -1,5 +1,5 @@
 import { Facebook, Instagram, Linkedin, Mail, MapPin, Phone } from "lucide-react";
-import logoSrc from "../public/yef-logo.jpg";
+import logoSrc from "../public/yemc-logo.png";
 import OptimizedImage from "./OptimizedImage";
 
 const socialLinks = [
@@ -32,12 +32,9 @@ export default function Footer() {
               <OptimizedImage
                 loading="eager"
                 src={logoSrc}
-                alt="YEMC Logo"
-                className="w-8 h-8 md:w-9 md:h-9 lg:w-10 lg:h-10 rounded-lg md:rounded-xl object-contain bg-white"
+                alt="Young Executive Master Class"
+                className="h-14 w-[4.25rem] rounded-lg bg-white object-contain p-1"
               />
-              <span className="text-white font-bold text-xl md:text-2xl tracking-tight">
-                YEMC
-              </span>
             </a>
             <p className="text-slate-400 mb-5 md:mb-6 lg:mb-8 leading-relaxed text-sm md:text-base">
               Raising the next generation of Christian business executives.

@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { ChevronRight, ChevronDown } from "lucide-react";
 import { useLocation } from "react-router";
-import logoSrc from "../public/yef-logo.jpg";
+import logoSrc from "../public/yemc-logo.png";
 import OptimizedImage from "./OptimizedImage";
 export default function Header({ hideUntilScroll = false }) {
   const location = useLocation();
@@ -40,15 +40,9 @@ export default function Header({ hideUntilScroll = false }) {
                 loading="eager"
                 fetchPriority="high"
                 src={logoSrc}
-                alt="YEF Logo"
-                className="w-10 h-10 md:w-12 md:h-12 rounded-xl object-contain bg-white shadow-none md:shadow-lg group-hover:scale-105 transition-transform"
+                alt="Young Executive Master Class"
+                className="h-12 w-[4.5rem] rounded-lg bg-white object-contain p-1 shadow-none transition-transform group-hover:scale-105 md:h-16 md:w-[4.75rem] md:shadow-lg"
               />
-              <span
-                className="text-white font-bold text-xl md:text-2xl tracking-tight"
-                style={{ fontFamily: "'Dela Gothic One', sans-serif" }}
-              >
-                YEMC
-              </span>
             </a>
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
