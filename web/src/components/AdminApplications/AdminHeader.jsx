@@ -44,7 +44,7 @@ export function AdminHeader({
               <OptimizedImage
                 src={logoSrc}
                 alt="Young Executive Master Class"
-                className="h-14 w-[4.25rem] rounded-xl bg-white p-1 shadow-lg transition-transform group-hover:scale-105 sm:h-16 sm:w-[4.75rem]"
+                className="h-14 w-14 rounded-full bg-white p-1 shadow-lg transition-transform group-hover:scale-105 sm:h-16 sm:w-16"
               />
             </a>
             <div

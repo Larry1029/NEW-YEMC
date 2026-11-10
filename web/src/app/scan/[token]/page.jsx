@@ -66,7 +66,7 @@ export default function ConferencePassPage() {
           <OptimizedImage
             src={logoSrc}
             alt="Young Executive Master Class"
-            className="h-20 w-24 rounded-2xl bg-white p-1 object-contain"
+            className="h-20 w-20 rounded-full bg-white p-1 object-contain"
           />
         </a>
         <section className="w-full overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 shadow-2xl">

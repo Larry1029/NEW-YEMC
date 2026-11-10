@@ -68,7 +68,7 @@ export default function ComingSoonNotice({
           <img
             src={logoSrc}
             alt="Young Executive Master Class"
-            className="h-16 w-[4.75rem] rounded-xl bg-white p-1 object-contain"
+            className="h-16 w-16 rounded-full bg-white p-1 object-contain"
           />
         )}
       </div>

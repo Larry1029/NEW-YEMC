@@ -33,7 +33,7 @@ export default function Footer() {
                 loading="eager"
                 src={logoSrc}
                 alt="Young Executive Master Class"
-                className="h-14 w-[4.25rem] rounded-lg bg-white object-contain p-1"
+                className="h-14 w-14 rounded-full bg-white object-contain p-1"
               />
             </a>
             <p className="text-slate-400 mb-5 md:mb-6 lg:mb-8 leading-relaxed text-sm md:text-base">

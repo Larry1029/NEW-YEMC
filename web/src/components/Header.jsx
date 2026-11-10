@@ -41,7 +41,7 @@ export default function Header({ hideUntilScroll = false }) {
                 fetchPriority="high"
                 src={logoSrc}
                 alt="Young Executive Master Class"
-                className="h-12 w-[4.5rem] rounded-lg bg-white object-contain p-1 shadow-none transition-transform group-hover:scale-105 md:h-16 md:w-[4.75rem] md:shadow-lg"
+                className="h-12 w-12 rounded-full bg-white object-contain p-1 shadow-none transition-transform group-hover:scale-105 md:h-16 md:w-16 md:shadow-lg"
               />
             </a>
             <button
