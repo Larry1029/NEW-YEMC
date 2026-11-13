@@ -157,7 +157,7 @@ export default function JoinPage() {
               {isMembershipApplication
                 ? welcomeEmailSent
                   ? "You are now part of YEMC. Welcome! We have sent you a confirmation email, and our team will be in touch soon."
-                  : "You are now part of YEMC. Welcome! Our team will be in touch soon. We could not send your confirmation email, so please check that your email address is correct."
+                  : "You are now part of YEMC. Welcome! Our team will be in touch soon. We could not deliver your confirmation email just now."
                 : "We sent your virtual registration details to your email address."}
             </p>
           </section>
