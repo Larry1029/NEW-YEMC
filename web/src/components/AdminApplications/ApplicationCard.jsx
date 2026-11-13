@@ -15,6 +15,7 @@ import {
   Monitor,
   MapPin,
   QrCode,
+  Users,
 } from "lucide-react";
 import { formatDate, formatPhone } from "@/utils/formatters";
 import { useState } from "react";
@@ -36,6 +37,7 @@ export function ApplicationCard({
     registrationType === "virtual registration" ||
     status === "virtual" ||
     status === "virtual registration";
+  const isMembership = registrationType === "membership";
   return (
     <div
       className={`rounded-2xl overflow-hidden transition-all ${isDark ? "bg-slate-900 border border-slate-800 hover:border-violet-500/50" : "bg-white/60 backdrop-blur-sm border border-purple-200/50 hover:border-purple-400/70 shadow-sm hover:shadow-md"}`}
@@ -65,11 +67,13 @@ export function ApplicationCard({
                 className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold ${
                   isVirtual
                     ? "bg-cyan-100 text-cyan-700 dark:bg-cyan-500/15 dark:text-cyan-300"
-                    : "bg-violet-100 text-violet-700 dark:bg-violet-500/15 dark:text-violet-300"
+                    : isMembership
+                      ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300"
+                      : "bg-violet-100 text-violet-700 dark:bg-violet-500/15 dark:text-violet-300"
                 }`}
               >
-                {isVirtual ? <Monitor size={12} /> : <MapPin size={12} />}
-                {isVirtual ? "Virtual Attendee" : "In-Person"}
+                {isVirtual ? <Monitor size={12} /> : isMembership ? <Users size={12} /> : <MapPin size={12} />}
+                {isVirtual ? "Virtual Attendee" : isMembership ? "YEMC Member" : "In-Person"}
               </span>
               <p
                 className={`text-sm break-all sm:truncate ${isDark ? "text-blue-400" : "text-blue-600"}`}

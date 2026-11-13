@@ -61,16 +61,31 @@ export async function POST(request) {
       country,
       otherDetails,
       registrationType,
+      consentGiven,
     } = body;
     const isVirtualRegistration = registrationType === "virtual";
-    const registrationDeadline = IN_PERSON_REGISTRATION_DEADLINE;
-    if (!isVirtualRegistration && Date.now() >= registrationDeadline) {
+    const isMembershipApplication = registrationType === "membership";
+    if (
+      !isVirtualRegistration &&
+      !isMembershipApplication &&
+      Date.now() >= IN_PERSON_REGISTRATION_DEADLINE
+    ) {
       return Response.json(
         { error: "In-person registration closed. Please register for the virtual experience." },
         { status: 410 },
       );
     }
+    if (
+      typeof fullName !== "string" ||
+      typeof email !== "string" ||
+      typeof phoneNumber !== "string" ||
+      typeof status !== "string"
+    ) {
+      return Response.json({ error: "Please complete all required fields." }, { status: 400 });
+    }
     const customStatus = typeof otherStatus === "string" ? otherStatus.trim() : "";
+    const cleanInstitution =
+      typeof institution === "string" ? institution.trim() : "";
     const recordedStatus = status === "Other" ? `Other: ${customStatus}` : status;
     const hasBaseVirtualDetails =
       typeof fullName === "string" && fullName.trim() &&
@@ -80,7 +95,7 @@ export async function POST(request) {
       typeof otherDetails === "string" && otherDetails.trim() &&
       typeof status === "string" && status.trim() &&
       (status !== "Other" || customStatus) &&
-      (status === "Other" || status === "Unemployed" || institution);
+      (status === "Other" || status === "Unemployed" || cleanInstitution);
     const hasBaseInPersonDetails =
       typeof fullName === "string" && fullName.trim() &&
       typeof email === "string" && email.trim() &&
@@ -88,20 +103,33 @@ export async function POST(request) {
       typeof status === "string" && status.trim() &&
       typeof message === "string" && message.trim() &&
       (status !== "Other" || customStatus) &&
-      (status === "Other" || status === "Unemployed" || institution);
+      (status === "Other" || status === "Unemployed" || cleanInstitution);
+    const hasRequiredDetails = isVirtualRegistration
+      ? hasBaseVirtualDetails
+      : hasBaseInPersonDetails && (!isMembershipApplication || consentGiven === true);
+    if (!hasRequiredDetails) {
+      return Response.json(
+        {
+          error: isMembershipApplication
+            ? "Please complete all required fields and confirm membership consent."
+            : "Please complete all required fields.",
+        },
+        { status: 400 },
+      );
+    }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const cleanEmail = email.trim();
     if (!emailRegex.test(cleanEmail)) {
       return Response.json({ error: "Invalid email format" }, { status: 400 });
     }
     const cleanPhone = phoneNumber.replace(/\D/g, "");
-    const validPhone = isVirtualRegistration
+    const validPhone = isVirtualRegistration || isMembershipApplication
       ? /^\d{7,15}$/.test(cleanPhone)
       : /^\d{10}$/.test(cleanPhone);
     if (!validPhone) {
       return Response.json(
         {
-          error: isVirtualRegistration
+          error: isVirtualRegistration || isMembershipApplication
             ? "Phone number must contain 7 to 15 digits"
             : "Phone number must be exactly 10 digits",
         },
@@ -110,15 +138,20 @@ export async function POST(request) {
     }
     try {
       await sql`
-        INSERT INTO applications (full_name, email, phone, status, institution, message, registration_type)
+        INSERT INTO applications (
+          full_name, email, phone, status, institution, message,
+          registration_type, consent_given, consent_given_at
+        )
         VALUES (
           ${fullName.trim()},
           ${cleanEmail},
           ${cleanPhone},
           ${recordedStatus},
-          ${isVirtualRegistration ? (institution || null) : (institution || null)},
+          ${cleanInstitution || null},
           ${isVirtualRegistration ? `Country: ${country.trim()}\n\n${otherDetails.trim()}` : message.trim()},
-          ${isVirtualRegistration ? "virtual" : "in_person"}
+          ${isMembershipApplication ? "membership" : isVirtualRegistration ? "virtual" : "in_person"},
+          ${consentGiven === true},
+          ${consentGiven === true ? new Date() : null}
         )
       `;
     } catch (dbError) {
@@ -131,27 +164,31 @@ export async function POST(request) {
     try {
       await sendEmail({
         to: "theyoungexecutivemasterclass@gmail.com",
-        subject: isVirtualRegistration ? "New YEMC Virtual Registration" : "New YEMC Application",
+        subject: isMembershipApplication
+          ? "New YEMC Membership Application"
+          : isVirtualRegistration
+            ? "New YEMC Virtual Registration"
+            : "New YEMC Application",
         html: `
-          <h2>${isVirtualRegistration ? "New Virtual Registration Received" : "New Application Received"}</h2>
-          <p><strong>Registration type:</strong> ${isVirtualRegistration ? "Virtual" : "In-person"}</p>
+          <h2>${isMembershipApplication ? "New YEMC Membership Application" : isVirtualRegistration ? "New Virtual Registration Received" : "New Application Received"}</h2>
+          <p><strong>Type:</strong> ${isMembershipApplication ? "YEMC Membership" : isVirtualRegistration ? "Virtual" : "In-person"}</p>
           <p><strong>Name:</strong> ${escapeHtml(fullName.trim())}</p>
           <p><strong>Email:</strong> ${escapeHtml(cleanEmail)}</p>
           <p><strong>Phone:</strong> ${cleanPhone}</p>
           <p><strong>Status:</strong> ${escapeHtml(recordedStatus)}</p>
           ${isVirtualRegistration ? `<p><strong>Country:</strong> ${escapeHtml(country || "")}</p>` : ""}
-          <p><strong>Institution:</strong> ${escapeHtml(institution || "")}</p>
+          <p><strong>Institution:</strong> ${escapeHtml(cleanInstitution)}</p>
           <p><strong>${isVirtualRegistration ? "Other Essential Details" : "Message"}:</strong></p>
           <p>${escapeHtml(isVirtualRegistration ? otherDetails.trim() : message.trim()).replace(/\r?\n/g, "<br>")}</p>
         `,
         text: `
-          ${isVirtualRegistration ? "New Virtual Registration Received" : "New Application Received"}
-          Registration type: ${isVirtualRegistration ? "Virtual" : "In-person"}
+          ${isMembershipApplication ? "New YEMC Membership Application" : isVirtualRegistration ? "New Virtual Registration Received" : "New Application Received"}
+          Type: ${isMembershipApplication ? "YEMC Membership" : isVirtualRegistration ? "Virtual" : "In-person"}
           Name: ${fullName.trim()}
           Email: ${cleanEmail}
           Phone: ${cleanPhone}
           Status: ${recordedStatus}
-          Institution: ${institution}
+          Institution: ${cleanInstitution}
           ${isVirtualRegistration ? `Country: ${country}` : ""}
           ${isVirtualRegistration ? "Other Essential Details" : "Message"}: ${isVirtualRegistration ? otherDetails.trim() : message.trim()}
         `,
@@ -159,13 +196,33 @@ export async function POST(request) {
     } catch (emailError) {
       console.error("Failed to send admin email:", emailError);
     }
+    let welcomeEmailSent = false;
     try {
       await sendEmail({
         to: cleanEmail,
-        subject: isVirtualRegistration
-          ? "YEMC 2026 Virtual Access Confirmed"
-          : "Welcome to YEMC!",
-        html: isVirtualRegistration
+        subject: isMembershipApplication
+          ? "Welcome to the YEMC Community"
+          : isVirtualRegistration
+            ? "YEMC 2026 Virtual Access Confirmed"
+            : "Welcome to YEMC!",
+        html: isMembershipApplication
+          ? `
+            <div style="margin:0;padding:32px 16px;background:#f8fafc;font-family:Arial,Helvetica,sans-serif;color:#0f172a;">
+              <div style="max-width:640px;margin:0 auto;overflow:hidden;border:1px solid #e2e8f0;border-radius:20px;background:#ffffff;">
+                <div style="padding:32px;text-align:center;background:#4c1d95;color:#ffffff;">
+                  <p style="margin:0;font-size:13px;font-weight:bold;letter-spacing:.16em;text-transform:uppercase;color:#ddd6fe;">Young Executive Master Class</p>
+                  <h1 style="margin:14px 0 0;font-size:30px;">Welcome to YEMC!</h1>
+                </div>
+                <div style="padding:32px;font-size:16px;line-height:1.7;">
+                  <p>Dear ${escapeHtml(fullName.trim())},</p>
+                  <p>We are delighted to welcome you. You are now part of the YEMC community, a network committed to growth, mentorship, leadership, and excellence.</p>
+                  <p>Thank you for taking this step to join us. Our team will be in touch soon with more information about upcoming activities and opportunities.</p>
+                  <p style="margin-top:28px;">Warm regards,<br><strong>The YEMC Team</strong></p>
+                </div>
+              </div>
+            </div>
+          `
+          : isVirtualRegistration
           ? getVirtualRegistrationConfirmationHtml({ fullName: fullName.trim() })
           : `
             <h2>Welcome to the Young Executive Master Class!</h2>
@@ -176,7 +233,16 @@ export async function POST(request) {
             <p>Best regards,</p>
             <p><strong>The YEMC Team</strong></p>
           `,
-        text: isVirtualRegistration
+        text: isMembershipApplication
+          ? `
+            Welcome to YEMC!
+            Dear ${fullName.trim()},
+            We are delighted to welcome you. You are now part of the YEMC community, a network committed to growth, mentorship, leadership, and excellence.
+            Thank you for taking this step to join us. Our team will be in touch soon with more information about upcoming activities and opportunities.
+            Warm regards,
+            The YEMC Team
+          `
+          : isVirtualRegistration
           ? `
             YEMC 2026 VIRTUAL ACCESS
             Your registration has been confirmed.
@@ -197,10 +263,14 @@ export async function POST(request) {
             The YEMC Team
           `,
       });
+      welcomeEmailSent = true;
     } catch (emailError) {
       console.error("Failed to send welcome email:", emailError);
     }
-    return Response.json({ success: true }, { status: 200 });
+    return Response.json(
+      { success: true, ...(isMembershipApplication ? { emailSent: welcomeEmailSent } : {}) },
+      { status: 200 },
+    );
   } catch (error) {
     console.error("Error processing application:", error);
     return Response.json(

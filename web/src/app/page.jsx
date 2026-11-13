@@ -249,10 +249,10 @@ export default function HomePage() {
                   strategy, and influence.
                 </p>
                 <a
-                  href="/contact"
+                  href="/join"
                   className="bg-white text-slate-950 px-6 md:px-8 lg:px-10 py-3 md:py-4 lg:py-5 rounded-xl md:rounded-2xl font-extrabold text-sm md:text-base lg:text-lg hover:bg-violet-100 transition-all hover:scale-105 shadow-xl inline-flex items-center gap-2"
                 >
-                  Get Started
+                  Become a Member
                   <ArrowRight className="w-4 h-4 md:w-5 md:h-5" />
                 </a>
               </div>

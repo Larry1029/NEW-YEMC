@@ -144,7 +144,7 @@ export default function Hero() {
           </h2>
           
           <a href="/join" className="hero-button-enter group mt-8 inline-flex items-center gap-3 rounded-full bg-white px-6 py-3 text-sm font-bold text-slate-950 shadow-xl shadow-violet-950/30 transition-all hover:scale-105 hover:bg-violet-100 md:mt-9 md:px-7 md:py-3.5">
-            Register Now
+            Become a Member
             <span className="flex h-6 w-6 items-center justify-center rounded-full bg-slate-950 text-white transition-transform group-hover:translate-x-1">
               <ArrowRight size={14} />
             </span>

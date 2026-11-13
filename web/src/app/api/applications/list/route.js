@@ -97,7 +97,11 @@ export async function GET(request) {
              OR LOWER(TRIM(COALESCE(status, ''))) IN ('virtual', 'virtual registration')
         ) AS virtual_registrations,
         COUNT(*) FILTER (
+          WHERE LOWER(TRIM(COALESCE(registration_type, ''))) = 'membership'
+        ) AS membership_applications,
+        COUNT(*) FILTER (
           WHERE LOWER(REPLACE(COALESCE(registration_type, 'in_person'), '-', '_')) NOT IN ('virtual', 'virtual_registration', 'virtual registration')
+             AND LOWER(TRIM(COALESCE(registration_type, ''))) <> 'membership'
              AND LOWER(TRIM(COALESCE(status, ''))) NOT IN ('virtual', 'virtual registration')
         ) AS in_person_registrations
       FROM applications
@@ -117,6 +121,7 @@ export async function GET(request) {
         consentConfirmed: parseInt(summary.consent_confirmed, 10),
         checkedIn: parseInt(summary.checked_in, 10),
         virtualRegistrations: parseInt(summary.virtual_registrations, 10),
+        membershipApplications: parseInt(summary.membership_applications, 10),
         inPersonRegistrations: parseInt(summary.in_person_registrations, 10),
       },
     });

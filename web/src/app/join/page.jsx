@@ -7,10 +7,9 @@ import conferenceImage from "../../public/632A81(264) - Copy.jpg";
 import virtualConferenceImage from "../../public/632A81(323) - Copy.jpg";
 export default function JoinPage() {
   const location = useLocation();
-  const [registrationType, setRegistrationType] = useState(
-    location.pathname === "/virtual-registration" ? "virtual" : "in-person",
-  );
-  const isVirtualExperience = registrationType === "virtual";
+  const isMembershipApplication = location.pathname !== "/virtual-registration";
+  const isVirtualExperience = !isMembershipApplication;
+  const registrationType = isMembershipApplication ? "membership" : "virtual";
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -24,6 +23,7 @@ export default function JoinPage() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [welcomeEmailSent, setWelcomeEmailSent] = useState(true);
   const [consentChecked, setConsentChecked] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
   const [submitError, setSubmitError] = useState("");
@@ -38,11 +38,15 @@ export default function JoinPage() {
     if (!value.trim()) return "Phone number is required";
     if (!/^[\d\s()+-]+$/.test(value)) return "Please enter a valid phone number";
     const digitCount = value.replace(/\D/g, "").length;
-    return (isVirtualExperience ? digitCount >= 7 && digitCount <= 15 : digitCount === 10)
+    return (isVirtualExperience || isMembershipApplication
+      ? digitCount >= 7 && digitCount <= 15
+      : digitCount === 10)
       ? ""
       : isVirtualExperience
         ? "Enter a valid phone number with 7 to 15 digits"
-        : "Phone number must be exactly 10 digits";
+        : isMembershipApplication
+          ? "Enter a valid phone number with 7 to 15 digits"
+          : "Phone number must be exactly 10 digits";
   };
   const validateForm = () => {
     const errors = {};
@@ -72,7 +76,7 @@ export default function JoinPage() {
       errors.message = "Message is required";
     }
     if (!isVirtualExperience && !consentChecked) {
-      errors.consent = "Please confirm your membership in the YEMC Forum.";
+      errors.consent = "Please confirm that you want to join the YEMC community.";
     }
     setValidationErrors(errors);
     return Object.keys(errors).length === 0;
@@ -106,13 +110,14 @@ export default function JoinPage() {
           ...formData,
           email: formData.email.trim(),
           consentGiven: consentChecked,
-          registrationType: isVirtualExperience ? "virtual" : "in-person",
+          registrationType,
         }),
       });
       const data = await response.json();
       if (!response.ok) {
         throw new Error(data.error || "Failed to submit application");
       }
+      setWelcomeEmailSent(data.emailSent !== false);
       setSubmitted(true);
     } catch (error) {
       console.error("Error submitting application:", error);
@@ -143,15 +148,17 @@ export default function JoinPage() {
               </svg>
             </div>
             <p className="mb-3 text-xs font-bold uppercase tracking-[0.18em] text-violet-300">
-              YEMC 2026 {isVirtualExperience ? "Virtual " : ""}Registration
+              {isMembershipApplication ? "YEMC Membership" : "YEMC 2026 Virtual Registration"}
             </p>
             <h1 className="text-2xl font-bold text-white md:text-3xl">
-              {isVirtualExperience ? "Your virtual registration is confirmed" : "Your registration is confirmed"}
+              {isMembershipApplication ? "Welcome to YEMC" : "Your virtual registration is confirmed"}
             </h1>
             <p className="mt-4 text-base leading-relaxed text-slate-300">
-              {isVirtualExperience
-                ? "We sent your virtual registration details to your email address."
-                : "We sent your conference pass to your email address. Keep it handy for check-in."}
+              {isMembershipApplication
+                ? welcomeEmailSent
+                  ? "You are now part of YEMC. Welcome! We have sent you a confirmation email, and our team will be in touch soon."
+                  : "You are now part of YEMC. Welcome! Our team will be in touch soon. We could not send your confirmation email, so please check that your email address is correct."
+                : "We sent your virtual registration details to your email address."}
             </p>
           </section>
         </div>
@@ -181,45 +188,38 @@ export default function JoinPage() {
           <div className="max-w-3xl mx-auto">
             <div className="text-center mb-12">
               <h1 className="text-4xl md:text-6xl font-extrabold text-white mb-4 font-plus-jakarta leading-tight">
-                Register for{" "}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-blue-400">
-                  YEMC 2026
-                </span>
+                {isMembershipApplication ? (
+                  <>
+                    Become a{" "}
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-blue-400">
+                      YEMC Member
+                    </span>
+                  </>
+                ) : (
+                  <>
+                    Register for{" "}
+                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 to-blue-400">
+                      YEMC 2026
+                    </span>
+                  </>
+                )}
               </h1>
             </div>
-              <div className="mb-6 flex justify-center">
-                <fieldset className="inline-flex rounded-2xl border border-slate-700/80 bg-slate-900/90 p-1.5 shadow-[0_18px_50px_rgba(2,6,23,0.35)] backdrop-blur-sm">
-                  <legend className="sr-only">How will you attend?</legend>
-                  <div className="grid grid-cols-2 gap-1">
-                    <button
-                      type="button"
-                      aria-pressed={registrationType === "in-person"}
-                      onClick={() => setRegistrationType("in-person")}
-                      className={`min-w-32 rounded-xl px-5 py-3 text-sm font-bold transition-all duration-200 md:min-w-40 md:text-base ${
-                        registrationType === "in-person"
-                          ? "bg-gradient-to-r from-violet-600 to-indigo-500 text-white shadow-[0_8px_24px_rgba(124,58,237,0.35)]"
-                          : "text-slate-400 hover:bg-slate-800 hover:text-white"
-                      }`}
-                    >
-                      In Person
-                    </button>
-                    <button
-                      type="button"
-                      aria-pressed={registrationType === "virtual"}
-                      onClick={() => setRegistrationType("virtual")}
-                      className={`min-w-32 rounded-xl px-5 py-3 text-sm font-bold transition-all duration-200 md:min-w-40 md:text-base ${
-                        registrationType === "virtual"
-                          ? "bg-gradient-to-r from-violet-600 to-indigo-500 text-white shadow-[0_8px_24px_rgba(124,58,237,0.35)]"
-                          : "text-slate-400 hover:bg-slate-800 hover:text-white"
-                      }`}
-                    >
-                      Online
-                    </button>
-                  </div>
-                </fieldset>
-              </div>
               <div className="overflow-hidden bg-slate-900 border border-slate-800 rounded-3xl md:rounded-[40px] p-8 md:p-12">
                 <form onSubmit={handleSubmit} className="space-y-6">
+                  {isMembershipApplication ? (
+                    <div className="-mx-8 -mt-8 md:-mx-12 md:-mt-12 border-b border-slate-800 bg-gradient-to-br from-violet-950 to-slate-900 px-8 py-8 md:px-12 md:py-10">
+                      <p className="text-xs font-bold uppercase tracking-[0.18em] text-violet-300">
+                        Join our community
+                      </p>
+                      <h2 className="mt-2 font-plus-jakarta text-2xl font-extrabold text-white md:text-3xl">
+                        Take your next step with YEMC
+                      </h2>
+                      <p className="mt-3 max-w-2xl text-sm leading-relaxed text-slate-300 md:text-base">
+                        Share a little about yourself and our team will be in touch.
+                      </p>
+                    </div>
+                  ) : (
                   <div className="-mx-8 -mt-8 md:-mx-12 md:-mt-12 overflow-hidden border-b border-slate-800">
                     <div className="relative isolate h-52 md:h-64">
                       <OptimizedImage
@@ -253,6 +253,7 @@ export default function JoinPage() {
                       </div>
                     </dl>
                   </div>
+                  )}
                   <div>
                     <label
                       htmlFor="fullName"
@@ -315,7 +316,9 @@ export default function JoinPage() {
                       value={formData.phoneNumber}
                       onChange={handleChange}
                       className={`w-full bg-slate-950 border ${validationErrors.phoneNumber ? "border-red-500" : "border-slate-800"} rounded-xl md:rounded-2xl px-4 md:px-6 py-3 md:py-4 text-white placeholder-slate-500 focus:outline-none focus:border-violet-500 transition-colors text-sm md:text-base`}
-                      placeholder={isVirtualExperience ? "+233 123 456 789" : "1234567890 (10 digits)"}
+                      placeholder={isMembershipApplication || isVirtualExperience
+                        ? "Enter your phone number (7-15 digits)"
+                        : "1234567890 (10 digits)"}
                     />
                     {validationErrors.phoneNumber && (
                       <p className="mt-2 text-sm text-red-400">
@@ -349,7 +352,7 @@ export default function JoinPage() {
                         htmlFor="status"
                       className="block text-white font-bold mb-3 text-sm md:text-base"
                     >
-                      Status
+                      {isMembershipApplication ? "Current Status" : "Status"}
                     </label>
                     <select
                       id="status"
@@ -429,7 +432,7 @@ export default function JoinPage() {
                         htmlFor="institution"
                         className="block text-white font-bold mb-3 text-sm md:text-base"
                       >
-                        School or Place of Work
+                        {isMembershipApplication ? "School, Organization, or Place of Work" : "School or Place of Work"}
                       </label>
                       <input
                         type="text"
@@ -472,7 +475,7 @@ export default function JoinPage() {
                       htmlFor="message"
                       className="block text-white font-bold mb-3 text-sm md:text-base"
                     >
-                      Message
+                      {isMembershipApplication ? "Why would you like to join YEMC?" : "Message"}
                     </label>
                     <textarea
                       id="message"
@@ -481,7 +484,9 @@ export default function JoinPage() {
                       onChange={handleChange}
                       rows={6}
                       className={`w-full bg-slate-950 border ${validationErrors.message ? "border-red-500" : "border-slate-800"} rounded-xl md:rounded-2xl px-4 md:px-6 py-3 md:py-4 text-white placeholder-slate-500 focus:outline-none focus:border-violet-500 transition-colors resize-none text-sm md:text-base`}
-                      placeholder="Tell us about your goals and what you hope to achieve with YEMC..."
+                      placeholder={isMembershipApplication
+                        ? "Tell us about yourself and why you would like to become part of YEMC..."
+                        : "Tell us about your goals and what you hope to achieve with YEMC..."}
                     ></textarea>
                     {validationErrors.message && (
                       <p className="mt-2 text-sm text-red-400">
@@ -506,7 +511,7 @@ export default function JoinPage() {
                         className="mt-1 h-4 w-4 rounded border-slate-600 bg-slate-900 text-violet-500 focus:ring-violet-500"
                       />
                       <span>
-                        Please tick to confirm your membership in the YEMC Forum. By joining, you will have access to information on YEMC events, webinars, opportunities, and other engagements.
+                        I agree to join the YEMC community and receive information about YEMC events, webinars, opportunities, and other engagements.
                       </span>
                     </label>
                     {validationErrors.consent && (
@@ -531,7 +536,7 @@ export default function JoinPage() {
                       </>
                     ) : (
                       <>
-                        {isVirtualExperience ? "Register for Virtual Experience" : "Submit Application"}
+                        {isVirtualExperience ? "Register for Virtual Experience" : "Become a YEMC Member"}
                         <Send size={18} />
                       </>
                     )}
