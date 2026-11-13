@@ -241,20 +241,34 @@ app.post('/api/join-application', async (c) => {
     }
 
     if (isMembershipApplication) {
-      await getDatabasePool().query(
-        `INSERT INTO applications (
-           full_name, email, phone, status, institution, message,
-           registration_type, consent_given, consent_given_at
-         ) VALUES ($1, $2, $3, $4, $5, $6, 'membership', TRUE, CURRENT_TIMESTAMP)`,
-        [
-          fullName.trim(),
-          cleanEmail,
-          cleanPhone,
-          recordedStatus,
-          status === 'Other' || status === 'Unemployed' ? null : institution.trim(),
-          message.trim(),
-        ],
+      const pool = getDatabasePool();
+      const existingMembership = await pool.query(
+        `SELECT id
+         FROM applications
+         WHERE LOWER(email) = LOWER($1) AND registration_type = 'membership'
+         ORDER BY created_at
+         LIMIT 1`,
+        [cleanEmail],
       );
+      const hasExistingMembership = existingMembership.rows.length > 0;
+      const membershipResult = hasExistingMembership
+        ? existingMembership
+        : await pool.query(
+            `INSERT INTO applications (
+               full_name, email, phone, status, institution, message,
+               registration_type, consent_given, consent_given_at
+             ) VALUES ($1, $2, $3, $4, $5, $6, 'membership', TRUE, CURRENT_TIMESTAMP)
+             RETURNING id`,
+            [
+              fullName.trim(),
+              cleanEmail,
+              cleanPhone,
+              recordedStatus,
+              status === 'Other' || status === 'Unemployed' ? null : institution.trim(),
+              message.trim(),
+            ],
+          );
+      const membershipId = membershipResult.rows[0].id;
 
       const safeName = fullName.trim().replace(/[&<>"']/g, (character) => ({
         '&': '&amp;',
@@ -263,7 +277,6 @@ app.post('/api/join-application', async (c) => {
         '"': '&quot;',
         "'": '&#39;',
       })[character]!);
-      let welcomeEmailSent = false;
       try {
         await sendEmail({
           to: cleanEmail,
@@ -286,13 +299,31 @@ app.post('/api/join-application', async (c) => {
           `,
           text: `Welcome to YEMC!\n\nDear ${fullName.trim()},\n\nWe are delighted to welcome you. You are now part of the YEMC community, a network committed to growth, mentorship, leadership, and excellence.\n\nThank you for taking this step to join us. Our team will be in touch soon with more information about upcoming activities and opportunities.\n\nWarm regards,\nThe YEMC Team`,
         });
-        welcomeEmailSent = true;
       } catch (emailError) {
         console.error('Failed to send YEMC membership welcome email:', emailError);
+        if (!hasExistingMembership) {
+          try {
+            await pool.query(
+              `DELETE FROM applications
+               WHERE id = $1 AND registration_type = 'membership'`,
+              [membershipId],
+            );
+          } catch (cleanupError) {
+            console.error('Failed to remove membership after welcome-email failure:', cleanupError);
+            return c.json(
+              { error: 'We could not confirm your membership by email. Please contact YEMC before trying again.' },
+              500,
+            );
+          }
+        }
+        return c.json(
+          { error: 'We could not send your confirmation email, so your membership was not completed. Please try again later.' },
+          502,
+        );
       }
 
       return c.json(
-        { success: true, registrationType: 'membership', emailSent: welcomeEmailSent },
+        { success: true, registrationType: 'membership', emailSent: true },
         201,
       );
     }

@@ -136,24 +136,61 @@ export async function POST(request) {
         { status: 400 },
       );
     }
+    let membershipApplicationId;
+    let createdMembershipApplication = false;
     try {
-      await sql`
-        INSERT INTO applications (
-          full_name, email, phone, status, institution, message,
-          registration_type, consent_given, consent_given_at
-        )
-        VALUES (
-          ${fullName.trim()},
-          ${cleanEmail},
-          ${cleanPhone},
-          ${recordedStatus},
-          ${cleanInstitution || null},
-          ${isVirtualRegistration ? `Country: ${country.trim()}\n\n${otherDetails.trim()}` : message.trim()},
-          ${isMembershipApplication ? "membership" : isVirtualRegistration ? "virtual" : "in_person"},
-          ${consentGiven === true},
-          ${consentGiven === true ? new Date() : null}
-        )
-      `;
+      if (isMembershipApplication) {
+        const existingMembership = await sql`
+          SELECT id
+          FROM applications
+          WHERE LOWER(email) = LOWER(${cleanEmail})
+            AND registration_type = 'membership'
+          ORDER BY created_at
+          LIMIT 1
+        `;
+        if (existingMembership.length > 0) {
+          membershipApplicationId = existingMembership[0].id;
+        } else {
+          const insertedMembership = await sql`
+            INSERT INTO applications (
+              full_name, email, phone, status, institution, message,
+              registration_type, consent_given, consent_given_at
+            )
+            VALUES (
+              ${fullName.trim()},
+              ${cleanEmail},
+              ${cleanPhone},
+              ${recordedStatus},
+              ${cleanInstitution || null},
+              ${message.trim()},
+              'membership',
+              TRUE,
+              CURRENT_TIMESTAMP
+            )
+            RETURNING id
+          `;
+          membershipApplicationId = insertedMembership[0].id;
+          createdMembershipApplication = true;
+        }
+      } else {
+        await sql`
+          INSERT INTO applications (
+            full_name, email, phone, status, institution, message,
+            registration_type, consent_given, consent_given_at
+          )
+          VALUES (
+            ${fullName.trim()},
+            ${cleanEmail},
+            ${cleanPhone},
+            ${recordedStatus},
+            ${cleanInstitution || null},
+            ${isVirtualRegistration ? `Country: ${country.trim()}\n\n${otherDetails.trim()}` : message.trim()},
+            ${isVirtualRegistration ? "virtual" : "in_person"},
+            ${consentGiven === true},
+            ${consentGiven === true ? new Date() : null}
+          )
+        `;
+      }
     } catch (dbError) {
       console.error("Failed to save application to database:", dbError);
       return Response.json(
@@ -266,6 +303,27 @@ export async function POST(request) {
       welcomeEmailSent = true;
     } catch (emailError) {
       console.error("Failed to send welcome email:", emailError);
+      if (isMembershipApplication) {
+        if (createdMembershipApplication) {
+          try {
+            await sql`
+              DELETE FROM applications
+              WHERE id = ${membershipApplicationId}
+                AND registration_type = 'membership'
+            `;
+          } catch (cleanupError) {
+            console.error("Failed to remove membership after welcome-email failure:", cleanupError);
+            return Response.json(
+              { error: "We could not confirm your membership by email. Please contact YEMC before trying again." },
+              { status: 500 },
+            );
+          }
+        }
+        return Response.json(
+          { error: "We could not send your confirmation email, so your membership was not completed. Please try again later." },
+          { status: 502 },
+        );
+      }
     }
     return Response.json(
       { success: true, ...(isMembershipApplication ? { emailSent: welcomeEmailSent } : {}) },
