@@ -199,6 +199,7 @@ app.post('/api/join-application', async (c) => {
       registrationType,
     } = body;
     const isVirtualRegistration = registrationType === 'virtual';
+    const isMembershipApplication = registrationType === 'membership';
     const cleanEmail = typeof email === 'string' ? email.trim() : '';
     const customStatus = typeof otherStatus === 'string' ? otherStatus.trim() : '';
     const recordedStatus = status === 'Other' ? `Other: ${customStatus}` : status;
@@ -223,7 +224,7 @@ app.post('/api/join-application', async (c) => {
       typeof message !== 'string' || !message.trim() ||
       consentGiven !== true ||
       (status === 'Other' && !customStatus) ||
-      (!institution && status !== 'Other' && status !== 'Unemployed')
+      (status !== 'Other' && status !== 'Unemployed' && (typeof institution !== 'string' || !institution.trim()))
         )
     ) {
       return c.json({ error: 'All fields are required' }, 400);
@@ -232,11 +233,68 @@ app.post('/api/join-application', async (c) => {
     if (!/^[^\s@]+@(?:[A-Za-z0-9](?:[A-Za-z0-9-]*[A-Za-z0-9])?\.)+[A-Za-z]{2,}$/.test(cleanEmail)) {
       return c.json({ error: 'Enter a valid email address, like mailhere@gmail.com' }, 400);
     }
-    if (!/^\d{7,15}$/.test(cleanPhone) && isVirtualRegistration) {
+    if (!/^\d{7,15}$/.test(cleanPhone) && (isVirtualRegistration || isMembershipApplication)) {
       return c.json({ error: 'Enter a valid phone number with 7 to 15 digits' }, 400);
     }
-    if (!/^\d{10}$/.test(cleanPhone) && !isVirtualRegistration) {
+    if (!/^\d{10}$/.test(cleanPhone) && !isVirtualRegistration && !isMembershipApplication) {
       return c.json({ error: 'Enter a valid 10-digit phone number' }, 400);
+    }
+
+    if (isMembershipApplication) {
+      await getDatabasePool().query(
+        `INSERT INTO applications (
+           full_name, email, phone, status, institution, message,
+           registration_type, consent_given, consent_given_at
+         ) VALUES ($1, $2, $3, $4, $5, $6, 'membership', TRUE, CURRENT_TIMESTAMP)`,
+        [
+          fullName.trim(),
+          cleanEmail,
+          cleanPhone,
+          recordedStatus,
+          status === 'Other' || status === 'Unemployed' ? null : institution.trim(),
+          message.trim(),
+        ],
+      );
+
+      const safeName = fullName.trim().replace(/[&<>"']/g, (character) => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;',
+      })[character]!);
+      let welcomeEmailSent = false;
+      try {
+        await sendEmail({
+          to: cleanEmail,
+          subject: 'Welcome to the YEMC Community',
+          html: `
+            <div style="margin:0;padding:32px 16px;background:#f8fafc;font-family:Arial,Helvetica,sans-serif;color:#0f172a;">
+              <div style="max-width:640px;margin:0 auto;overflow:hidden;border:1px solid #e2e8f0;border-radius:20px;background:#ffffff;">
+                <div style="padding:32px;text-align:center;background:#4c1d95;color:#ffffff;">
+                  <p style="margin:0;font-size:13px;font-weight:bold;letter-spacing:.16em;text-transform:uppercase;color:#ddd6fe;">Young Executive Master Class</p>
+                  <h1 style="margin:14px 0 0;font-size:30px;">Welcome to YEMC!</h1>
+                </div>
+                <div style="padding:32px;font-size:16px;line-height:1.7;">
+                  <p>Dear ${safeName},</p>
+                  <p>We are delighted to welcome you. You are now part of the YEMC community, a network committed to growth, mentorship, leadership, and excellence.</p>
+                  <p>Thank you for taking this step to join us. Our team will be in touch soon with more information about upcoming activities and opportunities.</p>
+                  <p style="margin-top:28px;">Warm regards,<br><strong>The YEMC Team</strong></p>
+                </div>
+              </div>
+            </div>
+          `,
+          text: `Welcome to YEMC!\n\nDear ${fullName.trim()},\n\nWe are delighted to welcome you. You are now part of the YEMC community, a network committed to growth, mentorship, leadership, and excellence.\n\nThank you for taking this step to join us. Our team will be in touch soon with more information about upcoming activities and opportunities.\n\nWarm regards,\nThe YEMC Team`,
+        });
+        welcomeEmailSent = true;
+      } catch (emailError) {
+        console.error('Failed to send YEMC membership welcome email:', emailError);
+      }
+
+      return c.json(
+        { success: true, registrationType: 'membership', emailSent: welcomeEmailSent },
+        201,
+      );
     }
 
     if (isVirtualRegistration) {
