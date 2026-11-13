@@ -251,24 +251,22 @@ app.post('/api/join-application', async (c) => {
         [cleanEmail],
       );
       const hasExistingMembership = existingMembership.rows.length > 0;
-      const membershipResult = hasExistingMembership
-        ? existingMembership
-        : await pool.query(
-            `INSERT INTO applications (
-               full_name, email, phone, status, institution, message,
-               registration_type, consent_given, consent_given_at
-             ) VALUES ($1, $2, $3, $4, $5, $6, 'membership', TRUE, CURRENT_TIMESTAMP)
-             RETURNING id`,
-            [
-              fullName.trim(),
-              cleanEmail,
-              cleanPhone,
-              recordedStatus,
-              status === 'Other' || status === 'Unemployed' ? null : institution.trim(),
-              message.trim(),
-            ],
-          );
-      const membershipId = membershipResult.rows[0].id;
+      if (!hasExistingMembership) {
+        await pool.query(
+          `INSERT INTO applications (
+             full_name, email, phone, status, institution, message,
+             registration_type, consent_given, consent_given_at
+           ) VALUES ($1, $2, $3, $4, $5, $6, 'membership', TRUE, CURRENT_TIMESTAMP)`,
+          [
+            fullName.trim(),
+            cleanEmail,
+            cleanPhone,
+            recordedStatus,
+            status === 'Other' || status === 'Unemployed' ? null : institution.trim(),
+            message.trim(),
+          ],
+        );
+      }
 
       const safeName = fullName.trim().replace(/[&<>"']/g, (character) => ({
         '&': '&amp;',
@@ -301,29 +299,10 @@ app.post('/api/join-application', async (c) => {
         });
       } catch (emailError) {
         console.error('Failed to send YEMC membership welcome email:', emailError);
-        if (!hasExistingMembership) {
-          try {
-            await pool.query(
-              `DELETE FROM applications
-               WHERE id = $1 AND registration_type = 'membership'`,
-              [membershipId],
-            );
-          } catch (cleanupError) {
-            console.error('Failed to remove membership after welcome-email failure:', cleanupError);
-            return c.json(
-              { error: 'We could not confirm your membership by email. Please contact YEMC before trying again.' },
-              500,
-            );
-          }
-        }
-        return c.json(
-          { error: 'We could not send your confirmation email, so your membership was not completed. Please try again later.' },
-          502,
-        );
       }
 
       return c.json(
-        { success: true, registrationType: 'membership', emailSent: true },
+        { success: true, registrationType: 'membership' },
         201,
       );
     }

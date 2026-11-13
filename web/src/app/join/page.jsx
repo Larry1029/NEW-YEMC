@@ -23,7 +23,6 @@ export default function JoinPage() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
-  const [welcomeEmailSent, setWelcomeEmailSent] = useState(true);
   const [consentChecked, setConsentChecked] = useState(false);
   const [validationErrors, setValidationErrors] = useState({});
   const [submitError, setSubmitError] = useState("");
@@ -117,7 +116,6 @@ export default function JoinPage() {
       if (!response.ok) {
         throw new Error(data.error || "Failed to submit application");
       }
-      setWelcomeEmailSent(data.emailSent !== false);
       setSubmitted(true);
     } catch (error) {
       console.error("Error submitting application:", error);
@@ -155,9 +153,7 @@ export default function JoinPage() {
             </h1>
             <p className="mt-4 text-base leading-relaxed text-slate-300">
               {isMembershipApplication
-                ? welcomeEmailSent
-                  ? "You are now part of YEMC. Welcome! We have sent you a confirmation email, and our team will be in touch soon."
-                  : "You are now part of YEMC. Welcome! Our team will be in touch soon. We could not deliver your confirmation email just now."
+                ? "Your request has been received. Welcome to YEMC! Our team will be in touch soon."
                 : "We sent your virtual registration details to your email address."}
             </p>
           </section>

@@ -136,8 +136,6 @@ export async function POST(request) {
         { status: 400 },
       );
     }
-    let membershipApplicationId;
-    let createdMembershipApplication = false;
     try {
       if (isMembershipApplication) {
         const existingMembership = await sql`
@@ -148,10 +146,8 @@ export async function POST(request) {
           ORDER BY created_at
           LIMIT 1
         `;
-        if (existingMembership.length > 0) {
-          membershipApplicationId = existingMembership[0].id;
-        } else {
-          const insertedMembership = await sql`
+        if (existingMembership.length === 0) {
+          await sql`
             INSERT INTO applications (
               full_name, email, phone, status, institution, message,
               registration_type, consent_given, consent_given_at
@@ -167,10 +163,7 @@ export async function POST(request) {
               TRUE,
               CURRENT_TIMESTAMP
             )
-            RETURNING id
           `;
-          membershipApplicationId = insertedMembership[0].id;
-          createdMembershipApplication = true;
         }
       } else {
         await sql`
@@ -233,7 +226,6 @@ export async function POST(request) {
     } catch (emailError) {
       console.error("Failed to send admin email:", emailError);
     }
-    let welcomeEmailSent = false;
     try {
       await sendEmail({
         to: cleanEmail,
@@ -300,33 +292,11 @@ export async function POST(request) {
             The YEMC Team
           `,
       });
-      welcomeEmailSent = true;
     } catch (emailError) {
       console.error("Failed to send welcome email:", emailError);
-      if (isMembershipApplication) {
-        if (createdMembershipApplication) {
-          try {
-            await sql`
-              DELETE FROM applications
-              WHERE id = ${membershipApplicationId}
-                AND registration_type = 'membership'
-            `;
-          } catch (cleanupError) {
-            console.error("Failed to remove membership after welcome-email failure:", cleanupError);
-            return Response.json(
-              { error: "We could not confirm your membership by email. Please contact YEMC before trying again." },
-              { status: 500 },
-            );
-          }
-        }
-        return Response.json(
-          { error: "We could not send your confirmation email, so your membership was not completed. Please try again later." },
-          { status: 502 },
-        );
-      }
     }
     return Response.json(
-      { success: true, ...(isMembershipApplication ? { emailSent: welcomeEmailSent } : {}) },
+      { success: true },
       { status: 200 },
     );
   } catch (error) {
